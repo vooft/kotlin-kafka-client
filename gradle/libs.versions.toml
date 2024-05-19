@@ -1,0 +1,19 @@
+[versions]
+#kotlin = "2.0.0-RC3"
+kotlin = "1.9.24" # downgrade to make it work with mokkery
+kotest = "5.9.0"
+
+[libraries]
+# testing
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
+kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
+mokkery = { id = "dev.mokkery", version = "1.9.24-1.7.0" }
