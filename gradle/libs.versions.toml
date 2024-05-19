@@ -2,8 +2,12 @@
 #kotlin = "2.0.0-RC3"
 kotlin = "1.9.24" # downgrade to make it work with mokkery
 kotest = "5.9.0"
+ktor = "2.3.11"
 
 [libraries]
+# networking
+ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
+
 # testing
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

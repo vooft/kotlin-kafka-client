@@ -12,19 +12,21 @@ kotlin {
 
     macosArm64()
 
-    js(IR) {
-        nodejs()
-    }
+//    js(IR) {
+//        nodejs()
+//    }
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.ktor.network)
+            implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.5")
         }
 
         jvmMain.dependencies { }
 
-        jsMain.dependencies { }
+//        jsMain.dependencies { }
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
