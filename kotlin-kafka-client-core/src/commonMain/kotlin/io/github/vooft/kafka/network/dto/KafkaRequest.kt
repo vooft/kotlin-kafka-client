@@ -1,9 +1,13 @@
 package io.github.vooft.kafka.network.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed interface KafkaRequest {
-    val apiKey: ApiKey
+    val apiKey: Short
 }
 
+@Serializable
 data object ApiVersionRequest : KafkaRequest {
-    override val apiKey: ApiKey = ApiKey.API_VERSIONS
+    override val apiKey: Short = ApiKey.API_VERSIONS
 }

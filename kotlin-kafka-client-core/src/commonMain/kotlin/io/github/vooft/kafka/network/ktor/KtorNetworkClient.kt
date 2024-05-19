@@ -3,11 +3,13 @@ package io.github.vooft.kafka.network.ktor
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
 import io.github.vooft.kafka.network.dto.ApiVersion
-import io.github.vooft.kafka.network.dto.CorrelationId
+import io.github.vooft.kafka.network.dto.ApiVersionsResponse
 import io.github.vooft.kafka.network.dto.KafkaRequest
 import io.github.vooft.kafka.network.dto.KafkaRequestHeader
 import io.github.vooft.kafka.network.dto.KafkaResponse
-import io.github.vooft.kafka.network.write
+import io.github.vooft.kafka.network.dto.KafkaResponseHeader
+import io.github.vooft.kafka.serialization.decode
+import io.github.vooft.kafka.serialization.encode
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
@@ -18,7 +20,6 @@ import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.io.Buffer
-import kotlinx.io.Sink
 import kotlinx.io.readByteArray
 
 class KtorNetworkClient : NetworkClient {
@@ -31,51 +32,40 @@ class KtorNetworkClient : NetworkClient {
         val readChannel = socket.openReadChannel()
 
         return object : KafkaConnection {
+            private var correlationIdCounter = 123
+
             override suspend fun sendRequest(request: KafkaRequest) {
-                val correlationId = CorrelationId.next()
+                val correlationId = correlationIdCounter++
                 writeChannel.writeMessage {
                     println("sending message with correlationId: $correlationId")
-                    writeHeader(correlationId, request)
-                    write(request)
+                    encode(
+                        KafkaRequestHeader(
+                            apiKey = request.apiKey,
+                            apiVersion = ApiVersion.V1,
+                            correlationId = correlationId,
+                            clientId = null
+                        )
+                    )
+                    encode(request)
                 }
             }
 
             override suspend fun receiveResponse(): KafkaResponse {
                 val buffer = readChannel.readMessage()
 
-                val correlationId = buffer.readInt()
-                println("received correlationId: $correlationId")
+                val header = buffer.decode<KafkaResponseHeader>()
+                println("received header: $header")
 
-                val errorCode = buffer.readShort()
-                println("received errorCode: $errorCode")
+                val response = buffer.decode<ApiVersionsResponse>()
+                println("received response: $response")
 
-                val length = buffer.readInt()
-                println("api versions length: $length")
-
-                repeat(length) {
-                    println("api version index $it")
-
-                    val apiKey = buffer.readShort()
-                    println("received apiKey: $apiKey")
-
-                    val minVersion = buffer.readShort()
-                    println("received minVersion: $minVersion")
-
-                    val maxVersion = buffer.readShort()
-                    println("received maxVersion: $maxVersion")
-
-                    println()
-                }
+                println("remaining: ${buffer.readByteArray().toHexString()}")
 
                 return object : KafkaResponse {}
             }
         }
     }
 }
-
-private fun Sink.writeHeader(correlationId: CorrelationId, request: KafkaRequest) = write(
-    KafkaRequestHeader(apiKey = request.apiKey, apiVersion = ApiVersion.V1, correlationId = correlationId, clientId = null)
-)
 
 private suspend fun ByteWriteChannel.writeMessage(block: Buffer.() -> Unit) {
     val buffer = Buffer()
@@ -95,8 +85,8 @@ private suspend fun ByteWriteChannel.writeMessage(data: ByteArray) {
 private suspend fun ByteReadChannel.readMessage(): Buffer {
     val size = readInt()
     println("Reading message of size $size")
-    val dst = ByteArray(size)
 
+    val dst = ByteArray(size)
     readFully(dst, 0, size)
 
     println("Read message: ${dst.toHexString()}")

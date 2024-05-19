@@ -1,6 +1,6 @@
 package io.github.vooft.kafka.network.dto
 
-import kotlin.jvm.JvmInline
+import kotlinx.serialization.Serializable
 
 /**
  * Request Header => api_key api_version correlation_id client_id
@@ -9,32 +9,25 @@ import kotlin.jvm.JvmInline
  *   correlation_id => INT32
  *   client_id => NULLABLE_STRING
  */
+@Serializable
 data class KafkaRequestHeader(
-    val apiKey: ApiKey,
-    val apiVersion: ApiVersion,
-    val correlationId: CorrelationId,
+    val apiKey: Short,
+    val apiVersion: Short,
+    val correlationId: Int,
     val clientId: String? = null
 )
 
-data class KafkaResponseHeader(val correlationId: CorrelationId)
+@Serializable
+data class KafkaResponseHeader(val correlationId: Int)
 
-enum class ApiVersion(val value: Short) {
-    V1(1),
-    V2(2)
+object ApiVersion {
+    const val V1: Short = 1
+    const val V2: Short = 2
 }
-
-@JvmInline
-value class CorrelationId(val value: Int) {
-    companion object {
-        fun next(): CorrelationId = CorrelationId(correlationIdCounter++)
-    }
-}
-
-private var correlationIdCounter = 666
 
 /**
  * Even though it is called ApiKey, it is more like a command
  */
-enum class ApiKey(val value: Short) {
-    API_VERSIONS(18),
+object ApiKey {
+    const val API_VERSIONS: Short = 18
 }
