@@ -23,5 +23,6 @@ internal class KafkaObjectDecoder(
         }
 
         return elementIndex++
+            //.also { println("Decoding ${descriptor.getElementName(it)}") }
     }
 }

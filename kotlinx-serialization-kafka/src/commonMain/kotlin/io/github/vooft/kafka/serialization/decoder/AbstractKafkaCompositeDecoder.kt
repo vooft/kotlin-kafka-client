@@ -38,11 +38,7 @@ abstract class AbstractKafkaCompositeDecoder(private val delegate: Decoder) : Co
         index: Int,
         deserializer: DeserializationStrategy<T?>,
         previousValue: T?
-    ): T? = if (deserializer.descriptor.isNullable || delegate.decodeNotNullMark()) {
-        delegate.decodeSerializableValue(deserializer)
-    } else {
-        delegate.decodeNull()
-    }
+    ): T? = delegate.decodeNullableSerializableValue(deserializer)
 
     override fun <T> decodeSerializableElement(
         descriptor: SerialDescriptor,

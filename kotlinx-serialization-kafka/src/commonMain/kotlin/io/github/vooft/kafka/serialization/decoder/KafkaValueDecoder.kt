@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.serialization.decoder
 
+import io.github.vooft.kafka.serialization.common.Constants
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
@@ -21,15 +22,16 @@ class KafkaValueDecoder(
         else -> error("Not supported ${descriptor.kind}")
     }
 
-    override fun decodeBoolean(): Boolean = error("Boolean is not supported")
+    override fun decodeBoolean(): Boolean {
+        val byte = source.readByte()
+        return byte != 0.toByte()
+    }
+
     override fun decodeChar(): Char = error("Char is not supported")
     override fun decodeDouble(): Double = error("Double is not supported")
     override fun decodeFloat(): Float = error("Float is not supported")
 
-    override fun decodeByte(): Byte {
-        println("decodeByte")
-        return source.readByte()
-    }
+    override fun decodeByte(): Byte = source.readByte()
 
     override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
         TODO("Not yet implemented")
@@ -57,9 +59,9 @@ class KafkaValueDecoder(
     @ExperimentalSerializationApi
     override fun <T : Any> decodeNullableSerializableValue(deserializer: DeserializationStrategy<T?>): T? {
         when (deserializer.descriptor.serialName) {
-            "kotlin.String?" -> {
+            Constants.REGULAR_STRING, Constants.NULLABLE_STRING -> {
                 val length = source.readShort()
-                return if (length == NULL_STRING_LENGTH) {
+                return if (length == Constants.NULL_STRING_LENGTH) {
                     null
                 } else {
                     source.readString(length.toLong()) as T
@@ -69,5 +71,3 @@ class KafkaValueDecoder(
         }
     }
 }
-
-private const val NULL_STRING_LENGTH: Short = -1

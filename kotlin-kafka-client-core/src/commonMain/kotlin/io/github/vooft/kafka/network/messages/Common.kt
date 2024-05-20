@@ -49,7 +49,8 @@ interface KafkaResponse : Versioned
 // Even though it is called ApiKey, it is more like a command
 @Serializable(with = ApiKeySerializer::class)
 enum class ApiKey(override val value: Short): ShortValue {
-    API_VERSIONS(0x12)
+    API_VERSIONS(18),
+    METADATA(3)
 }
 
 object ApiKeySerializer : ShortValueSerializer<ApiKey>({ ApiKey.entries.first { key -> key.value == it } })

@@ -47,7 +47,11 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
         writeChannel.writeMessage {
-            encodeHeader(request.nextHeader())
+            val header = request.nextHeader()
+            println("writing header $header")
+            encodeHeader(header)
+
+            println("writing request $request")
             encode(requestSerializer, request)
         }
 
