@@ -17,6 +17,9 @@ interface IntValue {
 abstract class ShortValueSerializer<T: ShortValue>(
     private val factory: (Short) -> T
 ) : KSerializer<T> {
+
+    constructor(entries: Collection<T>) : this({ value -> entries.first { it.value == value } })
+
     override val descriptor = PrimitiveSerialDescriptor("ShortValue", PrimitiveKind.SHORT)
 
     override fun deserialize(decoder: Decoder): T {

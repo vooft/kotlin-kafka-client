@@ -13,7 +13,7 @@ sealed interface ApiVersionResponse: KafkaResponse
 
 @Serializable
 data class ApiVersionsResponseV1(
-    val errorCode: Short,
+    val errorCode: ErrorCode,
     val apiKeys: List<ApiVersion>,
     val throttleTimeMs: Int = 0
 ) : ApiVersionResponse, VersionedV1 {

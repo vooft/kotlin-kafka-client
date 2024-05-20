@@ -26,7 +26,7 @@ enum class ApiVersion(override val value: Short) : ShortValue {
 }
 
 // TODO: move to module
-object ApiVersionSerializer : ShortValueSerializer<ApiVersion>({ ApiVersion.entries.first { version -> version.value == it } })
+object ApiVersionSerializer : ShortValueSerializer<ApiVersion>(ApiVersion.entries)
 
 @Serializable(with = CorrelationIdSerializer::class)
 @JvmInline
@@ -53,4 +53,4 @@ enum class ApiKey(override val value: Short): ShortValue {
     METADATA(3)
 }
 
-object ApiKeySerializer : ShortValueSerializer<ApiKey>({ ApiKey.entries.first { key -> key.value == it } })
+object ApiKeySerializer : ShortValueSerializer<ApiKey>(ApiKey.entries)

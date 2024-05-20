@@ -27,14 +27,14 @@ data class MetadataResponseV1(
 
     @Serializable
     data class Topic(
-        val errorCode: Short,
+        val errorCode: ErrorCode,
         val name: String,
         val isInternal: Boolean,
         val partitions: List<Partition>
     ) {
         @Serializable
         data class Partition(
-            val errorCode: Short,
+            val errorCode: ErrorCode,
             val partition: Int,
             val leader: Int,
             val replicas: List<Int>,
