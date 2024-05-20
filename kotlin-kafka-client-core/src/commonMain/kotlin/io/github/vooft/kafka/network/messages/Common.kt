@@ -32,19 +32,12 @@ object ApiVersionSerializer : ShortValueSerializer<ApiVersion>({ ApiVersion.entr
 @JvmInline
 value class CorrelationId(override val value: Int) : IntValue {
     companion object {
-        private var counter = 0
+        private var counter = 666
         fun next() = CorrelationId(counter++)
     }
 }
 
 object CorrelationIdSerializer : IntValueSerializer<CorrelationId>({ CorrelationId(it) })
-
-sealed interface KafkaResponseHeader : Versioned {
-    val correlationId: CorrelationId
-}
-
-@Serializable
-data class KafkaResponseHeaderV0(override val correlationId: CorrelationId) : KafkaResponseHeader, VersionedV0
 
 @Serializable
 sealed interface KafkaRequest : Versioned {

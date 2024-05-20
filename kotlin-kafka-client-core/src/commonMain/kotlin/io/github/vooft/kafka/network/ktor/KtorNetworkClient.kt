@@ -2,14 +2,11 @@ package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
-import io.github.vooft.kafka.network.messages.ApiVersionsRequestV0.apiKey
-import io.github.vooft.kafka.network.messages.CorrelationId
 import io.github.vooft.kafka.network.messages.KafkaRequest
-import io.github.vooft.kafka.network.messages.KafkaRequestHeaderV0
 import io.github.vooft.kafka.network.messages.KafkaResponse
-import io.github.vooft.kafka.network.messages.KafkaResponseHeader
-import io.github.vooft.kafka.network.messages.KafkaResponseHeaderV0
-import io.github.vooft.kafka.network.messages.VersionedV0
+import io.github.vooft.kafka.network.messages.nextRequestHeader
+import io.github.vooft.kafka.network.messages.responseHeaderDeserializer
+import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.ktor.network.selector.SelectorManager
@@ -44,22 +41,22 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
     private val writeChannel = socket.openWriteChannel()
     private val readChannel = socket.openReadChannel()
 
-    private var correlationIdCounter = 123 // TODO: replace with Atomic
-
     override suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> sendRequest(
         request: Rq,
         requestSerializer: SerializationStrategy<Rq>,
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
         writeChannel.writeMessage {
-            encodeHeaderFor(request)
+            encodeHeader(request.apiKey.nextRequestHeader())
             encode(requestSerializer, request)
         }
 
         return readChannel.readMessage {
-            decode(request.responseHeaderDeserializer())
+            val header = decode(request.responseHeaderDeserializer())
+            println("decoded header $header")
 
             val result = decode(responseDeserializer)
+            println("decoded result $result")
 
             val remaining = readByteArray()
             require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
@@ -70,23 +67,6 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
 
     override suspend fun close() {
         socket.close()
-    }
-
-    private fun Sink.encodeHeaderFor(request: KafkaRequest) {
-        val correlationId = CorrelationId.next()
-        println("sending message with correlation id $correlationId")
-        when (request) {
-            is VersionedV0 -> encode(
-                KafkaRequestHeaderV0(
-                    apiKey = apiKey,
-                    correlationId = correlationId
-                )
-            )
-        }
-    }
-
-    private fun KafkaRequest.responseHeaderDeserializer(): DeserializationStrategy<KafkaResponseHeader> = when (this) {
-        is VersionedV0 -> KafkaResponseHeaderV0.serializer()
     }
 }
 
