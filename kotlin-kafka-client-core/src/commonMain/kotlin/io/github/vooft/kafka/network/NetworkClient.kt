@@ -11,10 +11,13 @@ interface NetworkClient {
 }
 
 interface KafkaConnection {
-    suspend fun <T: KafkaRequest> sendRequest(serializationStrategy: SerializationStrategy<T>, request: T)
-    suspend fun <T: KafkaResponse> receiveResponse(deserializationStrategy: DeserializationStrategy<T>): T
+    suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> sendRequest(
+        request: Rq,
+        requestSerializer: SerializationStrategy<Rq>,
+        responseDeserializer: DeserializationStrategy<Rs>
+    ): Rs
+
     suspend fun close()
 }
 
-suspend inline fun <reified T: KafkaRequest> KafkaConnection.sendRequest(request: T) = sendRequest(serializer<T>(), request)
-suspend inline fun <reified T: KafkaResponse> KafkaConnection.receiveResponse() = receiveResponse(serializer<T>())
+suspend inline fun <reified Rq: KafkaRequest, reified Rs: KafkaResponse> KafkaConnection.sendRequest(request: Rq): Rs = sendRequest(request, serializer<Rq>(), serializer<Rs>())

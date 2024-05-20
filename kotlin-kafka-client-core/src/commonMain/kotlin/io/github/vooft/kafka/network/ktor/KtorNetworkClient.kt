@@ -2,10 +2,14 @@ package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.messages.ApiVersionsRequestV0.apiKey
+import io.github.vooft.kafka.network.messages.CorrelationId
 import io.github.vooft.kafka.network.messages.KafkaRequest
-import io.github.vooft.kafka.network.messages.KafkaRequestHeader
+import io.github.vooft.kafka.network.messages.KafkaRequestHeaderV0
 import io.github.vooft.kafka.network.messages.KafkaResponse
 import io.github.vooft.kafka.network.messages.KafkaResponseHeader
+import io.github.vooft.kafka.network.messages.KafkaResponseHeaderV0
+import io.github.vooft.kafka.network.messages.VersionedV0
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.ktor.network.selector.SelectorManager
@@ -19,6 +23,8 @@ import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.io.Buffer
+import kotlinx.io.Sink
+import kotlinx.io.Source
 import kotlinx.io.readByteArray
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
@@ -40,56 +46,65 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
 
     private var correlationIdCounter = 123 // TODO: replace with Atomic
 
-    override suspend fun <T : KafkaRequest> sendRequest(serializationStrategy: SerializationStrategy<T>, request: T) {
-        val correlationId = correlationIdCounter++
+    override suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> sendRequest(
+        request: Rq,
+        requestSerializer: SerializationStrategy<Rq>,
+        responseDeserializer: DeserializationStrategy<Rs>
+    ): Rs {
         writeChannel.writeMessage {
-            println("sending message with correlationId: $correlationId")
-            encode(request.createHeader())
-            encode(serializationStrategy, request)
+            encodeHeaderFor(request)
+            encode(requestSerializer, request)
         }
-    }
 
-    override suspend fun <T : KafkaResponse> receiveResponse(deserializationStrategy: DeserializationStrategy<T>): T {
-        val buffer = readChannel.readMessage()
+        return readChannel.readMessage {
+            decode(request.responseHeaderDeserializer())
 
-        val header = buffer.decode<KafkaResponseHeader>()
-        println("received header: $header")
+            val result = decode(responseDeserializer)
 
-        val response = buffer.decode(deserializationStrategy)
-        println("received response: $response")
+            val remaining = readByteArray()
+            require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
 
-        val remaining = buffer.readByteArray()
-        require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
-
-        return response
+            result
+        }
     }
 
     override suspend fun close() {
         socket.close()
     }
 
-    private fun KafkaRequest.createHeader(): KafkaRequestHeader {
-        return KafkaRequestHeader(
-            apiKey = apiKey,
-            apiVersion = version,
-            correlationId = correlationIdCounter++,
-            clientId = null
-        )
+    private fun Sink.encodeHeaderFor(request: KafkaRequest) {
+        val correlationId = CorrelationId.next()
+        println("sending message with correlation id $correlationId")
+        when (request) {
+            is VersionedV0 -> encode(
+                KafkaRequestHeaderV0(
+                    apiKey = apiKey,
+                    correlationId = correlationId
+                )
+            )
+        }
+    }
+
+    private fun KafkaRequest.responseHeaderDeserializer(): DeserializationStrategy<KafkaResponseHeader> = when (this) {
+        is VersionedV0 -> KafkaResponseHeaderV0.serializer()
     }
 }
 
-private suspend fun ByteWriteChannel.writeMessage(block: Buffer.() -> Unit) {
+private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) {
     val buffer = Buffer()
     buffer.block()
 
     val data = buffer.readByteArray()
+    println("writing ${data.size} bytes")
     writeInt(data.size)
     writeFully(data)
 
     flush()
+    println("sent message: ${data.toHexString()}")
 }
 
-private suspend fun ByteReadChannel.readMessage(): Buffer {
+private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T {
+    println("reading message")
     val size = readInt()
     println("Reading message of size $size")
 
@@ -100,7 +115,7 @@ private suspend fun ByteReadChannel.readMessage(): Buffer {
 
     val result = Buffer()
     result.write(dst)
-    return result
+    return result.block()
 }
 
 private fun ByteArray.toHexString() = joinToString(", ", "[", "]") { "0x" + it.toUByte().toString(16).padStart(2, '0').uppercase() }

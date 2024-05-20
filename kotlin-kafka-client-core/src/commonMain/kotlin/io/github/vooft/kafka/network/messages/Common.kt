@@ -1,57 +1,62 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.serialization.IntValue
+import io.github.vooft.kafka.serialization.IntValueSerializer
+import io.github.vooft.kafka.serialization.ShortValue
+import io.github.vooft.kafka.serialization.ShortValueSerializer
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
+
+sealed interface Versioned {
+    val apiVersion: ApiVersion
+}
+
+sealed interface VersionedV0 : Versioned {
+    override val apiVersion: ApiVersion get() = ApiVersion.V0
+}
+
+sealed interface VersionedV1 : Versioned {
+    override val apiVersion: ApiVersion get() = ApiVersion.V1
+}
+
+@Serializable(with = ApiVersionSerializer::class)
+enum class ApiVersion(override val value: Short) : ShortValue {
+    V0(0),
+    V1(1)
+}
+
+// TODO: move to module
+object ApiVersionSerializer : ShortValueSerializer<ApiVersion>({ ApiVersion.entries.first { version -> version.value == it } })
+
+@Serializable(with = CorrelationIdSerializer::class)
+@JvmInline
+value class CorrelationId(override val value: Int) : IntValue {
+    companion object {
+        private var counter = 0
+        fun next() = CorrelationId(counter++)
+    }
+}
+
+object CorrelationIdSerializer : IntValueSerializer<CorrelationId>({ CorrelationId(it) })
+
+sealed interface KafkaResponseHeader : Versioned {
+    val correlationId: CorrelationId
+}
+
+@Serializable
+data class KafkaResponseHeaderV0(override val correlationId: CorrelationId) : KafkaResponseHeader, VersionedV0
 
 @Serializable
 sealed interface KafkaRequest : Versioned {
-    val apiKey: Short
+    val apiKey: ApiKey
 }
 
 interface KafkaResponse : Versioned
 
-sealed interface Versioned {
-    val version: Short
+// Even though it is called ApiKey, it is more like a command
+@Serializable(with = ApiKeySerializer::class)
+enum class ApiKey(override val value: Short): ShortValue {
+    API_VERSIONS(0x12)
 }
 
-sealed interface VersionV0: Versioned {
-    override val version: Short get() = ApiVersion.V0
-}
-
-sealed interface VersionV1: Versioned {
-    override val version: Short get() = ApiVersion.V1
-}
-
-sealed interface VersionV2: Versioned {
-    override val version: Short get() = ApiVersion.V2
-}
-
-/**
- * Request Header => api_key api_version correlation_id client_id
- *   api_key => INT16
- *   api_version => INT16
- *   correlation_id => INT32
- *   client_id => NULLABLE_STRING
- */
-@Serializable
-data class KafkaRequestHeader(
-    val apiKey: Short,
-    val apiVersion: Short,
-    val correlationId: Int,
-    val clientId: String? = null
-)
-
-@Serializable
-data class KafkaResponseHeader(val correlationId: Int)
-
-object ApiVersion {
-    const val V0: Short = 0
-    const val V1: Short = 1
-    const val V2: Short = 2
-}
-
-/**
- * Even though it is called ApiKey, it is more like a command
- */
-object ApiKey {
-    const val API_VERSIONS: Short = 18
-}
+object ApiKeySerializer : ShortValueSerializer<ApiKey>({ ApiKey.entries.first { key -> key.value == it } })

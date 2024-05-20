@@ -30,6 +30,10 @@ class KotlinxSerializationKafkaEncoder(
         sink.writeString(value)
     }
 
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+
+    }
+
     override fun <T : Any> encodeNullableSerializableElement(
         descriptor: SerialDescriptor,
         index: Int,
