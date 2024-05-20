@@ -4,7 +4,7 @@ import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
 import io.github.vooft.kafka.network.messages.KafkaRequest
 import io.github.vooft.kafka.network.messages.KafkaResponse
-import io.github.vooft.kafka.network.messages.nextRequestHeader
+import io.github.vooft.kafka.network.messages.nextHeader
 import io.github.vooft.kafka.network.messages.responseHeaderDeserializer
 import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
@@ -47,7 +47,7 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
         writeChannel.writeMessage {
-            encodeHeader(request.apiKey.nextRequestHeader())
+            encodeHeader(request.nextHeader())
             encode(requestSerializer, request)
         }
 

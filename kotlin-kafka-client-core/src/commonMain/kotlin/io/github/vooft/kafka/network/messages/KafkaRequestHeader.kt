@@ -23,10 +23,3 @@ data class KafkaRequestHeaderV1(
     val clientId: String? = null
 ) : KafkaRequestHeader, VersionedV1
 
-fun ApiVersion.nextRequestHeader(apiKey: ApiKey, clientId: String? = null) = when (this) {
-    ApiVersion.V0 -> KafkaRequestHeaderV0(apiKey = apiKey, correlationId = CorrelationId.next())
-    ApiVersion.V1 -> KafkaRequestHeaderV1(apiKey = apiKey, correlationId = CorrelationId.next(), clientId = clientId)
-}
-
-fun ApiKey.nextRequestHeader(clientId: String? = null) = apiVersion().nextRequestHeader(this, clientId)
-
