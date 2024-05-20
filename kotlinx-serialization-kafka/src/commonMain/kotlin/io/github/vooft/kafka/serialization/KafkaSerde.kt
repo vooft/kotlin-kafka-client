@@ -20,6 +20,9 @@ object KafkaSerde {
 }
 
 inline fun <reified T> KafkaSerde.encode(value: T, buffer: Buffer = Buffer()) = encode(serializer(), value, buffer)
-inline fun <reified T> Buffer.encode(value: T) = KafkaSerde.encode(serializer(), value, this)
+inline fun <reified T> Buffer.encode(value: T) = encode(serializer(), value)
+fun <T> Buffer.encode(serializer: SerializationStrategy<T>, value: T) = KafkaSerde.encode(serializer, value, this)
+
 inline fun <reified T> KafkaSerde.decode(buffer: Buffer): T = decode(serializer(), buffer)
 inline fun <reified T> Buffer.decode(): T = KafkaSerde.decode(serializer(), this)
+fun <T> Buffer.decode(deserializer: DeserializationStrategy<T>): T = KafkaSerde.decode(deserializer, this)

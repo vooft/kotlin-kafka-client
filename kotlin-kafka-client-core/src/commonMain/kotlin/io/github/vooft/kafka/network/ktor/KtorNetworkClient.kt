@@ -2,7 +2,6 @@ package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
-import io.github.vooft.kafka.network.messages.ApiVersionsResponseV0
 import io.github.vooft.kafka.network.messages.KafkaRequest
 import io.github.vooft.kafka.network.messages.KafkaRequestHeader
 import io.github.vooft.kafka.network.messages.KafkaResponse
@@ -21,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationStrategy
 
 class KtorNetworkClient : NetworkClient {
 
@@ -39,22 +40,22 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
 
     private var correlationIdCounter = 123 // TODO: replace with Atomic
 
-    override suspend fun sendRequest(request: KafkaRequest) {
+    override suspend fun <T : KafkaRequest> sendRequest(serializationStrategy: SerializationStrategy<T>, request: T) {
         val correlationId = correlationIdCounter++
         writeChannel.writeMessage {
             println("sending message with correlationId: $correlationId")
             encode(request.createHeader())
-            encode(request)
+            encode(serializationStrategy, request)
         }
     }
 
-    override suspend fun receiveResponse(): KafkaResponse {
+    override suspend fun <T : KafkaResponse> receiveResponse(deserializationStrategy: DeserializationStrategy<T>): T {
         val buffer = readChannel.readMessage()
 
         val header = buffer.decode<KafkaResponseHeader>()
         println("received header: $header")
 
-        val response = buffer.decode<ApiVersionsResponseV0>()
+        val response = buffer.decode(deserializationStrategy)
         println("received response: $response")
 
         val remaining = buffer.readByteArray()
