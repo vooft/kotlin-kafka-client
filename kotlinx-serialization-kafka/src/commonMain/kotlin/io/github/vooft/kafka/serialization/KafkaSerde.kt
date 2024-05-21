@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.serialization
 
 import io.github.vooft.kafka.serialization.decoder.KafkaObjectDecoder
+import io.github.vooft.kafka.serialization.encoder.KafkaValueEncoder
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.io.Source
@@ -10,7 +11,7 @@ import kotlinx.serialization.serializer
 
 object KafkaSerde {
     fun <T> encode(serializer: SerializationStrategy<T>, value: T, sink: Sink) {
-        val encoder = KotlinxSerializationKafkaEncoder(sink)
+        val encoder = KafkaValueEncoder(sink)
         encoder.encodeSerializableValue(serializer, value)
     }
 

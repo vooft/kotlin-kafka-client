@@ -1,37 +1,32 @@
-package io.github.vooft.kafka.serialization
+package io.github.vooft.kafka.serialization.encoder
 
+import io.github.vooft.kafka.serialization.common.Constants
 import kotlinx.io.Sink
 import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
-import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
-class KotlinxSerializationKafkaEncoder(
+class KafkaValueEncoder(
     private val sink: Sink,
     override val serializersModule: SerializersModule = EmptySerializersModule()
-) : AbstractEncoder() {
+) : Encoder {
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
         require(descriptor.kind == StructureKind.LIST) { "Can only encode lists, but found $descriptor" }
 
         sink.writeInt(collectionSize)
-        return this
+        return beginStructure(descriptor)
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
-        // add crc32 prefixed composite encoder?
-        // add size prefixed composite encoder?
-        return super.beginStructure(descriptor)
-    }
-
-    override fun encodeValue(value: Any) {
-        error("Class ${value::class} is not allowed in Kafka: $value")
+        return KafkaObjectEncoder(sink, serializersModule, this)
     }
 
     override fun encodeBoolean(value: Boolean) = sink.writeByte(if (value) 1 else 0)
@@ -46,24 +41,45 @@ class KotlinxSerializationKafkaEncoder(
         sink.writeString(value)
     }
 
+    override fun encodeInline(descriptor: SerialDescriptor): Encoder = this
+
+    override fun encodeChar(value: Char) {
+        TODO("Not yet implemented")
+    }
+
+    override fun encodeDouble(value: Double) {
+        TODO("Not yet implemented")
+    }
+
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun encodeFloat(value: Float) {
+        TODO("Not yet implemented")
+    }
+
+    @ExperimentalSerializationApi
+    override fun encodeNull() {
+        TODO("Not yet implemented")
+    }
+
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        // add crc32 prefixed composite encoder?
+        // add size prefixed composite encoder?
         super.encodeSerializableValue(serializer, value)
     }
 
-    override fun <T : Any> encodeNullableSerializableElement(
-        descriptor: SerialDescriptor,
-        index: Int,
-        serializer: SerializationStrategy<T>,
-        value: T?
-    ) {
-        val elementDescriptor = descriptor.getElementDescriptor(index)
+    @ExperimentalSerializationApi
+    override fun <T : Any> encodeNullableSerializableValue(serializer: SerializationStrategy<T>, value: T?) {
+        val elementDescriptor = serializer.descriptor
         if (value == null) {
             when (elementDescriptor.serialName) {
-                "kotlin.String?" -> sink.writeShort(-1)
-                else -> error("Unsupported nullable type: ${descriptor.serialName}")
+                Constants.NULLABLE_STRING, Constants.REGULAR_STRING -> sink.writeShort(-1)
+                else -> error("Unsupported nullable type: ${elementDescriptor.serialName}")
             }
         } else {
-            encodeSerializableElement(descriptor, index, serializer, value)
+            encodeSerializableValue(serializer, value)
         }
     }
 }
