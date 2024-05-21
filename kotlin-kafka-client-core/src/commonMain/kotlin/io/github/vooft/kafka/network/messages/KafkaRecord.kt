@@ -3,6 +3,8 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.common.primitives.toVarLong
 import kotlinx.serialization.Serializable
@@ -22,15 +24,10 @@ data class KafkaRecordHeader(val key: String, val value: ByteArray)
 data class KafkaRecordBody(
     val attributes: Byte = 0,
     val timestampDelta: VarLong = 0.toVarLong(),
-//    val offsetDelta: VarInt // index of the current record, starting from 0
-    val fakeOffsetDelta: Byte = 0, // VarInt // index of the current record, starting from 0
-    val fakeKeyLength: Byte = 2,
-    val fakeKeyValue: Byte = 0x31,
-    val fakeValueLength: Byte = 2,
-    val fakeValueValue: Byte = 0x31,
+    val offsetDelta: VarInt, // index of the current record, starting from 0
+    val key: VarIntByteArray,
+    val value: VarIntByteArray,
     val fakeHeaders: Byte = 0
-//    val key: ByteArray,
-//    val value: ByteArray,
 //    val headers: List<KafkaRecordHeader> = listOf()
 )
 
