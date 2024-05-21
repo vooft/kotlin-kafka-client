@@ -18,7 +18,7 @@ data class KafkaRequestHeaderV0(
 @Serializable
 data class KafkaRequestHeaderV1(
     override val apiKey: ApiKey,
-    override val apiVersion: ApiVersion = ApiVersion.V1,
+    override val apiVersion: ApiVersion,
     override val correlationId: CorrelationId,
     val clientId: String? = null
 ) : KafkaRequestHeader, VersionedV1

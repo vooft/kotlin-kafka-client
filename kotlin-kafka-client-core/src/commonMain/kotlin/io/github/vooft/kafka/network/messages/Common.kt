@@ -19,10 +19,16 @@ sealed interface VersionedV1 : Versioned {
     override val apiVersion: ApiVersion get() = ApiVersion.V1
 }
 
+sealed interface VersionedV3: Versioned {
+    override val apiVersion: ApiVersion get() = ApiVersion.V3
+}
+
 @Serializable(with = ApiVersionSerializer::class)
 enum class ApiVersion(override val value: Short) : ShortValue {
     V0(0),
-    V1(1)
+    V1(1),
+    V2(2),
+    V3(3),
 }
 
 // TODO: move to module
@@ -49,8 +55,9 @@ interface KafkaResponse : Versioned
 // Even though it is called ApiKey, it is more like a command
 @Serializable(with = ApiKeySerializer::class)
 enum class ApiKey(override val value: Short): ShortValue {
-    API_VERSIONS(18),
-    METADATA(3)
+    PRODUCE(0),
+    METADATA(3),
+    API_VERSIONS(18)
 }
 
 object ApiKeySerializer : ShortValueSerializer<ApiKey>(ApiKey.entries)

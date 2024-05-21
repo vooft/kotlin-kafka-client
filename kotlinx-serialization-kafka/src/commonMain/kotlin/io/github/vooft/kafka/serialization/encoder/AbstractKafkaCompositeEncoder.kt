@@ -53,16 +53,6 @@ abstract class AbstractKafkaCompositeEncoder(private val delegate: Encoder) : Co
     ): Encoder =
         if (encodeElement(descriptor, index)) delegate.encodeInline(descriptor.getElementDescriptor(index)) else delegate
 
-    override fun <T : Any?> encodeSerializableElement(
-        descriptor: SerialDescriptor,
-        index: Int,
-        serializer: SerializationStrategy<T>,
-        value: T
-    ) {
-        if (encodeElement(descriptor, index))
-            delegate.encodeSerializableValue(serializer, value)
-    }
-
     override fun <T : Any> encodeNullableSerializableElement(
         descriptor: SerialDescriptor,
         index: Int,

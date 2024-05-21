@@ -14,7 +14,7 @@ enum class ErrorCode(override val value: Short, val retriable: Boolean) : ShortV
     /**
      *
      */
-    NONE(0, false),
+    NO_ERROR(0, false),
 
     /**
      * The requested offset is not within the range of offsets maintained by the server.
