@@ -45,6 +45,7 @@ value class CorrelationId(override val value: Int) : IntValue {
 
 object CorrelationIdSerializer : IntValueSerializer<CorrelationId>({ CorrelationId(it) })
 
+// TODO: add test checking that no raw strings are present
 @Serializable
 sealed interface KafkaRequest : Versioned {
     val apiKey: ApiKey

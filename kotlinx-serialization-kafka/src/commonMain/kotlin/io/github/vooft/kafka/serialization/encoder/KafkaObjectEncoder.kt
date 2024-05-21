@@ -2,14 +2,18 @@ package io.github.vooft.kafka.serialization.encoder
 
 import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
+import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.customtypes.VarInt
+import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
+import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
@@ -23,6 +27,7 @@ class KafkaObjectEncoder(
 
     override fun <T> encodeSerializableElement(descriptor: SerialDescriptor, index: Int, serializer: SerializationStrategy<T>, value: T) {
         val annotations = descriptor.getElementAnnotations(index)
+        val elementDescriptor = descriptor.getElementDescriptor(index)
         when {
             // TODO: move to a separate class?
             annotations.any { it is KafkaCrc32Prefixed } -> {
@@ -38,6 +43,7 @@ class KafkaObjectEncoder(
                 val nestedEncoder = KafkaObjectEncoder(buffer, serializersModule)
                 nestedEncoder.encodeSerializableValue(serializer, value)
 
+                // TODO: add custom class wrapping collection
                 val annotation = annotations.filterIsInstance<KafkaSizeInBytesPrefixed>().single()
 
                 when (annotation.encoding) {
@@ -46,6 +52,24 @@ class KafkaObjectEncoder(
                 }
 
                 sink.write(buffer, buffer.size)
+            }
+            elementDescriptor.kind == StructureKind.LIST -> {
+                val size = when (value) {
+                    is Collection<*> -> value.size
+                    is ByteArray -> value.size
+                    is VarIntByteArray -> null
+                    null -> -1
+                    else -> error("Unsupported collection type: ${value!!::class}")
+                }
+
+                if (size != null) {
+                    when {
+                        annotations.any { it is KafkaCollectionWithVarIntSize } -> encodeVarInt(size.toVarInt())
+                        else -> encodeInt(size)
+                    }
+                }
+
+                encodeSerializableValue(serializer, value)
             }
             else -> encodeSerializableValue(serializer, value)
         }

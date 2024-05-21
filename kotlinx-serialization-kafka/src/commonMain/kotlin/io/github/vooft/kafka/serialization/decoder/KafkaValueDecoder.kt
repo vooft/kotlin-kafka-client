@@ -1,6 +1,5 @@
 package io.github.vooft.kafka.serialization.decoder
 
-import io.github.vooft.kafka.serialization.common.Constants
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
@@ -37,7 +36,10 @@ class KafkaValueDecoder(
         TODO("Not yet implemented")
     }
 
-    override fun decodeInline(descriptor: SerialDescriptor): Decoder = this
+    override fun decodeInline(descriptor: SerialDescriptor): Decoder {
+        // TODO: move custom values deserializers here
+        return this
+    }
 
     override fun decodeInt(): Int = source.readInt()
 
@@ -58,16 +60,6 @@ class KafkaValueDecoder(
 
     @ExperimentalSerializationApi
     override fun <T : Any> decodeNullableSerializableValue(deserializer: DeserializationStrategy<T?>): T? {
-        when (deserializer.descriptor.serialName) {
-            Constants.REGULAR_STRING, Constants.NULLABLE_STRING -> {
-                val length = source.readShort()
-                return if (length == Constants.NULL_STRING_LENGTH) {
-                    null
-                } else {
-                    source.readString(length.toLong()) as T
-                }
-            }
-            else -> error("Unsupported nullable type: ${deserializer.descriptor.serialName}")
-        }
+        error("Nullable fields should not be present: ${deserializer.descriptor.serialName}")
     }
 }

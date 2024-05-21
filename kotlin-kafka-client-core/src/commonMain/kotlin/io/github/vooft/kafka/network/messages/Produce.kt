@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
 sealed interface ProduceRequest : KafkaRequest {
@@ -9,14 +10,14 @@ sealed interface ProduceRequest : KafkaRequest {
 
 @Serializable
 data class ProduceRequestV3(
-    val transactionalId: String? = null,
+    val transactionalId: Int16String = Int16String.NULL,
     val acks: Short = -1,
     val timeoutMs: Int = 1000,
     val topicData: List<TopicData>
 ) : ProduceRequest, VersionedV3 {
     @Serializable
     data class TopicData(
-        val name: String,
+        val name: Int16String,
         val partitionData: List<PartitionData>
     ) {
         @Serializable
@@ -36,7 +37,7 @@ data class ProduceResponseV1(
 ) : ProduceResponse, VersionedV1 {
     @Serializable
     data class TopicResponse(
-        val name: String,
+        val name: Int16String,
         val partitionResponses: List<PartitionResponse>
     ) {
         @Serializable

@@ -6,12 +6,15 @@ import io.github.vooft.kafka.network.messages.KafkaRecordBatch
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchBody
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainer
 import io.github.vooft.kafka.network.messages.KafkaRecordBody
+import io.github.vooft.kafka.network.messages.MetadataRequestV1
+import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV1
 import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.primitives.toVarInt
-import io.github.vooft.kafka.serialization.common.primitives.toVarIntByteArray
-import io.github.vooft.kafka.serialization.common.primitives.toVarLong
+import io.github.vooft.kafka.serialization.common.customtypes.toInt16String
+import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
+import io.github.vooft.kafka.serialization.common.customtypes.toVarIntByteArray
+import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
@@ -31,13 +34,13 @@ class KafkaTest {
 //        val versionsResponse = connection.sendRequest<ApiVersionsRequestV1, ApiVersionsResponseV1>(ApiVersionsRequestV1)
 //        println(versionsResponse)
 
-//        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf("test")))
-//        println(metadataResponse)
+        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf("test").toInt16String()))
+        println(metadataResponse)
 
         val produceRequest = ProduceRequestV3(
             topicData = listOf(
                 ProduceRequestV3.TopicData(
-                    name = "test",
+                    name = "test".toInt16String(),
                     partitionData = listOf(
                         ProduceRequestV3.TopicData.PartitionData(
                             partitionIndex = 0,

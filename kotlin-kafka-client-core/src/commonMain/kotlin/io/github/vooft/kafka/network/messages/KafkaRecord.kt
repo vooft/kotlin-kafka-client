@@ -1,16 +1,18 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.serialization.common.IntEncoding
+import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.primitives.VarInt
-import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
-import io.github.vooft.kafka.serialization.common.primitives.VarLong
-import io.github.vooft.kafka.serialization.common.primitives.toVarLong
+import io.github.vooft.kafka.serialization.common.customtypes.Int16String
+import io.github.vooft.kafka.serialization.common.customtypes.VarInt
+import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
+import io.github.vooft.kafka.serialization.common.customtypes.VarLong
+import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class KafkaRecordHeader(val key: String, val value: ByteArray)
+data class KafkaRecordHeader(val key: Int16String, val value: VarIntByteArray)
 
 /*
     .writeInt8(0) // no used record attributes at the moment
@@ -27,8 +29,7 @@ data class KafkaRecordBody(
     val offsetDelta: VarInt, // index of the current record, starting from 0
     val key: VarIntByteArray,
     val value: VarIntByteArray,
-    val fakeHeaders: Byte = 0
-//    val headers: List<KafkaRecordHeader> = listOf()
+    @KafkaCollectionWithVarIntSize val headers: List<KafkaRecordHeader> = listOf()
 )
 
 @Serializable

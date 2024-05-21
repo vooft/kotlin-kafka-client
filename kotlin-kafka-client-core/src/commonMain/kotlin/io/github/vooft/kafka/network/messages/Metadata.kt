@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
 sealed interface MetadataRequest: KafkaRequest {
@@ -7,7 +8,7 @@ sealed interface MetadataRequest: KafkaRequest {
 }
 
 @Serializable
-data class MetadataRequestV1(val topics: List<String>) : MetadataRequest, VersionedV1
+data class MetadataRequestV1(val topics: List<Int16String>) : MetadataRequest, VersionedV1
 
 sealed interface MetadataResponse: KafkaResponse
 
@@ -20,15 +21,15 @@ data class MetadataResponseV1(
     @Serializable
     data class Broker(
         val nodeId: Int,
-        val host: String,
+        val host: Int16String,
         val port: Int,
-        val rack: String?
+        val rack: Int16String
     )
 
     @Serializable
     data class Topic(
         val errorCode: ErrorCode,
-        val name: String,
+        val name: Int16String,
         val isInternal: Boolean,
         val partitions: List<Partition>
     ) {

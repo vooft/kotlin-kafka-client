@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.serialization.common.primitives
+package io.github.vooft.kafka.serialization.common.customtypes
 
 import io.github.vooft.kafka.serialization.common.ZigzagInteger
 import kotlinx.serialization.KSerializer

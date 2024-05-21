@@ -12,6 +12,10 @@ annotation class KafkaSizeInBytesPrefixed(val encoding: IntEncoding = IntEncodin
 
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
+annotation class KafkaCollectionWithVarIntSize
+
+@SerialInfo
+@Target(AnnotationTarget.PROPERTY)
 annotation class KafkaSkipCollectionSize
 
 enum class IntEncoding {

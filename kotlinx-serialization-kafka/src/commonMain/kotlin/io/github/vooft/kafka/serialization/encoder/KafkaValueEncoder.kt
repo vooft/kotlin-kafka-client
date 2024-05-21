@@ -1,12 +1,10 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.Constants
 import kotlinx.io.Sink
 import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.EmptySerializersModule
@@ -18,12 +16,12 @@ class KafkaValueEncoder(
     override val serializersModule: SerializersModule = EmptySerializersModule()
 ) : Encoder {
 
-    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
-        require(descriptor.kind == StructureKind.LIST) { "Can only encode lists, but found $descriptor" }
-
-        sink.writeInt(collectionSize)
-        return beginStructure(descriptor)
-    }
+//    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
+//        require(descriptor.kind == StructureKind.LIST) { "Can only encode lists, but found $descriptor" }
+//
+//        sink.writeInt(collectionSize)
+//        return beginStructure(descriptor)
+//    }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         return KafkaObjectEncoder(sink, serializersModule, this)
@@ -34,14 +32,12 @@ class KafkaValueEncoder(
     override fun encodeInt(value: Int) = sink.writeInt(value)
     override fun encodeLong(value: Long) = sink.writeLong(value)
     override fun encodeShort(value: Short) = sink.writeShort(value)
+    override fun encodeString(value: String) = sink.writeString(value)
 
-    override fun encodeString(value: String) {
-        require(value.length <= Short.MAX_VALUE) { "String is too long: ${value.length}" }
-        sink.writeShort(value.length.toShort())
-        sink.writeString(value)
+    override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+        // TODO: move custom values serializers here
+        return this
     }
-
-    override fun encodeInline(descriptor: SerialDescriptor): Encoder = this
 
     override fun encodeChar(value: Char) {
         TODO("Not yet implemented")
@@ -60,9 +56,7 @@ class KafkaValueEncoder(
     }
 
     @ExperimentalSerializationApi
-    override fun encodeNull() {
-        TODO("Not yet implemented")
-    }
+    override fun encodeNull() = error("Nulls are not supported")
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         // add crc32 prefixed composite encoder?
@@ -72,14 +66,20 @@ class KafkaValueEncoder(
 
     @ExperimentalSerializationApi
     override fun <T : Any> encodeNullableSerializableValue(serializer: SerializationStrategy<T>, value: T?) {
-        val elementDescriptor = serializer.descriptor
         if (value == null) {
-            when (elementDescriptor.serialName) {
-                Constants.NULLABLE_STRING, Constants.REGULAR_STRING -> sink.writeShort(-1)
-                else -> error("Unsupported nullable type: ${elementDescriptor.serialName}")
-            }
+            val elementDescriptor = serializer.descriptor
+            error("Nullable fields are not allowed: ${elementDescriptor.serialName}")
         } else {
             encodeSerializableValue(serializer, value)
         }
+
+//        if (value == null) {
+//            when (elementDescriptor.serialName) {
+//                Constants.NULLABLE_STRING, Constants.REGULAR_STRING -> sink.writeShort(-1)
+//                else -> error("Unsupported nullable type: ${elementDescriptor.serialName}")
+//            }
+//        } else {
+//            encodeSerializableValue(serializer, value)
+//        }
     }
 }
