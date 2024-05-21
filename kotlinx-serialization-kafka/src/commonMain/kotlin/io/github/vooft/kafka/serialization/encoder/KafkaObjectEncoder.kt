@@ -4,9 +4,7 @@ import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.VarInt
-import io.github.vooft.kafka.serialization.common.ZigzagInteger
-import io.github.vooft.kafka.serialization.common.writeVarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -43,8 +41,8 @@ class KafkaObjectEncoder(
                 val annotation = annotations.filterIsInstance<KafkaSizeInBytesPrefixed>().single()
 
                 when (annotation.encoding) {
-                    IntEncoding.INT32 -> sink.writeInt(buffer.size.toInt())
-                    IntEncoding.VARINT -> sink.writeVarInt(VarInt(ZigzagInteger.encode(buffer.size.toInt())))
+                    IntEncoding.INT32 -> encodeInt(buffer.size.toInt())
+                    IntEncoding.VARINT -> encodeVarInt(VarInt(buffer.size.toInt()))
                 }
 
                 sink.write(buffer, buffer.size)

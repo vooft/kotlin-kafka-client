@@ -9,6 +9,7 @@ import io.github.vooft.kafka.network.messages.KafkaRecordBody
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV1
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.primitives.toVarLong
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
@@ -48,6 +49,9 @@ class KafkaTest {
                                         records = listOf(
                                             KafkaRecord(
                                                 recordBody = KafkaRecordBody(
+//                                                    timestampDelta = 1024.toVarLong()
+                                                    timestampDelta = 10.toVarLong()
+//                                                    offsetDelta = 0.toVarInt(),
 //                                                    offsetDelta = 0,
 //                                                    key = "test".encodeToByteArray(),
 //                                                    value = "test".encodeToByteArray()

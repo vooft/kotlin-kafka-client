@@ -1,7 +1,10 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.VarLong
+import io.github.vooft.kafka.serialization.common.primitives.toVarLong
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,8 +21,7 @@ data class KafkaRecordHeader(val key: String, val value: ByteArray)
 @Serializable
 data class KafkaRecordBody(
     val attributes: Byte = 0,
-//    val timestampDelta: VarLong = 0,
-    val fakeTimestampDelta: Byte = 0, // TODO: make proper fields
+    val timestampDelta: VarLong = 0.toVarLong(),
 //    val offsetDelta: VarInt // index of the current record, starting from 0
     val fakeOffsetDelta: Byte = 0, // VarInt // index of the current record, starting from 0
     val fakeKeyLength: Byte = 2,
@@ -34,9 +36,7 @@ data class KafkaRecordBody(
 
 @Serializable
 data class KafkaRecord(
-//    @KafkaSizeInBytesPrefixed(encoding = VARINT) val recordBody: KafkaRecordBody
-    val recordBodyLength: Byte = 0x10,
-    val recordBody: KafkaRecordBody
+    @KafkaSizeInBytesPrefixed(encoding = IntEncoding.VARINT) val recordBody: KafkaRecordBody
 )
 
 /**
