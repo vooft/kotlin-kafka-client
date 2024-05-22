@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.serialization.common.customtypes
 
+import io.github.vooft.kafka.serialization.common.ZigzagInteger
 import io.github.vooft.kafka.serialization.decoder.decodeVarInt
 import io.github.vooft.kafka.serialization.encoder.encodeVarInt
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -15,9 +16,6 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class VarIntByteArray(val data: ByteArray): KafkaCustomType
 
-fun ByteArray.toVarIntByteArray() = VarIntByteArray(this)
-fun String.toVarIntByteArray() = VarIntByteArray(this.encodeToByteArray())
-
 @OptIn(ExperimentalSerializationApi::class)
 object VarIntByteArraySerializer : KSerializer<VarIntByteArray>, KafkaCustomTypeSerializer {
     override val descriptor: SerialDescriptor = listSerialDescriptor<Byte>()
@@ -25,11 +23,13 @@ object VarIntByteArraySerializer : KSerializer<VarIntByteArray>, KafkaCustomType
     override fun deserialize(decoder: Decoder): VarIntByteArray {
         val varInt = decoder.decodeVarInt()
         val length = varInt.toDecoded()
-        return ByteArray(length) { decoder.decodeByte() }.toVarIntByteArray()
+        val data = ByteArray(length) { decoder.decodeByte() }
+        return VarIntByteArray(data)
     }
 
     override fun serialize(encoder: Encoder, value: VarIntByteArray) {
-        encoder.encodeVarInt(value.data.size.toVarInt())
+        val zigzag = ZigzagInteger.encode(value.data.size)
+        encoder.encodeVarInt(VarInt(zigzag))
         value.data.forEach { encoder.encodeByte(it) }
     }
 

@@ -18,10 +18,9 @@ value class VarInt(internal val zigzagEncoded: Int): KafkaCustomType {
 
     companion object {
         val MINUS_ONE = VarInt(ZigzagInteger.encode(-1))
+        fun fromDecoded(value: Int) = VarInt(ZigzagInteger.encode(value))
     }
 }
-
-fun Int.toVarInt() = VarInt(ZigzagInteger.encode(this))
 
 // adapted from https://github.com/addthis/stream-lib
 internal object VarIntSerializer : KSerializer<VarInt>, KafkaCustomTypeSerializer {

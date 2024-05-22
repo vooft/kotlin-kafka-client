@@ -23,7 +23,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.ktor.network)
-            implementation(project(":kotlinx-serialization-kafka"))
+            api(project(":kotlinx-serialization-kafka"))
             implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.5")
         }
 

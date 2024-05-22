@@ -48,19 +48,19 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
     ): Rs {
         writeChannel.writeMessage {
             val header = request.nextHeader()
-            println("writing header $header")
+//            println("writing header $header")
             encodeHeader(header)
 
-            println("writing request $request")
+//            println("writing request $request")
             encode(requestSerializer, request)
         }
 
         return readChannel.readMessage {
             val header = decode(request.responseHeaderDeserializer())
-            println("decoded header $header")
+//            println("decoded header $header")
 
             val result = decode(responseDeserializer)
-            println("decoded result $result")
+//            println("decoded result $result")
 
             val remaining = readByteArray()
             require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
@@ -79,23 +79,23 @@ private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) {
     buffer.block()
 
     val data = buffer.readByteArray()
-    println("writing ${data.size} bytes")
+//    println("writing ${data.size} bytes")
     writeInt(data.size)
     writeFully(data)
 
     flush()
-    println("sent message: ${data.toHexString()}")
+//    println("sent message: ${data.toHexString()}")
 }
 
 private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T {
-    println("reading message")
+//    println("reading message")
     val size = readInt()
-    println("Reading message of size $size")
+//    println("Reading message of size $size")
 
     val dst = ByteArray(size)
     readFully(dst, 0, size)
 
-    println("Read message: ${dst.toHexString()}")
+//    println("Read message: ${dst.toHexString()}")
 
     val result = Buffer()
     result.write(dst)

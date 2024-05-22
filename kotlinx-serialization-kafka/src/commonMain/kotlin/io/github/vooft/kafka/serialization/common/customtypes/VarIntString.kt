@@ -10,4 +10,3 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class VarIntString(val value: String?): KafkaCustomType
 
-fun String?.toVarIntString() = VarIntString(this)

@@ -7,8 +7,9 @@
 
     <logger name="org.apache.kafka.common.metrics.Metrics" level="error"/>
     <logger name="org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter" level="error"/>
+    <logger name="org.apache.kafka" level="error"/>
 
-    <root level="trace">
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

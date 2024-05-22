@@ -1,5 +1,10 @@
 package io.github.vooft.kafka
 
+import io.github.vooft.kafka.network.common.toInt16String
+import io.github.vooft.kafka.network.common.toVarInt
+import io.github.vooft.kafka.network.common.toVarIntByteArray
+import io.github.vooft.kafka.network.common.toVarIntString
+import io.github.vooft.kafka.network.common.toVarLong
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
@@ -12,11 +17,6 @@ import io.github.vooft.kafka.network.messages.KafkaRecordHeader
 import io.github.vooft.kafka.network.messages.OffsetFetchRequestV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.customtypes.toInt16String
-import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
-import io.github.vooft.kafka.serialization.common.customtypes.toVarIntByteArray
-import io.github.vooft.kafka.serialization.common.customtypes.toVarIntString
-import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import io.github.vooft.kafka.serialization.decode
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer

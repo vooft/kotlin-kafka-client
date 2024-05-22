@@ -5,8 +5,8 @@ import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
-import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -47,7 +47,7 @@ class KafkaObjectEncoder(
 
                 when (annotation.encoding) {
                     IntEncoding.INT32 -> encodeInt(buffer.size.toInt())
-                    IntEncoding.VARINT -> encodeVarInt(buffer.size.toInt().toVarInt())
+                    IntEncoding.VARINT -> encodeVarInt(VarInt.fromDecoded(buffer.size.toInt()))
                     IntEncoding.INT16 -> error("Unsupported encoding: ${IntEncoding.INT16}")
                 }
 
@@ -64,7 +64,7 @@ class KafkaObjectEncoder(
 
                 if (size != null) {
                     when {
-                        annotations.any { it is KafkaCollectionWithVarIntSize } -> encodeVarInt(size.toVarInt())
+                        annotations.any { it is KafkaCollectionWithVarIntSize } -> encodeVarInt(VarInt.fromDecoded(size))
                         else -> encodeInt(size)
                     }
                 }

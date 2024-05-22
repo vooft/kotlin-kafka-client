@@ -14,8 +14,6 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class VarLong(val value: Long): KafkaCustomType
 
-fun Int.toVarLong() = VarLong(this.toLong())
-
 // adapted from https://github.com/addthis/stream-lib
 internal object VarLongSerializer : KSerializer<VarLong>, KafkaCustomTypeSerializer {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("VarLong", PrimitiveKind.LONG)

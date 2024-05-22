@@ -69,8 +69,6 @@ internal class KafkaObjectDecoder(
             }
 
             elementDescriptor.kind == StructureKind.LIST -> {
-                println("serialName: ${elementDescriptor.serialName}, hasAnnotation: ${annotations.any { it is KafkaCollectionWithVarIntSize }}")
-
                 if (deserializer !is KafkaCustomTypeSerializer) {
                     // if this is just an annotated collection, then use special decoder
                     val size = when {

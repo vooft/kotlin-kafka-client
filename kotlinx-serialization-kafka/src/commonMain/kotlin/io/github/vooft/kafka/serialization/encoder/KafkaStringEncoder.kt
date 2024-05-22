@@ -2,7 +2,6 @@ package io.github.vooft.kafka.serialization.encoder
 
 import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.customtypes.VarInt
-import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
 import kotlinx.io.Sink
 import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -21,7 +20,7 @@ class KafkaStringEncoder(
         when (lengthEncoding) {
             IntEncoding.INT16 -> sink.writeShort(value.length.toShort())
             IntEncoding.INT32 -> sink.writeInt(value.length)
-            IntEncoding.VARINT -> encodeVarInt(value.length.toVarInt())
+            IntEncoding.VARINT -> encodeVarInt(VarInt.fromDecoded(value.length))
         }
 
         sink.writeString(value)

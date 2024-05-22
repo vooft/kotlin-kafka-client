@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.network.common.toVarLong
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.IntEncoding.VARINT
 import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
@@ -9,7 +10,6 @@ import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
 import io.github.vooft.kafka.serialization.common.customtypes.VarLong
-import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -54,7 +54,7 @@ data class KafkaRecordBatch(
 
 @Serializable
 data class KafkaRecordBatchContainer(
-    val firstOffset: Long,
+    val firstOffset: Long = 0,
     @KafkaSizeInBytesPrefixed(encoding = INT32) val batch: KafkaRecordBatch
 )
 
