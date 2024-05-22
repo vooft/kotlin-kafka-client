@@ -18,7 +18,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
-            implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.5")
+            implementation(libs.kotlinx.io.core)
+            implementation(project(":kotlinx-serialization-kafka-common"))
         }
 
         jvmMain.dependencies { }

@@ -5,6 +5,7 @@ ktor = "2.3.11"
 
 [libraries]
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.6.3" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.3.5" }
 
 # networking
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }

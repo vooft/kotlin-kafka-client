@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.serialization.IntValue
-import io.github.vooft.kafka.serialization.IntValueSerializer
-import io.github.vooft.kafka.serialization.ShortValue
-import io.github.vooft.kafka.serialization.ShortValueSerializer
+import io.github.vooft.kafka.serialization.common.IntValue
+import io.github.vooft.kafka.serialization.common.IntValueSerializer
+import io.github.vooft.kafka.serialization.common.ShortValue
+import io.github.vooft.kafka.serialization.common.ShortValueSerializer
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 

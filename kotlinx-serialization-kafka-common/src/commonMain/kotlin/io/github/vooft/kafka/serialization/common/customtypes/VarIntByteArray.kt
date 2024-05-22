@@ -1,8 +1,8 @@
 package io.github.vooft.kafka.serialization.common.customtypes
 
 import io.github.vooft.kafka.serialization.common.ZigzagInteger
-import io.github.vooft.kafka.serialization.decoder.decodeVarInt
-import io.github.vooft.kafka.serialization.encoder.encodeVarInt
+import io.github.vooft.kafka.serialization.common.decodeVarInt
+import io.github.vooft.kafka.serialization.common.encodeVarInt
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

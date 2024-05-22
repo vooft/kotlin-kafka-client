@@ -2,6 +2,7 @@ package io.github.vooft.kafka.serialization.encoder
 
 import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.customtypes.VarInt
+import io.github.vooft.kafka.serialization.common.encodeVarInt
 import kotlinx.io.Sink
 import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi

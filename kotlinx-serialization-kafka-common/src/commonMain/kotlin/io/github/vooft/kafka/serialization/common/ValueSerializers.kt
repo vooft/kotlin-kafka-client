@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.serialization
+package io.github.vooft.kafka.serialization.common
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

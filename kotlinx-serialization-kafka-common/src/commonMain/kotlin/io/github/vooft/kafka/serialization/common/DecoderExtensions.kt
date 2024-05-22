@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.serialization.decoder
+package io.github.vooft.kafka.serialization.common
 
 import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import kotlinx.serialization.encoding.Decoder

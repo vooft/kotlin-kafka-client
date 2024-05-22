@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.serialization.ShortValue
-import io.github.vooft.kafka.serialization.ShortValueSerializer
+import io.github.vooft.kafka.serialization.common.ShortValue
+import io.github.vooft.kafka.serialization.common.ShortValueSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ErrorCodeSerializer::class)

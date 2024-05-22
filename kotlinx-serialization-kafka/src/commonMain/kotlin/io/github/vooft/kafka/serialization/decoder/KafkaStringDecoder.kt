@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.serialization.decoder
 
 import io.github.vooft.kafka.serialization.common.IntEncoding
+import io.github.vooft.kafka.serialization.common.decodeVarInt
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy

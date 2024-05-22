@@ -5,7 +5,6 @@ import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
-//@Serializable(with = Int16StringSerializer::class)
 @KafkaString(encoding = IntEncoding.INT16)
 @Serializable
 @JvmInline

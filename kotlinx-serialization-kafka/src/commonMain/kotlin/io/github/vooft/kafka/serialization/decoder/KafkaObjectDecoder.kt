@@ -6,6 +6,7 @@ import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.KafkaCustomTypeSerializer
+import io.github.vooft.kafka.serialization.common.decodeVarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Source
 import kotlinx.serialization.DeserializationStrategy

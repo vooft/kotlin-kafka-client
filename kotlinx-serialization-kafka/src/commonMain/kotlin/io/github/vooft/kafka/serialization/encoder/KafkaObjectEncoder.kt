@@ -7,6 +7,7 @@ import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
+import io.github.vooft.kafka.serialization.common.encodeVarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
