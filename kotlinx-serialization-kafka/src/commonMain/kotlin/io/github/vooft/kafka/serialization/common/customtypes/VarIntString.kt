@@ -8,6 +8,6 @@ import kotlin.jvm.JvmInline
 @KafkaString(encoding = IntEncoding.VARINT)
 @Serializable
 @JvmInline
-value class VarIntString(val value: String?)
+value class VarIntString(val value: String?): KafkaCustomType
 
 fun String?.toVarIntString() = VarIntString(this)

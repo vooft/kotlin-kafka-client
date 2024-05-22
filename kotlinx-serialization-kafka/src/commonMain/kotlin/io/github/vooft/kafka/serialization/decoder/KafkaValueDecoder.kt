@@ -18,7 +18,7 @@ class KafkaValueDecoder(
 ) : Decoder {
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
         StructureKind.OBJECT, StructureKind.CLASS -> KafkaObjectDecoder(source, serializersModule)
-        StructureKind.LIST -> KafkaListDecoder(source.readInt(), source, serializersModule)
+//        StructureKind.LIST -> KafkaListDecoder(source.readInt(), source, serializersModule)
         else -> error("Not supported ${descriptor.kind}")
     }
 

@@ -12,7 +12,7 @@ import kotlin.jvm.JvmInline
 
 @Serializable(with = VarIntSerializer::class)
 @JvmInline
-value class VarInt(internal val zigzagEncoded: Int) {
+value class VarInt(internal val zigzagEncoded: Int): KafkaCustomType {
 
     fun toDecoded() = ZigzagInteger.decode(zigzagEncoded)
 
@@ -24,7 +24,7 @@ value class VarInt(internal val zigzagEncoded: Int) {
 fun Int.toVarInt() = VarInt(ZigzagInteger.encode(this))
 
 // adapted from https://github.com/addthis/stream-lib
-internal object VarIntSerializer : KSerializer<VarInt> {
+internal object VarIntSerializer : KSerializer<VarInt>, KafkaCustomTypeSerializer {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("VarInt", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): VarInt {

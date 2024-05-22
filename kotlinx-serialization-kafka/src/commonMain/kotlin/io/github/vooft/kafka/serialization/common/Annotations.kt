@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package io.github.vooft.kafka.serialization.common
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialInfo
 
 @SerialInfo
@@ -8,7 +11,7 @@ annotation class KafkaCrc32Prefixed
 
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-annotation class KafkaSizeInBytesPrefixed(val encoding: IntEncoding = IntEncoding.INT32)
+annotation class KafkaSizeInBytesPrefixed(val encoding: IntEncoding)
 
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)

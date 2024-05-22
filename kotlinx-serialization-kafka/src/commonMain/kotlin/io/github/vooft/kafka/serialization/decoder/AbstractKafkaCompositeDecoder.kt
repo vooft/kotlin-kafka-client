@@ -7,7 +7,7 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 
 @OptIn(ExperimentalSerializationApi::class)
-abstract class AbstractKafkaCompositeDecoder(private val delegate: Decoder) : CompositeDecoder {
+abstract class AbstractKafkaCompositeDecoder(protected val delegate: Decoder) : CompositeDecoder {
 
     override fun decodeBooleanElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeBoolean()
 

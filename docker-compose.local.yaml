@@ -7,6 +7,12 @@ services:
       - '9092:9092'
     environment:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+
+      # by default it removes immediately?
+      KAFKA_LOG_RETENTION_MS: -1
+      KAFKA_LOG_RETENTION_HOURS: -1
+
+      # copypaste kraft config
       KAFKA_NODE_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT_HOST://localhost:9092,PLAINTEXT://broker:19092'

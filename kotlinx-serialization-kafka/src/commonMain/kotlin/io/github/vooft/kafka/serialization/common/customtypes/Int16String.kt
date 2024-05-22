@@ -15,7 +15,7 @@ import kotlin.jvm.JvmInline
 @KafkaString(encoding = IntEncoding.INT16)
 @Serializable
 @JvmInline
-value class Int16String(val value: String?) {
+value class Int16String(val value: String?) : KafkaCustomType {
     init {
         if (value != null) {
             require(value.length <= Short.MAX_VALUE) { "String is too long: ${value.length}" }
@@ -30,7 +30,7 @@ value class Int16String(val value: String?) {
 fun String?.toInt16String() = Int16String(this)
 fun List<String>.toInt16String() = map { it.toInt16String() }
 
-object Int16StringSerializer : KSerializer<Int16String> {
+object Int16StringSerializer : KSerializer<Int16String>, KafkaCustomTypeSerializer {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Int16String", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Int16String {

@@ -1,22 +1,23 @@
 package io.github.vooft.kafka
 
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
+import io.github.vooft.kafka.network.messages.FetchRequestV4
+import io.github.vooft.kafka.network.messages.FetchResponseV4
 import io.github.vooft.kafka.network.messages.KafkaRecord
 import io.github.vooft.kafka.network.messages.KafkaRecordBatch
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchBody
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainer
 import io.github.vooft.kafka.network.messages.KafkaRecordBody
 import io.github.vooft.kafka.network.messages.KafkaRecordHeader
-import io.github.vooft.kafka.network.messages.MetadataRequestV1
-import io.github.vooft.kafka.network.messages.MetadataResponseV1
+import io.github.vooft.kafka.network.messages.OffsetFetchRequestV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
-import io.github.vooft.kafka.network.messages.ProduceResponseV3
 import io.github.vooft.kafka.network.sendRequest
 import io.github.vooft.kafka.serialization.common.customtypes.toInt16String
 import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
 import io.github.vooft.kafka.serialization.common.customtypes.toVarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.toVarIntString
 import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
+import io.github.vooft.kafka.serialization.decode
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
@@ -36,8 +37,8 @@ class KafkaTest {
 //        val versionsResponse = connection.sendRequest<ApiVersionsRequestV1, ApiVersionsResponseV1>(ApiVersionsRequestV1)
 //        println(versionsResponse)
 
-        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf("test").toInt16String()))
-        println(metadataResponse)
+//        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf("test").toInt16String()))
+//        println(metadataResponse)
 
         val produceRequest = ProduceRequestV3(
             topicData = listOf(
@@ -59,12 +60,12 @@ class KafkaTest {
 //                                                    timestampDelta = 1024.toVarLong()
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 0.toVarInt(),
-                                                    key = "test".encodeToByteArray().toVarIntByteArray(),
-                                                    value = "test1".encodeToByteArray().toVarIntByteArray(),
+                                                    recordKey = "test".encodeToByteArray().toVarIntByteArray(),
+                                                    recordValue = "test1".encodeToByteArray().toVarIntByteArray(),
                                                     headers = listOf(
                                                         KafkaRecordHeader(
-                                                            key = "test".toVarIntString(),
-                                                            value = "test".toVarIntByteArray()
+                                                            headerKey = "test".toVarIntString(),
+                                                            headerValue = "test".toVarIntByteArray()
                                                         )
                                                     )
 //                                                    offsetDelta = 0,
@@ -77,12 +78,12 @@ class KafkaTest {
 //                                                    timestampDelta = 1024.toVarLong()
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 1.toVarInt(),
-                                                    key = "test".encodeToByteArray().toVarIntByteArray(),
-                                                    value = "test2".encodeToByteArray().toVarIntByteArray(),
+                                                    recordKey = "test".encodeToByteArray().toVarIntByteArray(),
+                                                    recordValue = "test2".encodeToByteArray().toVarIntByteArray(),
                                                     headers = listOf(
                                                         KafkaRecordHeader(
-                                                            key = "test".toVarIntString(),
-                                                            value = "test2".toVarIntByteArray()
+                                                            headerKey = "test".toVarIntString(),
+                                                            headerValue = "test2".toVarIntByteArray()
                                                         )
                                                     )
 //                                                    offsetDelta = 0,
@@ -100,54 +101,357 @@ class KafkaTest {
             )
         )
 
-        // kafkajs
-        // 0xFF, 0xFF, // transactionalId = null
-        // 0xFF, 0xFF, // acks = -1
-        // 0x00, 0x00, 0x03, 0xE8, // timeoutMs = 1000
-        // 0x00, 0x00, 0x00, 0x01, // topicData length = 1
-        // 0x00, 0x04, // name length "test
-        // 0x74, 0x65, 0x73, 0x74, // "test"
-        // 0x00, 0x00, 0x00, 0x01, // partitionData length
-        // 0x00, 0x00, 0x00, 0x00, // partitionIndex
-        // 0x00, 0x00, 0x00, 0x46, // kafka records batch container size in bytes
-        // 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // first offset = 0
-        // 0x00, 0x00, 0x00, 0x3A, // kafka records batch size in bytes (container - 8 first offset - 4 batch size)
-        // 0x00, 0x00, 0x00, 0x00, //  partitionLeaderEpoch = 0, ignored
-        // 0x02, // magic = 2
-        // 0x16, 0x3B, 0xB5, 0x6A, // uint crc32
-        // 0x00, 0x00, // attributes
-        // 0x00, 0x00, 0x00, 0x00, // last offset delta (records.length - 1)
-        // 0x00, 0x00, 0x01, 0x5F, 0x8E, 0xBB, 0x3A, 0x0C, // first timestamp (now)
-        // 0x00, 0x00, 0x01, 0x5F, 0x8E, 0xBB, 0x3A, 0x0C, // max timestamp
-        // 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF // producer id -1
-        // 0x00, 0x00, // producer epoch
-        // 0x00, 0x00, 0x00, 0x01, // first sequence
-        // 0x00, 0x00, 0x00, 0x01, // records length
-        // 0x10, // record length zigzag varint
-        // 0x00, // record attribute (always 0)
-        // 0x00, // varlong timestamp delta
-        // 0x00, // var int offset delta
-        // 0x02, 0x31,  // var int bytes key
-        // 0x02, 0x31,  // var int bytes value
-        // 0x00, // var int array header length
+//        val produceResponse = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(produceRequest)
+//        println(produceResponse)
 
+        val offsetFetchRequest = OffsetFetchRequestV1(
+            groupId = "test".toInt16String(),
+            topics = listOf(
+                OffsetFetchRequestV1.Topic(
+                    topic = "test".toInt16String(),
+                    partitions = listOf(
+                        OffsetFetchRequestV1.Topic.Partition(
+                            partition = 0
+                        )
+                    )
+                )
+            )
+        )
 
-        // 0xFF, 0xFF,
-        // 0xFF, 0xFF,
-        // 0x00, 0x00, 0x03, 0xE8,
-        // 0x00, 0x00, 0x00, 0x01,
-        // 0x00, 0x04,
-        // 0x74, 0x65, 0x73, 0x74,
-        // 0x00, 0x00, 0x00, 0x01,
-        // 0x00, 0x00, 0x00, 0x00,
-        // 0x00, 0x00, 0x00, 0x56, 0x00, 0x00, 0x00, 0x00, 0x02, 0xCD, 0xFC, 0x79, 0xE2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00
+//        val offsetFetchResponse = connection.sendRequest<OffsetFetchRequestV1, OffsetFetchResponseV1>(offsetFetchRequest)
+//        println(offsetFetchResponse)
 
+        val fetchRequest = FetchRequestV4(
+            maxWaitTime = 1000,
+            minBytes = 1,
+            maxBytes = 1024,
+            topics = listOf(
+                FetchRequestV4.Topic(
+                    topic = "test".toInt16String(),
+                    partitions = listOf(
+                        FetchRequestV4.Topic.Partition(
+                            partition = 0,
+                            fetchOffset = 0,
+                            maxBytes = 128
+                        )
+                    )
+                )
+            )
+        )
 
-
-        val produceResponse = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(produceRequest)
-        println(produceResponse)
+        val fetchResponse = connection.sendRequest<FetchRequestV4, FetchResponseV4>(fetchRequest)
+        println(fetchResponse)
 
         connection.close()
+    }
+
+    @Test
+    fun fff() {
+        val data = byteArrayOf(
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            31,
+            116,
+            101,
+            115,
+            116,
+            45,
+            116,
+            111,
+            112,
+            105,
+            99,
+            45,
+            97,
+            98,
+            52,
+            100,
+            53,
+            52,
+            55,
+            55,
+            52,
+            100,
+            99,
+            97,
+            100,
+            99,
+            51,
+            57,
+            53,
+            97,
+            55,
+            102,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            217.toByte(),
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            205.toByte(),
+            0,
+            0,
+            0,
+            0,
+            2,
+            214.toByte(),
+            84,
+            85,
+            104,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            1,
+            95,
+            136.toByte(),
+            193.toByte(),
+            114,
+            169.toByte(),
+            0,
+            0,
+            1,
+            95,
+            136.toByte(),
+            193.toByte(),
+            114,
+            169.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            255.toByte(),
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            102,
+            0,
+            0,
+            0,
+            10,
+            107,
+            101,
+            121,
+            45,
+            48,
+            24,
+            115,
+            111,
+            109,
+            101,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            48,
+            2,
+            24,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            107,
+            101,
+            121,
+            45,
+            48,
+            28,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            48,
+            102,
+            0,
+            0,
+            2,
+            10,
+            107,
+            101,
+            121,
+            45,
+            49,
+            24,
+            115,
+            111,
+            109,
+            101,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            49,
+            2,
+            24,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            107,
+            101,
+            121,
+            45,
+            49,
+            28,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            49,
+            102,
+            0,
+            0,
+            4,
+            10,
+            107,
+            101,
+            121,
+            45,
+            50,
+            24,
+            115,
+            111,
+            109,
+            101,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            50,
+            2,
+            24,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            107,
+            101,
+            121,
+            45,
+            50,
+            28,
+            104,
+            101,
+            97,
+            100,
+            101,
+            114,
+            45,
+            118,
+            97,
+            108,
+            117,
+            101,
+            45,
+            50
+        )
+
+        println(data.toHexString())
+
+        val buf = Buffer()
+        buf.write(data)
+
+        val response = buf.decode<FetchResponseV4>()
+        println(response)
+
+        val remaining = buf.readByteArray()
+        require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
     }
 }
 
