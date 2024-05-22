@@ -5,7 +5,7 @@ plugins {
 
     // test plugins
     alias(libs.plugins.kotest.multiplatform)
-    alias(libs.plugins.mokkery)
+//    alias(libs.plugins.mokkery)
 }
 
 kotlin {

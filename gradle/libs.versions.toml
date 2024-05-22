@@ -1,6 +1,5 @@
 [versions]
-#kotlin = "2.0.0-RC3"
-kotlin = "1.9.24" # downgrade to make it work with mokkery
+kotlin = "2.0.0"
 kotest = "5.9.0"
 ktor = "2.3.11"
 
