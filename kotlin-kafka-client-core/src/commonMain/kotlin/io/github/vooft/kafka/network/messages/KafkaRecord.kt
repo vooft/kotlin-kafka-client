@@ -4,15 +4,15 @@ import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
+import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
 import io.github.vooft.kafka.serialization.common.customtypes.VarLong
 import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class KafkaRecordHeader(val key: Int16String, val value: VarIntByteArray)
+data class KafkaRecordHeader(val key: VarIntString, val value: VarIntByteArray)
 
 /*
     .writeInt8(0) // no used record attributes at the moment

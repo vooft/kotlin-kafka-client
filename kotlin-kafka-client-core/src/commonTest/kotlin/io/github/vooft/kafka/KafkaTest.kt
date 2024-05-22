@@ -6,6 +6,7 @@ import io.github.vooft.kafka.network.messages.KafkaRecordBatch
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchBody
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainer
 import io.github.vooft.kafka.network.messages.KafkaRecordBody
+import io.github.vooft.kafka.network.messages.KafkaRecordHeader
 import io.github.vooft.kafka.network.messages.MetadataRequestV1
 import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
@@ -14,6 +15,7 @@ import io.github.vooft.kafka.network.sendRequest
 import io.github.vooft.kafka.serialization.common.customtypes.toInt16String
 import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
 import io.github.vooft.kafka.serialization.common.customtypes.toVarIntByteArray
+import io.github.vooft.kafka.serialization.common.customtypes.toVarIntString
 import io.github.vooft.kafka.serialization.common.customtypes.toVarLong
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer
@@ -58,7 +60,13 @@ class KafkaTest {
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 0.toVarInt(),
                                                     key = "test".encodeToByteArray().toVarIntByteArray(),
-                                                    value = "test".encodeToByteArray().toVarIntByteArray()
+                                                    value = "test".encodeToByteArray().toVarIntByteArray(),
+                                                    headers = listOf(
+                                                        KafkaRecordHeader(
+                                                            key = "test".toVarIntString(),
+                                                            value = "test".toVarIntByteArray()
+                                                        )
+                                                    )
 //                                                    offsetDelta = 0,
 //                                                    key = "test".encodeToByteArray(),
 //                                                    value = "test".encodeToByteArray()

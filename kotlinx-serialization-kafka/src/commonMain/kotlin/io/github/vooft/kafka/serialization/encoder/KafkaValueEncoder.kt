@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.serialization.encoder
 
+import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.io.Sink
-import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -16,13 +16,6 @@ class KafkaValueEncoder(
     override val serializersModule: SerializersModule = EmptySerializersModule()
 ) : Encoder {
 
-//    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
-//        require(descriptor.kind == StructureKind.LIST) { "Can only encode lists, but found $descriptor" }
-//
-//        sink.writeInt(collectionSize)
-//        return beginStructure(descriptor)
-//    }
-
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         return KafkaObjectEncoder(sink, serializersModule, this)
     }
@@ -32,10 +25,15 @@ class KafkaValueEncoder(
     override fun encodeInt(value: Int) = sink.writeInt(value)
     override fun encodeLong(value: Long) = sink.writeLong(value)
     override fun encodeShort(value: Short) = sink.writeShort(value)
-    override fun encodeString(value: String) = sink.writeString(value)
+
+    override fun encodeString(value: String) = error("Strings should not be encoded directly")
 
     override fun encodeInline(descriptor: SerialDescriptor): Encoder {
-        // TODO: move custom values serializers here
+        val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
+        if (kafkaString != null) {
+            return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule, this)
+        }
+
         return this
     }
 

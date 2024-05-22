@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.serialization.decoder
 
+import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
@@ -37,7 +38,11 @@ class KafkaValueDecoder(
     }
 
     override fun decodeInline(descriptor: SerialDescriptor): Decoder {
-        // TODO: move custom values deserializers here
+        val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
+        if (kafkaString != null) {
+            return KafkaStringDecoder(source, kafkaString.encoding, serializersModule, this)
+        }
+
         return this
     }
 

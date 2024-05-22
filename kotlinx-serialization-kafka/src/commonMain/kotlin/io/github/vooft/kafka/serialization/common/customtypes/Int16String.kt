@@ -1,5 +1,7 @@
 package io.github.vooft.kafka.serialization.common.customtypes
 
+import io.github.vooft.kafka.serialization.common.IntEncoding
+import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -9,7 +11,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.jvm.JvmInline
 
-@Serializable(with = Int16StringSerializer::class)
+//@Serializable(with = Int16StringSerializer::class)
+@KafkaString(encoding = IntEncoding.INT16)
+@Serializable
 @JvmInline
 value class Int16String(val value: String?) {
     init {

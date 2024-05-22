@@ -12,9 +12,16 @@ import kotlin.jvm.JvmInline
 
 @Serializable(with = VarIntSerializer::class)
 @JvmInline
-value class VarInt(val value: Int)
+value class VarInt(internal val zigzagEncoded: Int) {
 
-fun Int.toVarInt() = VarInt(this)
+    fun toDecoded() = ZigzagInteger.decode(zigzagEncoded)
+
+    companion object {
+        val MINUS_ONE = VarInt(ZigzagInteger.encode(-1))
+    }
+}
+
+fun Int.toVarInt() = VarInt(ZigzagInteger.encode(this))
 
 // adapted from https://github.com/addthis/stream-lib
 internal object VarIntSerializer : KSerializer<VarInt> {
@@ -39,7 +46,7 @@ internal object VarIntSerializer : KSerializer<VarInt> {
     }
 
     override fun serialize(encoder: Encoder, value: VarInt) {
-        var varInt = ZigzagInteger.encode(value.value)
+        var varInt = value.zigzagEncoded
         while (varInt and -0x80 != 0) {
             encoder.encodeByte(((varInt and 0x7F) or 0x80).toByte())
             varInt = varInt ushr 7

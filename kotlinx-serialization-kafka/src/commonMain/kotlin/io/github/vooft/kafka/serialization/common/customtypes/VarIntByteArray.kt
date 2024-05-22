@@ -15,6 +15,7 @@ import kotlin.jvm.JvmInline
 value class VarIntByteArray(val data: ByteArray)
 
 fun ByteArray.toVarIntByteArray() = VarIntByteArray(this)
+fun String.toVarIntByteArray() = VarIntByteArray(this.encodeToByteArray())
 
 @OptIn(ExperimentalSerializationApi::class)
 object VarIntByteArraySerializer : KSerializer<VarIntByteArray> {

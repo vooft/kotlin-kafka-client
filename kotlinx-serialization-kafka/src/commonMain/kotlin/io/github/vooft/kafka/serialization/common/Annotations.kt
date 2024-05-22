@@ -18,7 +18,12 @@ annotation class KafkaCollectionWithVarIntSize
 @Target(AnnotationTarget.PROPERTY)
 annotation class KafkaSkipCollectionSize
 
+@SerialInfo
+@Target(AnnotationTarget.CLASS)
+annotation class KafkaString(val encoding: IntEncoding)
+
 enum class IntEncoding {
+    INT16,
     INT32,
     VARINT
 }
