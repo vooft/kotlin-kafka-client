@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.ktor.network)
-            implementation(project(":kotlin-kafka-client-core"))
+            implementation(project(":kotlin-kafka-client-lowlevel"))
         }
 
         jvmMain.dependencies {
