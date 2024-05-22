@@ -10,7 +10,7 @@ import io.github.vooft.kafka.network.messages.KafkaRecordHeader
 import io.github.vooft.kafka.network.messages.MetadataRequestV1
 import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
-import io.github.vooft.kafka.network.messages.ProduceResponseV1
+import io.github.vooft.kafka.network.messages.ProduceResponseV3
 import io.github.vooft.kafka.network.sendRequest
 import io.github.vooft.kafka.serialization.common.customtypes.toInt16String
 import io.github.vooft.kafka.serialization.common.customtypes.toVarInt
@@ -50,7 +50,7 @@ class KafkaTest {
                                 firstOffset = 0,
                                 KafkaRecordBatch(
                                     body = KafkaRecordBatchBody(
-                                        lastOffsetDelta = 0,
+                                        lastOffsetDelta = 1,
                                         firstTimestamp = 0,
                                         maxTimestamp = 0,
                                         records = listOf(
@@ -60,11 +60,29 @@ class KafkaTest {
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 0.toVarInt(),
                                                     key = "test".encodeToByteArray().toVarIntByteArray(),
-                                                    value = "test".encodeToByteArray().toVarIntByteArray(),
+                                                    value = "test1".encodeToByteArray().toVarIntByteArray(),
                                                     headers = listOf(
                                                         KafkaRecordHeader(
                                                             key = "test".toVarIntString(),
                                                             value = "test".toVarIntByteArray()
+                                                        )
+                                                    )
+//                                                    offsetDelta = 0,
+//                                                    key = "test".encodeToByteArray(),
+//                                                    value = "test".encodeToByteArray()
+                                                )
+                                            ),
+                                            KafkaRecord(
+                                                recordBody = KafkaRecordBody(
+//                                                    timestampDelta = 1024.toVarLong()
+                                                    timestampDelta = 1024.toVarLong(),
+                                                    offsetDelta = 1.toVarInt(),
+                                                    key = "test".encodeToByteArray().toVarIntByteArray(),
+                                                    value = "test2".encodeToByteArray().toVarIntByteArray(),
+                                                    headers = listOf(
+                                                        KafkaRecordHeader(
+                                                            key = "test".toVarIntString(),
+                                                            value = "test2".toVarIntByteArray()
                                                         )
                                                     )
 //                                                    offsetDelta = 0,
@@ -126,7 +144,7 @@ class KafkaTest {
 
 
 
-        val produceResponse = connection.sendRequest<ProduceRequestV3, ProduceResponseV1>(produceRequest)
+        val produceResponse = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(produceRequest)
         println(produceResponse)
 
         connection.close()

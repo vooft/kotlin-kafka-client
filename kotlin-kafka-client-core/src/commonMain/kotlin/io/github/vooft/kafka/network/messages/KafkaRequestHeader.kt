@@ -10,13 +10,6 @@ sealed interface KafkaRequestHeader: Versioned {
 }
 
 @Serializable
-data class KafkaRequestHeaderV0(
-    override val apiKey: ApiKey,
-    override val apiVersion: ApiVersion = ApiVersion.V0,
-    override val correlationId: CorrelationId,
-) : KafkaRequestHeader, VersionedV0
-
-@Serializable
 data class KafkaRequestHeaderV1(
     override val apiKey: ApiKey,
     override val apiVersion: ApiVersion,

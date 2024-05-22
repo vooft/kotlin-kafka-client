@@ -30,14 +30,25 @@ data class ProduceRequestV3(
 
 sealed interface ProduceResponse : KafkaResponse
 
+/**
+ * Produce Response (Version: 3) => [responses] throttle_time_ms
+ *   responses => topic [partition_responses]
+ *     topic => STRING
+ *     partition_responses => partition error_code base_offset log_append_time
+ *       partition => INT32
+ *       error_code => INT16
+ *       base_offset => INT64
+ *       log_append_time => INT64
+ *   throttle_time_ms => INT32
+ */
 @Serializable
-data class ProduceResponseV1(
+data class ProduceResponseV3(
     val topicResponses: List<TopicResponse>,
     val throttleTimeMs: Int
-) : ProduceResponse, VersionedV1 {
+) : ProduceResponse, VersionedV3 {
     @Serializable
     data class TopicResponse(
-        val name: Int16String,
+        val topicName: Int16String,
         val partitionResponses: List<PartitionResponse>
     ) {
         @Serializable
@@ -45,10 +56,7 @@ data class ProduceResponseV1(
             val index: Int,
             val errorCode: ErrorCode,
             val baseOffset: Long,
+            val logAppendTime: Long
         )
     }
 }
-
-// [0x00, 0x00, 0x02, 0x9A, // corr id
-// 0x00, 0x00, 0x00, 0x01,
-// 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00]
