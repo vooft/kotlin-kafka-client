@@ -4,11 +4,8 @@ import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.ErrorCode
-import io.github.vooft.kafka.network.messages.KafkaRecord
-import io.github.vooft.kafka.network.messages.KafkaRecordBatch
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchBody
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainer
-import io.github.vooft.kafka.network.messages.KafkaRecordBody
+import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
+import io.github.vooft.kafka.network.messages.KafkaRecordV0
 import io.github.vooft.kafka.network.messages.MetadataRequestV1
 import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
@@ -53,15 +50,15 @@ fun main() = runBlocking {
                             partitionData = listOf(
                                 ProduceRequestV3.TopicData.PartitionData(
                                     partitionIndex = 0,
-                                    batchContainer = KafkaRecordBatchContainer(
-                                        batch = KafkaRecordBatch(
-                                            body = KafkaRecordBatchBody(
+                                    batchContainer = KafkaRecordBatchContainerV0(
+                                        batch = KafkaRecordBatchContainerV0.KafkaRecordBatch(
+                                            body = KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
                                                 lastOffsetDelta = 0,
                                                 firstTimestamp = System.currentTimeMillis(),
                                                 maxTimestamp = System.currentTimeMillis(),
                                                 records = listOf(
-                                                    KafkaRecord(
-                                                        recordBody = KafkaRecordBody(
+                                                    KafkaRecordV0(
+                                                        recordBody = KafkaRecordV0.KafkaRecordBody(
                                                             offsetDelta = 0.toVarInt(),
                                                             recordKey = "key $it".toVarIntByteArray(),
                                                             recordValue = "value $it".toVarIntByteArray()

@@ -24,7 +24,7 @@ data class ProduceRequestV3(
         @Serializable
         data class PartitionData(
             val partitionIndex: Int,
-            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainer
+            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0
         )
     }
 }

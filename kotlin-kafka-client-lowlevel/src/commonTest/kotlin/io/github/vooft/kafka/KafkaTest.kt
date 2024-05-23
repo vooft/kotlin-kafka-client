@@ -8,12 +8,8 @@ import io.github.vooft.kafka.network.common.toVarLong
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
-import io.github.vooft.kafka.network.messages.KafkaRecord
-import io.github.vooft.kafka.network.messages.KafkaRecordBatch
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchBody
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainer
-import io.github.vooft.kafka.network.messages.KafkaRecordBody
-import io.github.vooft.kafka.network.messages.KafkaRecordHeader
+import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
+import io.github.vooft.kafka.network.messages.KafkaRecordV0
 import io.github.vooft.kafka.network.messages.OffsetFetchRequestV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.sendRequest
@@ -47,23 +43,23 @@ class KafkaTest {
                     partitionData = listOf(
                         ProduceRequestV3.TopicData.PartitionData(
                             partitionIndex = 0,
-                            batchContainer = KafkaRecordBatchContainer(
+                            batchContainer = KafkaRecordBatchContainerV0(
                                 firstOffset = 0,
-                                KafkaRecordBatch(
-                                    body = KafkaRecordBatchBody(
+                                KafkaRecordBatchContainerV0.KafkaRecordBatch(
+                                    body = KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
                                         lastOffsetDelta = 1,
                                         firstTimestamp = 0,
                                         maxTimestamp = 0,
                                         records = listOf(
-                                            KafkaRecord(
-                                                recordBody = KafkaRecordBody(
+                                            KafkaRecordV0(
+                                                recordBody = KafkaRecordV0.KafkaRecordBody(
 //                                                    timestampDelta = 1024.toVarLong()
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 0.toVarInt(),
                                                     recordKey = "test".encodeToByteArray().toVarIntByteArray(),
                                                     recordValue = "test1".encodeToByteArray().toVarIntByteArray(),
                                                     headers = listOf(
-                                                        KafkaRecordHeader(
+                                                        KafkaRecordV0.KafkaRecordBody.KafkaRecordHeader(
                                                             headerKey = "test".toVarIntString(),
                                                             headerValue = "test".toVarIntByteArray()
                                                         )
@@ -73,15 +69,15 @@ class KafkaTest {
 //                                                    value = "test".encodeToByteArray()
                                                 )
                                             ),
-                                            KafkaRecord(
-                                                recordBody = KafkaRecordBody(
+                                            KafkaRecordV0(
+                                                recordBody = KafkaRecordV0.KafkaRecordBody(
 //                                                    timestampDelta = 1024.toVarLong()
                                                     timestampDelta = 1024.toVarLong(),
                                                     offsetDelta = 1.toVarInt(),
                                                     recordKey = "test".encodeToByteArray().toVarIntByteArray(),
                                                     recordValue = "test2".encodeToByteArray().toVarIntByteArray(),
                                                     headers = listOf(
-                                                        KafkaRecordHeader(
+                                                        KafkaRecordV0.KafkaRecordBody.KafkaRecordHeader(
                                                             headerKey = "test".toVarIntString(),
                                                             headerValue = "test2".toVarIntByteArray()
                                                         )
