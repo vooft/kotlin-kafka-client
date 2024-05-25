@@ -9,7 +9,7 @@ import io.github.vooft.kafka.serialization.common.customtypes.VarLong
 import kotlinx.io.Source
 import kotlinx.io.readByteArray
 
-fun String?.toInt16String() = Int16String(this)
+fun String?.toInt16String() = this?.let { Int16String(it) } ?: Int16String.NULL
 fun List<String>.toInt16String() = map { it.toInt16String() }
 
 fun Int.toVarInt() = VarInt(ZigzagInteger.encode(this))

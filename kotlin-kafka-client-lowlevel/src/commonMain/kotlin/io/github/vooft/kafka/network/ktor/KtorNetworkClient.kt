@@ -2,10 +2,10 @@ package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.headers.KafkaResponseHeaderV0
 import io.github.vooft.kafka.network.messages.KafkaRequest
 import io.github.vooft.kafka.network.messages.KafkaResponse
 import io.github.vooft.kafka.network.messages.nextHeader
-import io.github.vooft.kafka.network.messages.responseHeaderDeserializer
 import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
@@ -56,7 +56,7 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         }
 
         return readChannel.readMessage {
-            val header = decode(request.responseHeaderDeserializer())
+            val header = decode<KafkaResponseHeaderV0>()
 //            println("decoded header $header")
 
             val result = decode(responseDeserializer)

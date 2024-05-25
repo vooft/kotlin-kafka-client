@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.network.serialization
 
-import io.github.vooft.kafka.network.messages.KafkaRequestHeader
-import io.github.vooft.kafka.network.messages.KafkaRequestHeaderV1
+import io.github.vooft.kafka.network.headers.KafkaRequestHeader
+import io.github.vooft.kafka.network.headers.KafkaRequestHeaderV1
 import io.github.vooft.kafka.serialization.encode
 import kotlinx.io.Sink
 
