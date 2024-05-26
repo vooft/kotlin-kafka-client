@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io.core)
             implementation(project(":kotlin-kafka-client-lowlevel"))
+            implementation(project(":kotlin-kafka-client-common"))
         }
 
         commonTest.dependencies {

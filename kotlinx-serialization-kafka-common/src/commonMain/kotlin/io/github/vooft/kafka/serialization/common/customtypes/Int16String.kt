@@ -5,6 +5,7 @@ import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
+// TODO: create non-nullable version
 @KafkaString(encoding = IntEncoding.INT16)
 @Serializable
 @JvmInline

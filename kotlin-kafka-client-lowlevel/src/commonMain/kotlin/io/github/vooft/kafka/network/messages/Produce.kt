@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
@@ -23,7 +24,7 @@ data class ProduceRequestV3(
     ) {
         @Serializable
         data class PartitionData(
-            val partitionIndex: Int,
+            val partition: PartitionIndex,
             @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0
         )
     }
@@ -43,7 +44,7 @@ data class ProduceResponseV3(
     ) {
         @Serializable
         data class PartitionResponse(
-            val index: Int,
+            val index: PartitionIndex,
             val errorCode: ErrorCode,
             val baseOffset: Long,
             val logAppendTime: Long

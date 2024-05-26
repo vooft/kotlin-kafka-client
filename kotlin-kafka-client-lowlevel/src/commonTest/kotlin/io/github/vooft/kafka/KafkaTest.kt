@@ -1,5 +1,6 @@
 package io.github.vooft.kafka
 
+import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
@@ -42,7 +43,7 @@ class KafkaTest {
                     name = "test".toInt16String(),
                     partitionData = listOf(
                         ProduceRequestV3.TopicData.PartitionData(
-                            partitionIndex = 0,
+                            partition = PartitionIndex(0),
                             batchContainer = KafkaRecordBatchContainerV0(
                                 firstOffset = 0,
                                 KafkaRecordBatchContainerV0.KafkaRecordBatch(
@@ -107,7 +108,7 @@ class KafkaTest {
                     topic = "test".toInt16String(),
                     partitions = listOf(
                         OffsetFetchRequestV1.Topic.Partition(
-                            partition = 0
+                            partition = PartitionIndex(0)
                         )
                     )
                 )
@@ -126,7 +127,7 @@ class KafkaTest {
                     topic = "test".toInt16String(),
                     partitions = listOf(
                         FetchRequestV4.Topic.Partition(
-                            partition = 0,
+                            partition = PartitionIndex(0),
                             fetchOffset = 0,
                             maxBytes = 128
                         )

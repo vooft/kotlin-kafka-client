@@ -1,4 +1,5 @@
-
+package io.github.vooft.kafka.manual
+import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
@@ -49,7 +50,7 @@ fun main() = runBlocking {
                             name = topic.toInt16String(),
                             partitionData = listOf(
                                 ProduceRequestV3.TopicData.PartitionData(
-                                    partitionIndex = 0,
+                                    partition = PartitionIndex(0),
                                     batchContainer = KafkaRecordBatchContainerV0(
                                         batch = KafkaRecordBatchContainerV0.KafkaRecordBatch(
                                             body = KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(

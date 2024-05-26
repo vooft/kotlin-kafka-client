@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
@@ -19,7 +20,7 @@ data class OffsetFetchRequestV1(
     ) {
         @Serializable
         data class Partition(
-            val partition: Int
+            val partition: PartitionIndex
         )
     }
 }
@@ -37,7 +38,7 @@ data class OffsetFetchResponseV1(
     ) {
         @Serializable
         data class Partition(
-            val partition: Int,
+            val partition: PartitionIndex,
             val offset: Long,
             val metadata: Int16String,
             val errorCode: ErrorCode

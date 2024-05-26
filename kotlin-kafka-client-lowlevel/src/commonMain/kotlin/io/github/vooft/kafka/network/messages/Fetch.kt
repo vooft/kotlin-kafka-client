@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
@@ -26,7 +27,7 @@ data class FetchRequestV4(
     ) {
         @Serializable
         data class Partition(
-            val partition: Int,
+            val partition: PartitionIndex,
             val fetchOffset: Long,
             val maxBytes: Int
         )
@@ -47,7 +48,7 @@ data class FetchResponseV4(
     ) {
         @Serializable
         data class Partition(
-            val partitionNumber: Int,
+            val partition: PartitionIndex,
             val errorCode: ErrorCode,
             val highwaterMarkOffset: Long,
             val lastStableOffset: Long,
