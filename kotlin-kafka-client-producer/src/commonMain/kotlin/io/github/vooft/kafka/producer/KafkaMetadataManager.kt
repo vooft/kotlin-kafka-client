@@ -68,7 +68,7 @@ class KafkaMetadataManagerImpl(
         println("metadata for topics $topics")
         println(response)
 
-        if (response.topics.any { it.errorCode == ErrorCode.UNKNOWN_TOPIC_OR_PARTITION }) {
+        if (response.topics.any { it.errorCode == ErrorCode.UNKNOWN_TOPIC_OR_PARTITION || it.errorCode == ErrorCode.LEADER_NOT_AVAILABLE }) {
             return null
         }
 

@@ -9,7 +9,7 @@ import io.github.vooft.kafka.producer.requests.ProducedRecord
 import kotlinx.io.Source
 import kotlinx.io.readByteArray
 
-class SingleBrokerKafkaTopicProducer(
+class SimpleKafkaTopicProducer(
     override val topic: String,
     private val topicMetadata: TopicMetadata,
     private val connectionPool: KafkaConnectionPool
@@ -34,6 +34,7 @@ class SingleBrokerKafkaTopicProducer(
     private fun determinePartition(key: Source): PartitionIndex {
         // TODO: use murmur
         val partitionCount = topicMetadata.partitions.size
+        println("partition count $partitionCount")
         val keyBytes = key.peek().readByteArray()
         val keyHash = keyBytes.fold(0) { acc, byte -> acc + byte.toInt() }
         return PartitionIndex(keyHash % partitionCount)

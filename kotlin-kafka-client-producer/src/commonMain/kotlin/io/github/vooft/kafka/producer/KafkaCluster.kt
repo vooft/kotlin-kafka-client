@@ -24,7 +24,7 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
 
     suspend fun createProducer(topic: String): KafkaTopicProducer {
         val topicMetadata = metadataManager.queryTopicMetadata(topic)
-        return SingleBrokerKafkaTopicProducer(topic, topicMetadata, connectionPool)
+        return SimpleKafkaTopicProducer(topic, topicMetadata, connectionPool)
     }
 }
 
