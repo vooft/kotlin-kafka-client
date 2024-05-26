@@ -53,7 +53,7 @@ data class FetchResponseV4(
             val highwaterMarkOffset: Long,
             val lastStableOffset: Long,
             val abortedTransaction: List<AbortedTransaction>,
-            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0
+            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0?
         ) {
             @Serializable
             data class AbortedTransaction(

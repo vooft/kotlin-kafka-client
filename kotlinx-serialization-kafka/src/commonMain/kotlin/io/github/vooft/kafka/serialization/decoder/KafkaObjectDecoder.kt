@@ -36,6 +36,38 @@ internal class KafkaObjectDecoder(
         //.also { println("Decoding ${descriptor.getElementName(it)}") }
     }
 
+    override fun <T : Any> decodeNullableSerializableElement(
+        descriptor: SerialDescriptor,
+        index: Int,
+        deserializer: DeserializationStrategy<T?>,
+        previousValue: T?
+    ): T? {
+        // if the prefix is 0, then the element is effectively null
+        // TODO: need to merge somehow with the non-nullable version
+        val annotations = descriptor.getElementAnnotations(index)
+        if (annotations.any { it is KafkaSizeInBytesPrefixed }) {
+            val annotation = annotations.filterIsInstance<KafkaSizeInBytesPrefixed>().single()
+            val length = when (annotation.encoding) {
+                IntEncoding.INT32 -> decodeInt()
+                IntEncoding.VARINT -> decodeVarInt().toDecoded()
+                IntEncoding.INT16 -> error("Unsupported encoding: ${IntEncoding.INT16}")
+            }
+
+            if (length == 0) {
+                return null
+            }
+
+            val buffer = Buffer()
+            source.readTo(buffer, length.toLong())
+
+            val nestedDecoder = KafkaObjectDecoder(buffer, serializersModule)
+            return nestedDecoder.decodeSerializableValue(deserializer)
+        }
+
+        error("Nullable element ${descriptor.serialName}.${descriptor.getElementName(index)} found without ${KafkaSizeInBytesPrefixed::class} annotation")
+//        return super.decodeNullableSerializableElement(descriptor, index, deserializer, previousValue)
+    }
+
     override fun <T> decodeSerializableElement(
         descriptor: SerialDescriptor,
         index: Int,
@@ -53,6 +85,8 @@ internal class KafkaObjectDecoder(
                     IntEncoding.VARINT -> decodeVarInt().toDecoded()
                     IntEncoding.INT16 -> error("Unsupported encoding: ${IntEncoding.INT16}")
                 }
+
+                require(length > 0) { "Length of a non-nullable field ${descriptor.serialName}.${descriptor.getElementName(index)} should be greater than 0" }
 
                 val buffer = Buffer()
                 source.readTo(buffer, length.toLong())

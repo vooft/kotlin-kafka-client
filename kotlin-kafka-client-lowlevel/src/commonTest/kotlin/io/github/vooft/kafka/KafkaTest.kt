@@ -11,6 +11,8 @@ import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
 import io.github.vooft.kafka.network.messages.KafkaRecordV0
+import io.github.vooft.kafka.network.messages.MetadataRequestV1
+import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.OffsetFetchRequestV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.sendRequest
@@ -34,8 +36,8 @@ class KafkaTest {
 //        val versionsResponse = connection.sendRequest<ApiVersionsRequestV1, ApiVersionsResponseV1>(ApiVersionsRequestV1)
 //        println(versionsResponse)
 
-//        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf("test").toInt16String()))
-//        println(metadataResponse)
+        val metadataResponse = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf<String>()))
+        println(metadataResponse)
 
         val produceRequest = ProduceRequestV3(
             topicData = listOf(
@@ -137,7 +139,7 @@ class KafkaTest {
         )
 
         val fetchResponse = connection.sendRequest<FetchRequestV4, FetchResponseV4>(fetchRequest)
-        println(fetchResponse)
+//        println(fetchResponse)
 
         connection.close()
     }

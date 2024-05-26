@@ -34,14 +34,16 @@ class SimpleKafkaTopicConsumer(
         val records = responses.flatMap { response ->
             response.topics.flatMap { topic ->
                 topic.partitions.flatMap { partition ->
-                    partition.batchContainer.batch.body.records.map { record ->
-                        KafkaRecord(
-                            partition = partition.partition,
-                            offset = partition.batchContainer.firstOffset + record.recordBody.offsetDelta.toDecoded(),
-                            key = record.recordBody.recordKey.toBuffer(),
-                            value = record.recordBody.recordValue.toBuffer()
-                        )
-                    }
+                    partition.batchContainer?.let { batchContainer ->
+                        batchContainer.batch.body.records.map { record ->
+                            KafkaRecord(
+                                partition = partition.partition,
+                                offset = batchContainer.firstOffset + record.recordBody.offsetDelta.toDecoded(),
+                                key = record.recordBody.recordKey.toBuffer(),
+                                value = record.recordBody.recordValue.toBuffer()
+                            )
+                        }
+                    } ?: emptyList()
                 }
             }
         }

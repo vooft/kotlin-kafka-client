@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -41,14 +40,21 @@ class KafkaMetadataManagerImpl(
 ) : KafkaMetadataManager {
 
     @Volatile
-    private var topicsMetadata = emptyMap<String, MutableStateFlow<TopicMetadata>>()
+    private var topicsMetadata = emptyMap<String, MutableSharedFlow<TopicMetadata>>()
     private val topicsMetadataMutex = Mutex()
 
-    private val mutableNodesFlow = MutableSharedFlow<Map<NodeId, BrokerAddress>>(replay = 1)
+    private val nodes = MutableSharedFlow<Map<NodeId, BrokerAddress>>(replay = 1)
+
+    init {
+        coroutineScope.launch {
+            val metadata = queryMetadata(listOf())
+            nodes.emit(metadata.nodes)
+        }
+    }
 
     // TODO: add checking for metadata expiration and force-update if needed
     override fun nodesProvider(): NodesProvider = object : NodesProvider {
-        override suspend fun nodes(): Nodes = mutableNodesFlow.first()
+        override suspend fun nodes(): Nodes = nodes.first()
     }
 
     override suspend fun topicMetadataProvider(topic: String): TopicMetadataProvider {
@@ -72,23 +78,34 @@ class KafkaMetadataManagerImpl(
             }
 
             val newFlow = MutableSharedFlow<TopicMetadata>(replay = 1)
-            coroutineScope.launch { newFlow.emit(querySingleTopicMetadata(topic)) }
-            return@withLock newFlow
+            topicsMetadata = topicsMetadata + (topic to newFlow)
+            newFlow
+        }.also { coroutineScope.launch { refreshMetadata() } }
+    }
+
+    private suspend fun refreshMetadata() {
+        val topics = topicsMetadata
+
+        val metadata = queryMetadata(topics.keys)
+        nodes.emit(metadata.nodes)
+
+        topics.forEach { (topic, flow) ->
+            flow.emit(metadata.topics.getValue(topic))
         }
     }
 
-    private suspend fun queryTopicsMetadataAndUpdateBrokers(topics: Collection<String>): Map<String, TopicMetadata> {
+    private suspend fun queryMetadata(topics: Collection<String>): TopicAndNodesMetadata {
         val response = queryMetadataRetryable(topics)
 
         val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.nonNullValue, it.port) }
-        mutableNodesFlow.emit(newNodes)
-
-        return response.topics.associate { topic ->
+        val newTopics = response.topics.associate { topic ->
             topic.name.nonNullValue to TopicMetadata(
                 topic = topic.name.nonNullValue,
                 partitions = topic.partitions.associate { it.partition to it.leader }
             )
         }
+
+        return TopicAndNodesMetadata(newNodes, newTopics)
     }
 
     // TODO: make more generic
@@ -104,11 +121,12 @@ class KafkaMetadataManagerImpl(
     }
 
     private suspend fun querySingleTopicMetadata(topic: String): TopicMetadata {
-        val metadata = queryTopicsMetadataAndUpdateBrokers(listOf(topic))
-        return metadata.getValue(topic)
+        val metadata = queryMetadata(listOf(topic))
+        return metadata.topics.getValue(topic)
     }
 }
 
 data class TopicMetadata(val topic: String, val partitions: Map<PartitionIndex, NodeId>)
+data class TopicAndNodesMetadata(val nodes: Nodes, val topics: Map<String, TopicMetadata>)
 
 

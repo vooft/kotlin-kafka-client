@@ -19,6 +19,8 @@ import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.io.Source
@@ -39,33 +41,35 @@ class KtorNetworkClient : NetworkClient {
 private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection {
 
     private val writeChannel = socket.openWriteChannel()
+    private val writeChannelMutex = Mutex()
+
     private val readChannel = socket.openReadChannel()
+    private val readChannelMutex = Mutex()
 
     override suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> sendRequest(
         request: Rq,
         requestSerializer: SerializationStrategy<Rq>,
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
-        writeChannel.writeMessage {
-            val header = request.nextHeader()
-//            println("writing header $header")
-            encodeHeader(header)
-
-//            println("writing request $request")
-            encode(requestSerializer, request)
+        writeChannelMutex.withLock {
+            writeChannel.writeMessage {
+                val header = request.nextHeader()
+                encodeHeader(header)
+                encode(requestSerializer, request)
+            }
         }
 
-        return readChannel.readMessage {
-            val header = decode<KafkaResponseHeaderV0>()
-//            println("decoded header $header")
+        return readChannelMutex.withLock {
+            readChannel.readMessage {
+                val header = decode<KafkaResponseHeaderV0>()
 
-            val result = decode(responseDeserializer)
-//            println("decoded result $result")
+                val result = decode(responseDeserializer)
 
-            val remaining = readByteArray()
-            require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
+                val remaining = readByteArray()
+                require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
 
-            result
+                result
+            }
         }
     }
 
