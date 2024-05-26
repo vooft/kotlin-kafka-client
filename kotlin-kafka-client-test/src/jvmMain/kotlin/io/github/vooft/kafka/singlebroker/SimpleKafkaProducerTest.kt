@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.singlebroker
 
+import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.common.BrokerAddress
-import io.github.vooft.kafka.producer.KafkaCluster
 import io.github.vooft.kafka.producer.send
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig

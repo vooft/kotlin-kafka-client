@@ -3,6 +3,7 @@ package io.github.vooft.kafka.serialization.common.customtypes
 import io.github.vooft.kafka.serialization.common.ZigzagInteger
 import io.github.vooft.kafka.serialization.common.decodeVarInt
 import io.github.vooft.kafka.serialization.common.encodeVarInt
+import kotlinx.io.Buffer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -15,6 +16,8 @@ import kotlin.jvm.JvmInline
 @Serializable(with = VarIntByteArraySerializer::class)
 @JvmInline
 value class VarIntByteArray(val data: ByteArray): KafkaCustomType
+
+fun VarIntByteArray.toBuffer() = Buffer().apply { write(data) }
 
 @OptIn(ExperimentalSerializationApi::class)
 object VarIntByteArraySerializer : KSerializer<VarIntByteArray>, KafkaCustomTypeSerializer {

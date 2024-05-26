@@ -1,5 +1,7 @@
 package io.github.vooft.kafka.producer
 
+import io.github.vooft.kafka.cluster.KafkaConnectionPool
+import io.github.vooft.kafka.cluster.TopicMetadata
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3

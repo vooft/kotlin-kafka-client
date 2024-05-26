@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.producer
+package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.common.BrokerAddress
 import io.github.vooft.kafka.common.NodeId

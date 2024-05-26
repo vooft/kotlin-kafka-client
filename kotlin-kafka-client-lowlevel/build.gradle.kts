@@ -26,7 +26,7 @@ kotlin {
             implementation(project(":kotlinx-serialization-kafka"))
             api(project(":kotlinx-serialization-kafka-common"))
             api(project(":kotlin-kafka-client-common"))
-            implementation(libs.kotlinx.io.core)
+            api(libs.kotlinx.io.core)
         }
 
         jvmMain.dependencies { }

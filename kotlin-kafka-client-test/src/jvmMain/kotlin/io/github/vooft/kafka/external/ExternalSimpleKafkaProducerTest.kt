@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.external
 
+import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.common.BrokerAddress
-import io.github.vooft.kafka.producer.KafkaCluster
 import io.github.vooft.kafka.producer.send
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -12,14 +12,15 @@ import java.time.Duration
 import java.util.Properties
 import java.util.UUID
 
-const val COUNT = 10
-val topic = UUID.randomUUID().toString()
-
 fun main() = runBlocking {
+
+    val count = 10
+    val topic = UUID.randomUUID().toString()
+
     val cluster = KafkaCluster(listOf(BrokerAddress("localhost", 9092)), coroutineScope = this)
     val producer = cluster.createProducer(topic)
 
-    repeat(COUNT) {
+    repeat(count) {
         val response = producer.send("key $it", "value $it")
         println(response)
     }
@@ -37,7 +38,7 @@ fun main() = runBlocking {
     consumer.subscribe(listOf(topic))
     consumer.poll(0)
     consumer.seekToBeginning(consumer.assignment())
-    while (received < COUNT) {
+    while (received < count) {
         val pollResult = consumer.poll(Duration.ofSeconds(1))
         val records = pollResult.records(topic).toList()
         println("Received ${records.size} records")
