@@ -5,7 +5,7 @@ import io.github.vooft.kafka.serialization.common.ShortValueSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ErrorCodeSerializer::class)
-enum class ErrorCode(override val value: Short, val retriable: Boolean) : ShortValue {
+enum class ErrorCode(override val value: Short, val isRetriable: Boolean) : ShortValue {
     /**
      * The server experienced an unexpected error when processing the request.
      */

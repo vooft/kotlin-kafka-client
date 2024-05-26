@@ -4,7 +4,6 @@ import io.github.vooft.kafka.common.BrokerAddress
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.KafkaConnection
-import io.github.vooft.kafka.network.messages.ErrorCode
 import io.github.vooft.kafka.network.messages.MetadataRequestV1
 import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.sendRequest
@@ -62,15 +61,8 @@ class KafkaMetadataManagerImpl(
         topicMetadata?.cancel()
     }
 
-    private suspend fun queryTopicsMetadataAndUpdateBrokers(topics: Collection<String>): Map<String, TopicMetadata>? {
-        val connection = bootstrapConnections.random().await()
-        val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(topics))
-        println("metadata for topics $topics")
-        println(response)
-
-        if (response.topics.any { it.errorCode == ErrorCode.UNKNOWN_TOPIC_OR_PARTITION || it.errorCode == ErrorCode.LEADER_NOT_AVAILABLE }) {
-            return null
-        }
+    private suspend fun queryTopicsMetadataAndUpdateBrokers(topics: Collection<String>): Map<String, TopicMetadata> {
+        val response = queryMetadataRetryable(topics)
 
         val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.nonNullValue, it.port) }
         if (newNodes != nodes) {
@@ -88,12 +80,20 @@ class KafkaMetadataManagerImpl(
         }
     }
 
-    private suspend fun querySingleTopicMetadata(topic: String): TopicMetadata {
-        var metadata: Map<String, TopicMetadata>? = null
-        while (metadata == null) {
-            metadata = queryTopicsMetadataAndUpdateBrokers(listOf(topic))
+    // TODO: make more generic
+    private suspend fun queryMetadataRetryable(topics: Collection<String>): MetadataResponseV1 {
+        val request = MetadataRequestV1(topics)
+        while (true) {
+            val connection = bootstrapConnections.random().await()
+            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(request)
+            if (response.topics.none { it.errorCode.isRetriable }) {
+                return response
+            }
         }
+    }
 
+    private suspend fun querySingleTopicMetadata(topic: String): TopicMetadata {
+        val metadata = queryTopicsMetadataAndUpdateBrokers(listOf(topic))
         return metadata.getValue(topic)
     }
 }
