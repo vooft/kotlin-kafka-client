@@ -13,7 +13,7 @@ interface KafkaConnectionPool {
 
 class KafkaConnectionPoolImpl(
     private val networkClient: NetworkClient,
-    private val kafkaMetadataManager: KafkaMetadataManager
+    private val nodesProvider: NodesProvider
 ) : KafkaConnectionPool {
 
     private val connections = mutableMapOf<BrokerAddress, KafkaConnection>()
@@ -21,8 +21,7 @@ class KafkaConnectionPoolImpl(
 
     // TODO: make it more reactive and update when metadata changes
     override suspend fun acquire(nodeId: NodeId): KafkaConnection {
-        val nodes = kafkaMetadataManager.queryLatestNodes()
-        val brokerAddress = nodes.getValue(nodeId)
+        val brokerAddress = nodesProvider.nodes().getValue(nodeId)
         connectionsMutex.withLock {
             val existing = connections[brokerAddress]
             if (existing != null) {

@@ -10,67 +10,78 @@ import io.github.vooft.kafka.network.sendRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.concurrent.Volatile
 
 interface KafkaMetadataManager {
-    suspend fun queryLatestNodes(): Map<NodeId, BrokerAddress>
-    suspend fun queryTopicMetadata(topic: String): TopicMetadata
-    suspend fun registerTopic(topic: String)
-    suspend fun removeTopic(topic: String)
+    fun nodesProvider(): NodesProvider
+    suspend fun topicMetadataProvider(topic: String): TopicMetadataProvider
 }
 
+interface NodesProvider {
+    suspend fun nodes(): Nodes
+}
+
+interface TopicMetadataProvider {
+    val topic: String
+    suspend fun topicMetadata(): TopicMetadata
+}
+
+typealias Nodes = Map<NodeId, BrokerAddress>
+
+// TODO: launch background thread to refresh metadatas
 class KafkaMetadataManagerImpl(
     private val bootstrapConnections: List<Deferred<KafkaConnection>>,
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) : KafkaMetadataManager {
 
-    private val topicsMetadata = mutableMapOf<String, Deferred<TopicMetadata>>()
+    @Volatile
+    private var topicsMetadata = emptyMap<String, MutableStateFlow<TopicMetadata>>()
     private val topicsMetadataMutex = Mutex()
 
-    private val nodes = mutableMapOf<NodeId, BrokerAddress>()
-    private val nodesMutex = Mutex()
+    private val mutableNodesFlow = MutableSharedFlow<Map<NodeId, BrokerAddress>>(replay = 1)
 
-    // TODO: launch background thread to refresh metadatas
-
-    override suspend fun queryLatestNodes(): Map<NodeId, BrokerAddress> {
-        require(nodes.isNotEmpty()) { "Nodes are not initialized, please query at least one topic" }
-        return nodesMutex.withLock { nodes.toMap() }
+    // TODO: add checking for metadata expiration and force-update if needed
+    override fun nodesProvider(): NodesProvider = object : NodesProvider {
+        override suspend fun nodes(): Nodes = mutableNodesFlow.first()
     }
 
-    override suspend fun queryTopicMetadata(topic: String): TopicMetadata {
-        // TODO: create thread-safe mutable map wrapper
-        if (!topicsMetadata.containsKey(topic)) {
-            registerTopic(topic)
+    override suspend fun topicMetadataProvider(topic: String): TopicMetadataProvider {
+        val flow = getOrCreateTopicsMetadataFlow(topic)
+        return object : TopicMetadataProvider {
+            override val topic: String = topic
+            override suspend fun topicMetadata(): TopicMetadata = flow.first()
+        }
+    }
+
+    private suspend fun getOrCreateTopicsMetadataFlow(topic: String): MutableSharedFlow<TopicMetadata> {
+        val firstExisting = topicsMetadata[topic]
+        if (firstExisting != null) {
+            return firstExisting
         }
 
-        return topicsMetadataMutex.withLock { topicsMetadata.getValue(topic) }.await()
-    }
-
-    override suspend fun registerTopic(topic: String) {
-        topicsMetadataMutex.withLock {
-            if (!topicsMetadata.containsKey(topic)) {
-                topicsMetadata[topic] = coroutineScope.async { querySingleTopicMetadata(topic) }
+        return topicsMetadataMutex.withLock {
+            val secondExisting = topicsMetadata[topic]
+            if (secondExisting != null) {
+                return@withLock secondExisting
             }
-        }
-    }
 
-    override suspend fun removeTopic(topic: String) {
-        val topicMetadata = topicsMetadataMutex.withLock { topicsMetadata.remove(topic) }
-        topicMetadata?.cancel()
+            val newFlow = MutableSharedFlow<TopicMetadata>(replay = 1)
+            coroutineScope.launch { newFlow.emit(querySingleTopicMetadata(topic)) }
+            return@withLock newFlow
+        }
     }
 
     private suspend fun queryTopicsMetadataAndUpdateBrokers(topics: Collection<String>): Map<String, TopicMetadata> {
         val response = queryMetadataRetryable(topics)
 
         val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.nonNullValue, it.port) }
-        if (newNodes != nodes) {
-            nodesMutex.withLock {
-                nodes.clear()
-                nodes.putAll(newNodes)
-            }
-        }
+        mutableNodesFlow.emit(newNodes)
 
         return response.topics.associate { topic ->
             topic.name.nonNullValue to TopicMetadata(

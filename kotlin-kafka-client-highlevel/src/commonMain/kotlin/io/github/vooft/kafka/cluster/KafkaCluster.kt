@@ -1,7 +1,6 @@
 package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.common.BrokerAddress
-import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
 import io.github.vooft.kafka.network.KafkaConnection
@@ -22,18 +21,16 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     }
 
     private val metadataManager: KafkaMetadataManager = KafkaMetadataManagerImpl(bootstrapConnections, coroutineScope)
-    private val connectionPool: KafkaConnectionPool = KafkaConnectionPoolImpl(networkClient, metadataManager)
-
-    private val brokerConnections = mutableMapOf<NodeId, Deferred<KafkaConnection>>()
+    private val connectionPool: KafkaConnectionPool = KafkaConnectionPoolImpl(networkClient, metadataManager.nodesProvider())
 
     suspend fun createProducer(topic: String): KafkaTopicProducer {
-        val topicMetadata = metadataManager.queryTopicMetadata(topic)
-        return SimpleKafkaTopicProducer(topic, topicMetadata, connectionPool)
+        val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
+        return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPool)
     }
 
     suspend fun createConsumer(topic: String): KafkaTopicConsumer {
-        val topicMetadata = metadataManager.queryTopicMetadata(topic)
-        return SimpleKafkaTopicConsumer(topic, topicMetadata, connectionPool, coroutineScope)
+        val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
+        return SimpleKafkaTopicConsumer(topic, topicMetadataProvider, connectionPool, coroutineScope)
     }
 }
 

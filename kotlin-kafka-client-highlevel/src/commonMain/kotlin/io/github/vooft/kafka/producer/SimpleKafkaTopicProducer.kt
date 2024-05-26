@@ -2,6 +2,7 @@ package io.github.vooft.kafka.producer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.TopicMetadata
+import io.github.vooft.kafka.cluster.TopicMetadataProvider
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3
@@ -13,13 +14,14 @@ import kotlinx.io.readByteArray
 
 class SimpleKafkaTopicProducer(
     override val topic: String,
-    private val topicMetadata: TopicMetadata,
+    private val topicMetadataProvider: TopicMetadataProvider,
     private val connectionPool: KafkaConnectionPool
 ) : KafkaTopicProducer {
 
     override suspend fun send(key: Source, value: Source): RecordMetadata {
         // TODO: add support for custom-provided partition
-        val partition = determinePartition(key)
+        val topicMetadata = topicMetadataProvider.topicMetadata()
+        val partition = topicMetadata.determinePartition(key)
         val node = topicMetadata.partitions.getValue(partition)
         val connection = connectionPool.acquire(node)
 
@@ -33,9 +35,9 @@ class SimpleKafkaTopicProducer(
         )
     }
 
-    private fun determinePartition(key: Source): PartitionIndex {
+    private fun TopicMetadata.determinePartition(key: Source): PartitionIndex {
         // TODO: use murmur
-        val partitionCount = topicMetadata.partitions.size
+        val partitionCount = partitions.size
         println("partition count $partitionCount")
         val keyBytes = key.peek().readByteArray()
         val keyHash = keyBytes.fold(0) { acc, byte -> acc + byte.toInt() }
