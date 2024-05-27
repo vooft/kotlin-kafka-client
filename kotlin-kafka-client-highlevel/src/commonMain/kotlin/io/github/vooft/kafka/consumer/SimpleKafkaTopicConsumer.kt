@@ -2,6 +2,7 @@ package io.github.vooft.kafka.consumer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.consumer.requests.ConsumerRequestsFactory
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
@@ -18,7 +19,7 @@ class SimpleKafkaTopicConsumer(
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) : KafkaTopicConsumer {
 
-    override val topic: String get() = topicMetadataProvider.topic
+    override val topic: KafkaTopic get() = topicMetadataProvider.topic
 
     override suspend fun consume(): KafkaRecordsBatch {
         val topicMetadata = topicMetadataProvider.topicMetadata()

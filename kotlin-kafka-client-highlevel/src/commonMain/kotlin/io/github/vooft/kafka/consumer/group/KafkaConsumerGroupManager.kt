@@ -28,7 +28,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class KafkaConsumerGroupManager(
-    private val topic: String,
+    private val topic: KafkaTopic,
     private val groupId: String,
     private val metadataManager: KafkaMetadataManager,
     private val connectionPool: KafkaConnectionPool,
@@ -89,7 +89,7 @@ class KafkaConsumerGroupManager(
                     JoinGroupRequestV1.GroupProtocol(
                         protocol = "mybla".toInt16String(), // TODO: change to proper assigner
                         metadata = JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = listOf(KafkaTopic(topic))
+                            topics = listOf(topic)
                         )
                     )
                 )
@@ -132,7 +132,7 @@ class KafkaConsumerGroupManager(
                     assignment = MemberAssignment(
                         partitionAssignments = listOf(
                             MemberAssignment.PartitionAssignment(
-                                topic = KafkaTopic(topic),
+                                topic = topic,
                                 partitions = partitions
                             )
                         ),
@@ -168,7 +168,7 @@ class KafkaConsumerGroupManager(
 
         // TODO: launch heartbeat
 
-        override val topic: String get() = topicMetadataProvider.topic
+        override val topic: KafkaTopic get() = topicMetadataProvider.topic
 
         override suspend fun topicMetadata(): TopicMetadata {
             sendHeartbeat(groupMemberMetadataFlow.value)

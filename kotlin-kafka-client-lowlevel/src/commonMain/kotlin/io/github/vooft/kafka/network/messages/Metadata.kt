@@ -17,10 +17,10 @@ sealed interface MetadataRequest: KafkaRequest {
  *     name => STRING
  */
 @Serializable
-data class MetadataRequestV1(val topics: List<Int16String>) : MetadataRequest, VersionedV1
+data class MetadataRequestV1(val topics: List<KafkaTopic>) : MetadataRequest, VersionedV1
 
-fun MetadataRequestV1(topic: String) = MetadataRequestV1(listOf(Int16String(topic)))
-fun MetadataRequestV1(topics: Collection<String>) = MetadataRequestV1(topics.map { Int16String(it) })
+fun MetadataRequestV1(topic: String) = MetadataRequestV1(listOf(KafkaTopic(topic)))
+fun MetadataRequestV1(topics: Collection<String>) = MetadataRequestV1(topics.map { KafkaTopic(it) })
 
 sealed interface MetadataResponse: KafkaResponse
 

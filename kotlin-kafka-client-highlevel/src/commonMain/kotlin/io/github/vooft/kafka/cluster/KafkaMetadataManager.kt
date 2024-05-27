@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.common.BrokerAddress
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.KafkaConnection
@@ -20,7 +21,7 @@ import kotlin.concurrent.Volatile
 
 interface KafkaMetadataManager {
     fun nodesProvider(): NodesProvider
-    suspend fun topicMetadataProvider(topic: String): TopicMetadataProvider
+    suspend fun topicMetadataProvider(topic: KafkaTopic): TopicMetadataProvider
 }
 
 interface NodesProvider {
@@ -28,7 +29,7 @@ interface NodesProvider {
 }
 
 interface TopicMetadataProvider {
-    val topic: String
+    val topic: KafkaTopic
     suspend fun topicMetadata(): TopicMetadata
 }
 
@@ -41,7 +42,7 @@ class KafkaMetadataManagerImpl(
 ) : KafkaMetadataManager {
 
     @Volatile
-    private var topicsMetadata = emptyMap<String, MutableSharedFlow<TopicMetadata>>()
+    private var topicsMetadata = emptyMap<KafkaTopic, MutableSharedFlow<TopicMetadata>>()
     private val topicsMetadataMutex = Mutex()
 
     private val nodes = MutableSharedFlow<Map<NodeId, BrokerAddress>>(replay = 1)
@@ -58,15 +59,15 @@ class KafkaMetadataManagerImpl(
         override suspend fun nodes(): Nodes = nodes.first()
     }
 
-    override suspend fun topicMetadataProvider(topic: String): TopicMetadataProvider {
+    override suspend fun topicMetadataProvider(topic: KafkaTopic): TopicMetadataProvider {
         val flow = getOrCreateTopicsMetadataFlow(topic)
         return object : TopicMetadataProvider {
-            override val topic: String = topic
+            override val topic: KafkaTopic = topic
             override suspend fun topicMetadata(): TopicMetadata = flow.first()
         }
     }
 
-    private suspend fun getOrCreateTopicsMetadataFlow(topic: String): MutableSharedFlow<TopicMetadata> {
+    private suspend fun getOrCreateTopicsMetadataFlow(topic: KafkaTopic): MutableSharedFlow<TopicMetadata> {
         val firstExisting = topicsMetadata[topic]
         if (firstExisting != null) {
             return firstExisting
@@ -96,14 +97,14 @@ class KafkaMetadataManagerImpl(
         }
     }
 
-    private suspend fun queryMetadata(topics: Collection<String>): TopicAndNodesMetadata {
+    private suspend fun queryMetadata(topics: Collection<KafkaTopic>): TopicAndNodesMetadata {
         val response = queryMetadataRetryable(topics)
 
         val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.value, it.port) }
-        val newTopics = response.topics.associate { topic ->
-            topic.topic.value to TopicMetadata(
-                topic = topic.topic.value,
-                partitions = topic.partitions.associate { it.partition to it.leader }
+        val newTopics = response.topics.associate { metadataResponseTopic ->
+            metadataResponseTopic.topic to TopicMetadata(
+                topic = metadataResponseTopic.topic,
+                partitions = metadataResponseTopic.partitions.associate { it.partition to it.leader }
             )
         }
 
@@ -111,8 +112,8 @@ class KafkaMetadataManagerImpl(
     }
 
     // TODO: make more generic
-    private suspend fun queryMetadataRetryable(topics: Collection<String>): MetadataResponseV1 {
-        val request = MetadataRequestV1(topics)
+    private suspend fun queryMetadataRetryable(topics: Collection<KafkaTopic>): MetadataResponseV1 {
+        val request = MetadataRequestV1(topics.toList())
         while (true) {
             val connection = bootstrapConnections.random().await()
             val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(request)
@@ -125,13 +126,13 @@ class KafkaMetadataManagerImpl(
         }
     }
 
-    private suspend fun querySingleTopicMetadata(topic: String): TopicMetadata {
+    private suspend fun querySingleTopicMetadata(topic: KafkaTopic): TopicMetadata {
         val metadata = queryMetadata(listOf(topic))
         return metadata.topics.getValue(topic)
     }
 }
 
-data class TopicMetadata(val topic: String, val partitions: Map<PartitionIndex, NodeId>)
-data class TopicAndNodesMetadata(val nodes: Nodes, val topics: Map<String, TopicMetadata>)
+data class TopicMetadata(val topic: KafkaTopic, val partitions: Map<PartitionIndex, NodeId>)
+data class TopicAndNodesMetadata(val nodes: Nodes, val topics: Map<KafkaTopic, TopicMetadata>)
 
 

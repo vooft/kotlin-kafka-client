@@ -3,6 +3,7 @@ package io.github.vooft.kafka.producer
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.TopicMetadata
 import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3
@@ -13,7 +14,7 @@ import kotlinx.io.Source
 import kotlinx.io.readByteArray
 
 class SimpleKafkaTopicProducer(
-    override val topic: String,
+    override val topic: KafkaTopic,
     private val topicMetadataProvider: TopicMetadataProvider,
     private val connectionPool: KafkaConnectionPool
 ) : KafkaTopicProducer {
@@ -29,7 +30,7 @@ class SimpleKafkaTopicProducer(
         val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(request)
 
         return RecordMetadata(
-            topic = response.topicResponses.single().topicName.value,
+            topic = response.topicResponses.single().topic,
             partition = response.topicResponses.single().partitionResponses.single().index,
             errorCode = response.topicResponses.single().partitionResponses.single().errorCode
         )

@@ -2,6 +2,7 @@ package io.github.vooft.kafka.singlebroker
 
 import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.common.BrokerAddress
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.producer.send
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -26,7 +27,7 @@ fun main() = runBlocking {
         container.start()
 
         val cluster = KafkaCluster(listOf(container.bootstrapServers).map { BrokerAddress.fromString(it) }, coroutineScope = this)
-        val producer = cluster.createProducer(topic)
+        val producer = cluster.createProducer(KafkaTopic(topic))
 
         repeat(COUNT) {
             val response = producer.send("key $it", "value $it")

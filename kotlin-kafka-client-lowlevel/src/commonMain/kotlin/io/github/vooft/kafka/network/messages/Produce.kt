@@ -4,7 +4,6 @@ import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
 import kotlinx.serialization.Serializable
 
@@ -63,7 +62,7 @@ data class ProduceResponseV3(
 ) : ProduceResponse, VersionedV3 {
     @Serializable
     data class TopicResponse(
-        val topicName: Int16String,
+        val topic: KafkaTopic,
         val partitionResponses: List<PartitionResponse>
     ) {
         @Serializable

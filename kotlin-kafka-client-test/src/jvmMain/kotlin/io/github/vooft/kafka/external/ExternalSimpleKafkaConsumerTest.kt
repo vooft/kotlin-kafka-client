@@ -2,6 +2,7 @@ package io.github.vooft.kafka.external
 
 import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.common.BrokerAddress
+import io.github.vooft.kafka.common.KafkaTopic
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.readString
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -27,7 +28,7 @@ fun main() = runBlocking {
     }
 
     val cluster = KafkaCluster(listOf(BrokerAddress("localhost", 9092)), coroutineScope = this)
-    val consumer = cluster.createConsumer(topic)
+    val consumer = cluster.createConsumer(KafkaTopic(topic))
 
     var received = 0
     while (received < count) {

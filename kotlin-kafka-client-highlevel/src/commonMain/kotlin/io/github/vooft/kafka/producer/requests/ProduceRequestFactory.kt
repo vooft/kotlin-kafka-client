@@ -10,10 +10,10 @@ import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import kotlinx.io.Source
 
 object ProduceRequestFactory {
-    fun createProduceRequest(topic: String, partitionIndex: PartitionIndex, records: List<ProducedRecord>) = ProduceRequestV3(
+    fun createProduceRequest(topic: KafkaTopic, partitionIndex: PartitionIndex, records: List<ProducedRecord>) = ProduceRequestV3(
         topicData = listOf(
             ProduceRequestV3.TopicData(
-                topic = KafkaTopic(topic),
+                topic = topic,
                 partitionData = listOf(
                     ProduceRequestV3.TopicData.PartitionData(
                         partition = partitionIndex,

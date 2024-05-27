@@ -1,7 +1,6 @@
 package io.github.vooft.kafka.manual
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
@@ -38,7 +37,7 @@ fun main() = runBlocking {
         val client = KtorNetworkClient()
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
-            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf(topic.toInt16String())))
+            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf(topic)))
             println("Metadata response: $response")
         } while (response.topics.single().errorCode != ErrorCode.NO_ERROR)
 

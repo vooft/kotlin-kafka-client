@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.common.BrokerAddress
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
 import io.github.vooft.kafka.consumer.group.KafkaConsumerGroupManager
@@ -29,12 +30,12 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     private val consumerGroupManagers = mutableMapOf<TopicGroup, KafkaConsumerGroupManager>()
     private val consumerGroupManagersMutex = Mutex()
 
-    suspend fun createProducer(topic: String): KafkaTopicProducer {
+    suspend fun createProducer(topic: KafkaTopic): KafkaTopicProducer {
         val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
         return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPool)
     }
 
-    suspend fun createConsumer(topic: String, groupId: String? = null): KafkaTopicConsumer {
+    suspend fun createConsumer(topic: KafkaTopic, groupId: String? = null): KafkaTopicConsumer {
         if (groupId == null) {
             val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
             return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
@@ -51,6 +52,6 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     }
 }
 
-data class TopicGroup(val topic: String, val groupId: String)
+data class TopicGroup(val topic: KafkaTopic, val groupId: String)
 
 
