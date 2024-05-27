@@ -8,7 +8,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 interface KafkaConnectionPool {
-    suspend fun acquire(nodeId: NodeId): KafkaConnection
+    suspend fun acquire(nodeId: NodeId? = null): KafkaConnection
 }
 
 class KafkaConnectionPoolImpl(
@@ -20,8 +20,9 @@ class KafkaConnectionPoolImpl(
     private val connectionsMutex = Mutex()
 
     // TODO: make it more reactive and update when metadata changes
-    override suspend fun acquire(nodeId: NodeId): KafkaConnection {
-        val brokerAddress = nodesProvider.nodes().getValue(nodeId)
+    override suspend fun acquire(nodeId: NodeId?): KafkaConnection {
+        val nodes = nodesProvider.nodes()
+        val brokerAddress = nodeId?.let { nodes.getValue(it) } ?: nodes.values.random()
         connectionsMutex.withLock {
             val existing = connections[brokerAddress]
             if (existing != null) {

@@ -1,7 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.serialization.common.IntValue
-import io.github.vooft.kafka.serialization.common.IntValueSerializer
 import io.github.vooft.kafka.serialization.common.ShortValue
 import io.github.vooft.kafka.serialization.common.ShortValueSerializer
 import kotlinx.serialization.Serializable
@@ -39,7 +38,7 @@ enum class ApiVersion(override val value: Short) : ShortValue {
 // TODO: move to module
 object ApiVersionSerializer : ShortValueSerializer<ApiVersion>(ApiVersion.entries)
 
-@Serializable(with = CorrelationIdSerializer::class)
+@Serializable
 @JvmInline
 value class CorrelationId(override val value: Int) : IntValue {
     companion object {
@@ -47,8 +46,6 @@ value class CorrelationId(override val value: Int) : IntValue {
         fun next() = CorrelationId(counter++)
     }
 }
-
-object CorrelationIdSerializer : IntValueSerializer<CorrelationId>({ CorrelationId(it) })
 
 // TODO: add test checking that no raw strings are present
 @Serializable
@@ -65,6 +62,8 @@ enum class ApiKey(override val value: Short): ShortValue {
     FETCH(1),
     METADATA(3),
     OFFSET_FETCH(9),
+    FIND_COORDINATOR(10),
+    JOIN_GROUP(11),
     API_VERSIONS(18)
 }
 

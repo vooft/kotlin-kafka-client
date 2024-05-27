@@ -20,6 +20,7 @@ value class Int16String(val value: String?) : KafkaCustomType {
 
     companion object {
         val NULL = Int16String(null)
+        val EMPTY = Int16String("")
     }
 }
 

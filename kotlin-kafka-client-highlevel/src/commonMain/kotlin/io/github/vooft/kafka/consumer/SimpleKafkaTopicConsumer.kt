@@ -13,11 +13,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 class SimpleKafkaTopicConsumer(
-    override val topic: String,
     private val topicMetadataProvider: TopicMetadataProvider,
     private val connectionPool: KafkaConnectionPool,
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) : KafkaTopicConsumer {
+
+    override val topic: String get() = topicMetadataProvider.topic
 
     override suspend fun consume(): KafkaRecordsBatch {
         val topicMetadata = topicMetadataProvider.topicMetadata()

@@ -3,6 +3,7 @@ package io.github.vooft.kafka.cluster
 import io.github.vooft.kafka.common.BrokerAddress
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
+import io.github.vooft.kafka.consumer.group.KafkaTopicConsumerGroup
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.producer.KafkaTopicProducer
@@ -30,7 +31,11 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
 
     suspend fun createConsumer(topic: String): KafkaTopicConsumer {
         val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
-        return SimpleKafkaTopicConsumer(topic, topicMetadataProvider, connectionPool, coroutineScope)
+        return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
+    }
+
+    suspend fun createGroup(topic: String, groupId: String) : KafkaTopicConsumerGroup {
+        TODO()
     }
 }
 

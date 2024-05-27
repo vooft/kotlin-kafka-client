@@ -14,6 +14,10 @@ interface IntValue {
     val value: Int
 }
 
+interface ByteValue {
+    val value: Byte
+}
+
 abstract class ShortValueSerializer<T: ShortValue>(
     private val factory: (Short) -> T
 ) : KSerializer<T> {
@@ -37,6 +41,8 @@ abstract class IntValueSerializer<T: IntValue>(
 ) : KSerializer<T> {
     override val descriptor = PrimitiveSerialDescriptor("IntValue", PrimitiveKind.INT)
 
+    constructor(entries: Collection<T>) : this({ value -> entries.first { it.value == value } })
+
     override fun deserialize(decoder: Decoder): T {
         val value = decoder.decodeInt()
         return factory(value)
@@ -46,3 +52,22 @@ abstract class IntValueSerializer<T: IntValue>(
         encoder.encodeInt(value.value)
     }
 }
+
+abstract class ByteValueSerializer<T: ByteValue>(
+    private val factory: (Byte) -> T
+) : KSerializer<T> {
+    override val descriptor = PrimitiveSerialDescriptor("ByteValue", PrimitiveKind.BYTE)
+
+    constructor(entries: Collection<T>) : this({ value -> entries.first { it.value == value } })
+
+    override fun deserialize(decoder: Decoder): T {
+        val value = decoder.decodeByte()
+        return factory(value)
+    }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeByte(value.value)
+    }
+}
+
+
