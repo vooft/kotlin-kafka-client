@@ -11,6 +11,20 @@ interface FetchRequest : KafkaRequest {
 }
 
 // up until V4 kafka returns MessageSet instead of RecordBatch
+/**
+ * Fetch Request (Version: 4) => replica_id max_wait_ms min_bytes max_bytes isolation_level [topics]
+ *   replica_id => INT32
+ *   max_wait_ms => INT32
+ *   min_bytes => INT32
+ *   max_bytes => INT32
+ *   isolation_level => INT8
+ *   topics => topic [partitions]
+ *     topic => STRING
+ *     partitions => partition fetch_offset partition_max_bytes
+ *       partition => INT32
+ *       fetch_offset => INT64
+ *       partition_max_bytes => INT32
+ */
 @Serializable
 data class FetchRequestV4(
     val replicaId: Int = -1, // always -1 for consumers
@@ -36,6 +50,21 @@ data class FetchRequestV4(
 
 interface FetchResponse : KafkaResponse
 
+/**
+ * Fetch Response (Version: 4) => throttle_time_ms [responses]
+ *   throttle_time_ms => INT32
+ *   responses => topic [partitions]
+ *     topic => STRING
+ *     partitions => partition_index error_code high_watermark last_stable_offset [aborted_transactions] records
+ *       partition_index => INT32
+ *       error_code => INT16
+ *       high_watermark => INT64
+ *       last_stable_offset => INT64
+ *       aborted_transactions => producer_id first_offset
+ *         producer_id => INT64
+ *         first_offset => INT64
+ *       records => RECORDS
+ */
 @Serializable
 data class FetchResponseV4(
     val throttleTimeMs: Int,
@@ -43,7 +72,7 @@ data class FetchResponseV4(
 ) : FetchResponse, VersionedV4 {
     @Serializable
     data class Topic(
-        val topic: String,
+        val topic: Int16String,
         val partitions: List<Partition>
     ) {
         @Serializable

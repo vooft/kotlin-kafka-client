@@ -99,10 +99,10 @@ class KafkaMetadataManagerImpl(
     private suspend fun queryMetadata(topics: Collection<String>): TopicAndNodesMetadata {
         val response = queryMetadataRetryable(topics)
 
-        val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.nonNullValue, it.port) }
+        val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.value, it.port) }
         val newTopics = response.topics.associate { topic ->
-            topic.name.nonNullValue to TopicMetadata(
-                topic = topic.name.nonNullValue,
+            topic.name.value to TopicMetadata(
+                topic = topic.name.value,
                 partitions = topic.partitions.associate { it.partition to it.leader }
             )
         }

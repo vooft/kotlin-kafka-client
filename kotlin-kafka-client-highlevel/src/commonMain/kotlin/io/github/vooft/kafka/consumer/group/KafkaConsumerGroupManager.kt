@@ -95,7 +95,7 @@ class KafkaConsumerGroupManager(
         )
 
         return GroupMemberMetadata(
-            memberId = response.memberId.nonNullValue,
+            memberId = response.memberId.value,
             isLeader = response.memberId == response.leaderId,
             generationId = response.generationId
         )

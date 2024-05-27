@@ -4,12 +4,18 @@ import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.serialization.common.ByteValue
 import io.github.vooft.kafka.serialization.common.ByteValueSerializer
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
+import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
 import kotlinx.serialization.Serializable
 
 interface FindCoordinatorRequest : KafkaRequest {
     override val apiKey: ApiKey get() = ApiKey.FIND_COORDINATOR
 }
 
+/**
+ * FindCoordinator Request (Version: 1) => key key_type
+ *   key => STRING
+ *   key_type => INT8
+ */
 @Serializable
 data class FindCoordinatorRequestV1(
     val key: Int16String,
@@ -18,11 +24,20 @@ data class FindCoordinatorRequestV1(
 
 interface FindCoordinatorResponse : KafkaResponse
 
+/**
+ * FindCoordinator Response (Version: 1) => throttle_time_ms error_code error_message node_id host port
+ *   throttle_time_ms => INT32
+ *   error_code => INT16
+ *   error_message => NULLABLE_STRING
+ *   node_id => INT32
+ *   host => STRING
+ *   port => INT32
+ */
 @Serializable
 data class FindCoordinatorResponseV1(
     val throttleTimeMs: Int,
     val errorCode: ErrorCode,
-    val errorMessage: Int16String,
+    val errorMessage: NullableInt16String,
     val nodeId: NodeId,
     val host: Int16String,
     val port: Int,
