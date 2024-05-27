@@ -3,7 +3,7 @@ package io.github.vooft.kafka.cluster
 import io.github.vooft.kafka.common.BrokerAddress
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
-import io.github.vooft.kafka.consumer.group.KafkaTopicConsumerGroup
+import io.github.vooft.kafka.consumer.group.KafkaConsumerGroupManager
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.producer.KafkaTopicProducer
@@ -13,6 +13,8 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineScope: CoroutineScope = CoroutineScope(Job())) {
 
@@ -24,19 +26,31 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     private val metadataManager: KafkaMetadataManager = KafkaMetadataManagerImpl(bootstrapConnections, coroutineScope)
     private val connectionPool: KafkaConnectionPool = KafkaConnectionPoolImpl(networkClient, metadataManager.nodesProvider())
 
+    private val consumerGroupManagers = mutableMapOf<TopicGroup, KafkaConsumerGroupManager>()
+    private val consumerGroupManagersMutex = Mutex()
+
     suspend fun createProducer(topic: String): KafkaTopicProducer {
         val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
         return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPool)
     }
 
-    suspend fun createConsumer(topic: String): KafkaTopicConsumer {
-        val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
-        return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
-    }
+    suspend fun createConsumer(topic: String, groupId: String? = null): KafkaTopicConsumer {
+        if (groupId == null) {
+            val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
+            return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
+        } else {
+            val consumerGroupManager = consumerGroupManagersMutex.withLock {
+                consumerGroupManagers.getOrPut(TopicGroup(topic, groupId)) {
+                    KafkaConsumerGroupManager(topic, groupId, metadataManager, connectionPool, coroutineScope)
+                }
+            }
 
-    suspend fun createGroup(topic: String, groupId: String) : KafkaTopicConsumerGroup {
-        TODO()
+            val topicMetadataProvider = consumerGroupManager.nextGroupedTopicMetadataProvider()
+            return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
+        }
     }
 }
+
+data class TopicGroup(val topic: String, val groupId: String)
 
 

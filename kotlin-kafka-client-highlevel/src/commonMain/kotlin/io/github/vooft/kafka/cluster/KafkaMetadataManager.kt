@@ -10,6 +10,7 @@ import io.github.vooft.kafka.network.sendRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -84,6 +85,7 @@ class KafkaMetadataManagerImpl(
     }
 
     private suspend fun refreshMetadata() {
+        println("refreshMetadata")
         val topics = topicsMetadata
 
         val metadata = queryMetadata(topics.keys)
@@ -117,6 +119,9 @@ class KafkaMetadataManagerImpl(
             if (response.topics.none { it.errorCode.isRetriable }) {
                 return response
             }
+
+            println("retrying due to ${response.topics.first { it.errorCode.isRetriable }}")
+            delay(100)
         }
     }
 

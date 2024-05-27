@@ -55,21 +55,29 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
             writeChannel.writeMessage {
                 val header = request.nextHeader()
                 encodeHeader(header)
+                println("encoded header $header")
                 encode(requestSerializer, request)
+                println("encoded $request")
             }
         }
 
         return readChannelMutex.withLock {
             readChannel.readMessage {
                 val header = decode<KafkaResponseHeaderV0>()
+                println("response header $header")
 
+                println("${responseDeserializer.descriptor.serialName} bytes ${peek().readByteArray().toHexString()}")
                 val result = decode(responseDeserializer)
+                println("decoded $result")
 
                 val remaining = readByteArray()
                 require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
 
                 result
             }
+        }.also {
+            println()
+            println()
         }
     }
 
