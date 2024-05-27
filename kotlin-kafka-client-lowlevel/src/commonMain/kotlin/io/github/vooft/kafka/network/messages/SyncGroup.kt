@@ -1,6 +1,8 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.common.PartitionIndex
+import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
+import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
@@ -27,7 +29,7 @@ data class SyncGroupRequestV1(
     @Serializable
     data class Assignment(
         val memberId: Int16String,
-        val assignment: MemberAssignment
+        @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment
     )
 }
 
@@ -44,7 +46,7 @@ data class SyncGroupResponseV1(
     val throttleTimeMs: Int,
     val errorCode: ErrorCode,
     // TODO: when there is an error, assignment is not returned at all, even length
-    val assignment: MemberAssignment
+    @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment?
 ) : SyncGroupResponse, VersionedV1
 
 /**

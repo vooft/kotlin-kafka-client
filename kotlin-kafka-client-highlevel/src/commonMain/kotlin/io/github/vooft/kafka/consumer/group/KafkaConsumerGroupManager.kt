@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,7 +55,7 @@ class KafkaConsumerGroupManager(
             memberMetadata[newGroupMemberMetadata.memberId] = memberMetadataFlow
         }
 
-        val assignedPartitions = syncGroupRetrying(
+        val assignedPartitions = syncGroup(
             coordinatorNodeId = coordinatorNodeId,
             current = newGroupMemberMetadata,
             memberIds = memberMetadata.keys.toList()
@@ -106,17 +105,6 @@ class KafkaConsumerGroupManager(
 
     }
 
-    private suspend fun syncGroupRetrying(coordinatorNodeId: NodeId, current: GroupMemberMetadata, memberIds: List<String>): List<PartitionIndex> {
-        while (true) {
-            try {
-                return syncGroup(coordinatorNodeId, current, memberIds)
-            } catch (e: Exception) {
-                println("syncGroup failed: $e")
-                delay(100)
-            }
-        }
-    }
-
     private suspend fun syncGroup(coordinatorNodeId: NodeId, current: GroupMemberMetadata, memberIds: List<String>): List<PartitionIndex> {
         println("syncGroup")
         val topicMetadata = topicMetadataProviderDeferred.await().topicMetadata()
@@ -151,17 +139,23 @@ class KafkaConsumerGroupManager(
             }
         ))
 
-        return syncResponse.assignment.partitionAssignments.single().partitions
+        return syncResponse.assignment?.partitionAssignments?.single()?.partitions ?: listOf()
 
     }
 
     private suspend fun findCoordinator(): NodeId {
-        val connection = connectionPool.acquire()
-        val response = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
-            FindCoordinatorRequestV1(groupId.toInt16String())
-        )
+        while (true) {
+            val connection = connectionPool.acquire()
+            val response = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
+                FindCoordinatorRequestV1(groupId.toInt16String())
+            )
 
-        return response.nodeId
+            if (response.errorCode.isRetriable) {
+                continue
+            }
+
+            return response.nodeId
+        }
     }
 
     private inner class GroupedTopicMetadataProvider(
