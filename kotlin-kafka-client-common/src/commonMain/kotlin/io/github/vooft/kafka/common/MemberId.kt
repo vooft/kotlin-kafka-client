@@ -8,4 +8,4 @@ import kotlin.jvm.JvmInline
 @KafkaString(encoding = IntEncoding.INT16)
 @Serializable
 @JvmInline
-value class KafkaTopic(val value: String)
+value class MemberId(val value: String)

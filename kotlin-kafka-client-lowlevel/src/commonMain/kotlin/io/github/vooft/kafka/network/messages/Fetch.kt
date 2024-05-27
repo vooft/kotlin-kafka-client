@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
 interface FetchRequest : KafkaRequest {
@@ -36,7 +36,7 @@ data class FetchRequestV4(
 ) : FetchRequest, VersionedV4 {
     @Serializable
     data class Topic(
-        val topic: Int16String,
+        val topic: KafkaTopic,
         val partitions: List<Partition>
     ) {
         @Serializable
@@ -72,7 +72,7 @@ data class FetchResponseV4(
 ) : FetchResponse, VersionedV4 {
     @Serializable
     data class Topic(
-        val topic: Int16String,
+        val topic: KafkaTopic,
         val partitions: List<Partition>
     ) {
         @Serializable

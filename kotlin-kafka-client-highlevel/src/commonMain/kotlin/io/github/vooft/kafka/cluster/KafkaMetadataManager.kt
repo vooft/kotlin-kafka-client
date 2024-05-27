@@ -101,8 +101,8 @@ class KafkaMetadataManagerImpl(
 
         val newNodes = response.brokers.associate { it.nodeId to BrokerAddress(it.host.value, it.port) }
         val newTopics = response.topics.associate { topic ->
-            topic.name.value to TopicMetadata(
-                topic = topic.name.value,
+            topic.topic.value to TopicMetadata(
+                topic = topic.topic.value,
                 partitions = topic.partitions.associate { it.partition to it.leader }
             )
         }

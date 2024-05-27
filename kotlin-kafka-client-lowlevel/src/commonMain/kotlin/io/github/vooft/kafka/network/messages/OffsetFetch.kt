@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
@@ -51,7 +52,7 @@ data class OffsetFetchResponseV1(
 ) : OffsetFetchResponse, VersionedV1 {
     @Serializable
     data class Topic(
-        val topic: Int16String,
+        val topic: KafkaTopic,
         val partitions: List<Partition>
     ) {
         @Serializable

@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
@@ -31,7 +32,7 @@ data class ProduceRequestV3(
 ) : ProduceRequest, VersionedV3 {
     @Serializable
     data class TopicData(
-        val name: Int16String,
+        val topic: KafkaTopic,
         val partitionData: List<PartitionData>
     ) {
         @Serializable

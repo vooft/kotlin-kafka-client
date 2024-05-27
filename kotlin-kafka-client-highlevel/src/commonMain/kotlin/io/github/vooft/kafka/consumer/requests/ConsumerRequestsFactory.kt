@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.consumer.requests
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 
 object ConsumerRequestsFactory {
@@ -11,7 +11,7 @@ object ConsumerRequestsFactory {
         maxBytes = 1024 * 1024,
         topics = listOf(
             FetchRequestV4.Topic(
-                topic = topic.toInt16String(),
+                topic = KafkaTopic(topic),
                 partitions = partitions.map {
                     FetchRequestV4.Topic.Partition(
                         partition = it,

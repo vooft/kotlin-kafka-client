@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.producer.requests
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
@@ -13,7 +13,7 @@ object ProduceRequestFactory {
     fun createProduceRequest(topic: String, partitionIndex: PartitionIndex, records: List<ProducedRecord>) = ProduceRequestV3(
         topicData = listOf(
             ProduceRequestV3.TopicData(
-                name = topic.toInt16String(),
+                topic = KafkaTopic(topic),
                 partitionData = listOf(
                     ProduceRequestV3.TopicData.PartitionData(
                         partition = partitionIndex,

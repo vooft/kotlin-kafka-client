@@ -1,5 +1,7 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
+import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
@@ -25,13 +27,13 @@ data class JoinGroupRequestV1(
     val groupId: Int16String,
     val sessionTimeoutMs: Int,
     val rebalanceTimeoutMs: Int,
-    val memberId: Int16String,
+    val memberId: MemberId,
     val protocolType: Int16String,
     val groupProtocols: List<GroupProtocol>
 ) : JoinGroupRequest, VersionedV1 {
     @Serializable
     data class GroupProtocol(
-        val name: Int16String,
+        val protocol: Int16String,
         @KafkaSizeInBytesPrefixed(INT32) val metadata: Metadata
     ) {
         /**
@@ -40,7 +42,7 @@ data class JoinGroupRequestV1(
         @Serializable
         data class Metadata(
             val version: Short = 0,
-            val topics: List<Int16String>,
+            val topics: List<KafkaTopic>,
             val userData: List<Byte> = listOf()
         )
     }
@@ -64,13 +66,13 @@ data class JoinGroupResponseV1(
     val errorCode: ErrorCode,
     val generationId: Int,
     val groupProtocol: Int16String,
-    val leaderId: Int16String,
-    val memberId: Int16String,
+    val leaderId: MemberId,
+    val memberId: MemberId,
     val members: List<Member>
 ) : JoinGroupResponse, VersionedV1 {
     @Serializable
     data class Member(
-        val memberId: Int16String,
+        val memberId: MemberId,
         val metadata: ByteArray
     )
 }

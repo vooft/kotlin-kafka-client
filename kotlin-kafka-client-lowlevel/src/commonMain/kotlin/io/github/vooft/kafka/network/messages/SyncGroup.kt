@@ -1,5 +1,7 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
+import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
@@ -23,12 +25,12 @@ interface SyncGroupRequest : KafkaRequest {
 data class SyncGroupRequestV1(
     val groupId: Int16String,
     val generationId: Int,
-    val memberId: Int16String,
+    val memberId: MemberId,
     val assignments: List<Assignment>
 ) : SyncGroupRequest, VersionedV1 {
     @Serializable
     data class Assignment(
-        val memberId: Int16String,
+        val memberId: MemberId,
         @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment
     )
 }
@@ -68,7 +70,7 @@ data class MemberAssignment(
 ) {
     @Serializable
     data class PartitionAssignment(
-        val topic: Int16String,
+        val topic: KafkaTopic,
         val partitions: List<PartitionIndex>
     )
 }

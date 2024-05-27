@@ -1,4 +1,5 @@
 package io.github.vooft.kafka.manual
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.common.toVarInt
@@ -47,7 +48,7 @@ fun main() = runBlocking {
                 ProduceRequestV3(
                     topicData = listOf(
                         ProduceRequestV3.TopicData(
-                            name = topic.toInt16String(),
+                            topic = KafkaTopic(topic),
                             partitionData = listOf(
                                 ProduceRequestV3.TopicData.PartitionData(
                                     partition = PartitionIndex(0),

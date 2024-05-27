@@ -1,5 +1,7 @@
 package io.github.vooft.kafka
 
+import io.github.vooft.kafka.common.KafkaTopic
+import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.CoordinatorType.GROUP
@@ -36,13 +38,13 @@ class KafkaTest {
                 groupId = group,
                 sessionTimeoutMs = 30000,
                 rebalanceTimeoutMs = 10000,
-                memberId = "".toInt16String(),
+                memberId = MemberId(""),
                 protocolType = "consumer".toInt16String(),
                 groupProtocols = listOf(
                     JoinGroupRequestV1.GroupProtocol(
-                        name = "mybla".toInt16String(),
+                        protocol = "mybla".toInt16String(),
                         metadata = JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = listOf("test".toInt16String())
+                            topics = listOf(KafkaTopic("test"))
                         )
                     )
                 )

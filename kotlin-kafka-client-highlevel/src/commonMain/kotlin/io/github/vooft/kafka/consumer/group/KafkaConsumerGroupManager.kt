@@ -4,6 +4,8 @@ import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaMetadataManager
 import io.github.vooft.kafka.cluster.TopicMetadata
 import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.common.KafkaTopic
+import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toInt16String
@@ -81,13 +83,13 @@ class KafkaConsumerGroupManager(
                 groupId = groupId.toInt16String(),
                 sessionTimeoutMs = 30000,
                 rebalanceTimeoutMs = 60000,
-                memberId = memberId.toInt16String(),
+                memberId = MemberId(memberId),
                 protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
                 groupProtocols = listOf(
                     JoinGroupRequestV1.GroupProtocol(
-                        name = "mybla".toInt16String(), // TODO: change to proper assigner
+                        protocol = "mybla".toInt16String(), // TODO: change to proper assigner
                         metadata = JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = listOf(topic.toInt16String())
+                            topics = listOf(KafkaTopic(topic))
                         )
                     )
                 )
@@ -123,14 +125,14 @@ class KafkaConsumerGroupManager(
         val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(SyncGroupRequestV1(
             groupId = groupId.toInt16String(),
             generationId = current.generationId,
-            memberId = current.memberId.toInt16String(),
+            memberId = MemberId(current.memberId),
             assignments = assignments.map { (memberId, partitions) ->
                 SyncGroupRequestV1.Assignment(
-                    memberId = memberId.toInt16String(),
+                    memberId = MemberId(memberId),
                     assignment = MemberAssignment(
                         partitionAssignments = listOf(
                             MemberAssignment.PartitionAssignment(
-                                topic = topic.toInt16String(),
+                                topic = KafkaTopic(topic),
                                 partitions = partitions
                             )
                         ),

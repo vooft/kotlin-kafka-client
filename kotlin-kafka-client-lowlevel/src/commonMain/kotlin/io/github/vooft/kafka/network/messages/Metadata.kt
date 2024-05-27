@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
@@ -59,7 +60,7 @@ data class MetadataResponseV1(
     @Serializable
     data class Topic(
         val errorCode: ErrorCode,
-        val name: Int16String,
+        val topic: KafkaTopic,
         val isInternal: Boolean,
         val partitions: List<Partition>
     ) {
