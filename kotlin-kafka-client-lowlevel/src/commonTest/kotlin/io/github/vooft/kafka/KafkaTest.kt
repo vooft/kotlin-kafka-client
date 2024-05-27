@@ -1,5 +1,6 @@
 package io.github.vooft.kafka
 
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.network.common.toInt16String
@@ -27,9 +28,9 @@ class KafkaTest {
 
         val connection = ktorClient.connect("localhost", 9093)
 
-        val group = "test-group".toInt16String()
+        val group = GroupId("test-group")
         val findCoordinatorResponse = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
-            FindCoordinatorRequestV1(key = group, keyType = GROUP)
+            FindCoordinatorRequestV1(key = group.value.toInt16String(), keyType = GROUP)
         )
         println(findCoordinatorResponse)
 

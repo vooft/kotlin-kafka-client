@@ -4,6 +4,7 @@ import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaMetadataManager
 import io.github.vooft.kafka.cluster.TopicMetadata
 import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.NodeId
@@ -29,7 +30,7 @@ import kotlinx.coroutines.sync.withLock
 
 class KafkaConsumerGroupManager(
     private val topic: KafkaTopic,
-    private val groupId: String,
+    private val groupId: GroupId,
     private val metadataManager: KafkaMetadataManager,
     private val connectionPool: KafkaConnectionPool,
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
@@ -80,7 +81,7 @@ class KafkaConsumerGroupManager(
 
         val response = connection.sendRequest<JoinGroupRequestV1, JoinGroupResponseV1>(
             JoinGroupRequestV1(
-                groupId = groupId.toInt16String(),
+                groupId = groupId,
                 sessionTimeoutMs = 30000,
                 rebalanceTimeoutMs = 60000,
                 memberId = MemberId(memberId),
@@ -123,7 +124,7 @@ class KafkaConsumerGroupManager(
 
         val connection = connectionPool.acquire(coordinatorNodeId)
         val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(SyncGroupRequestV1(
-            groupId = groupId.toInt16String(),
+            groupId = groupId,
             generationId = current.generationId,
             memberId = MemberId(current.memberId),
             assignments = assignments.map { (memberId, partitions) ->
@@ -149,7 +150,7 @@ class KafkaConsumerGroupManager(
         while (true) {
             val connection = connectionPool.acquire()
             val response = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
-                FindCoordinatorRequestV1(groupId.toInt16String())
+                FindCoordinatorRequestV1(groupId.value.toInt16String()) // TODO: create 2 types: one for groups, one for txns
             )
 
             if (response.errorCode.isRetriable) {

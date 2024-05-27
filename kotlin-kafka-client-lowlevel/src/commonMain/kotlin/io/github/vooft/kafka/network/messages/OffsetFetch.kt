@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
@@ -19,7 +20,7 @@ interface OffsetFetchRequest : KafkaRequest {
  */
 @Serializable
 data class OffsetFetchRequestV1(
-    val groupId: NullableInt16String,
+    val groupId: GroupId,
     val topics: List<Topic>
 ) : OffsetFetchRequest, VersionedV1 {
     @Serializable

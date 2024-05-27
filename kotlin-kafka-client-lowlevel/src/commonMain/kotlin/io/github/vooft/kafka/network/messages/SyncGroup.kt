@@ -1,11 +1,11 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import kotlinx.serialization.Serializable
 
 interface SyncGroupRequest : KafkaRequest {
@@ -23,7 +23,7 @@ interface SyncGroupRequest : KafkaRequest {
  */
 @Serializable
 data class SyncGroupRequestV1(
-    val groupId: Int16String,
+    val groupId: GroupId,
     val generationId: Int,
     val memberId: MemberId,
     val assignments: List<Assignment>

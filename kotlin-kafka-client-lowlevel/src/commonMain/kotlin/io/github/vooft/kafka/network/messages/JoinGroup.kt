@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
@@ -24,7 +25,7 @@ interface JoinGroupRequest : KafkaRequest {
  */
 @Serializable
 data class JoinGroupRequestV1(
-    val groupId: Int16String,
+    val groupId: GroupId,
     val sessionTimeoutMs: Int,
     val rebalanceTimeoutMs: Int,
     val memberId: MemberId,

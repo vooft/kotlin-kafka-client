@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.common.BrokerAddress
+import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
@@ -35,7 +36,7 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
         return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPool)
     }
 
-    suspend fun createConsumer(topic: KafkaTopic, groupId: String? = null): KafkaTopicConsumer {
+    suspend fun createConsumer(topic: KafkaTopic, groupId: GroupId? = null): KafkaTopicConsumer {
         if (groupId == null) {
             val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
             return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
@@ -52,6 +53,6 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     }
 }
 
-data class TopicGroup(val topic: KafkaTopic, val groupId: String)
+data class TopicGroup(val topic: KafkaTopic, val groupId: GroupId)
 
 
