@@ -26,29 +26,28 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
     }
 
     private val metadataManager: KafkaMetadataManager = KafkaMetadataManagerImpl(bootstrapConnections, coroutineScope)
-    private val connectionPool: KafkaConnectionPool = KafkaConnectionPoolImpl(networkClient, metadataManager.nodesProvider())
+    private val connectionPoolFactory: KafkaConnectionPoolFactory = KafkaConnectionPoolFactoryImpl(networkClient, metadataManager.nodesProvider())
 
     private val consumerGroupManagers = mutableMapOf<TopicGroup, KafkaConsumerGroupManager>()
     private val consumerGroupManagersMutex = Mutex()
 
     suspend fun createProducer(topic: KafkaTopic): KafkaTopicProducer {
         val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
-        return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPool)
+        return SimpleKafkaTopicProducer(topic, topicMetadataProvider, connectionPoolFactory.create())
     }
 
     suspend fun createConsumer(topic: KafkaTopic, groupId: GroupId? = null): KafkaTopicConsumer {
         if (groupId == null) {
             val topicMetadataProvider = metadataManager.topicMetadataProvider(topic)
-            return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
+            return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPoolFactory.create(), coroutineScope)
         } else {
             val consumerGroupManager = consumerGroupManagersMutex.withLock {
                 consumerGroupManagers.getOrPut(TopicGroup(topic, groupId)) {
-                    KafkaConsumerGroupManager(topic, groupId, metadataManager, connectionPool, coroutineScope)
+                    KafkaConsumerGroupManager(topic, groupId, metadataManager, connectionPoolFactory, coroutineScope)
                 }
             }
 
-            val topicMetadataProvider = consumerGroupManager.nextGroupedTopicMetadataProvider()
-            return SimpleKafkaTopicConsumer(topicMetadataProvider, connectionPool, coroutineScope)
+            return consumerGroupManager.createConsumer()
         }
     }
 }
