@@ -51,38 +51,25 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         requestSerializer: SerializationStrategy<Rq>,
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
-        println("locking write channel mutex")
         writeChannelMutex.withLock {
-            println("locked write channel mutex")
             writeChannel.writeMessage {
                 val header = request.nextHeader()
                 encodeHeader(header)
-                println("encoded header $header")
                 encode(requestSerializer, request)
-                println("encoded $request")
             }
         }
-        println("unlocked write channel mutex")
 
-        println("locking read channel mutex")
         return readChannelMutex.withLock {
-            println("locked read channel mutex")
             readChannel.readMessage {
                 val header = decode<KafkaResponseHeaderV0>()
-                println("response header $header")
 
                 val result = decode(responseDeserializer)
-                println("decoded $result")
 
                 val remaining = readByteArray()
                 require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
 
                 result
             }
-        }.also {
-            println("unlocked read channel mutex")
-            println()
-            println()
         }
     }
 
@@ -96,23 +83,17 @@ private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) {
     buffer.block()
 
     val data = buffer.readByteArray()
-//    println("writing ${data.size} bytes")
     writeInt(data.size)
     writeFully(data)
 
     flush()
-//    println("sent message: ${data.toHexString()}")
 }
 
 private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T {
-//    println("reading message")
     val size = readInt()
-//    println("Reading message of size $size")
 
     val dst = ByteArray(size)
     readFully(dst, 0, size)
-
-//    println("Read message: ${dst.toHexString()}")
 
     val result = Buffer()
     result.write(dst)

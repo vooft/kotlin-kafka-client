@@ -23,10 +23,11 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.ktor.network)
+            implementation(libs.canard)
+            api(libs.kotlinx.io.core)
             implementation(project(":kotlinx-serialization-kafka"))
             api(project(":kotlinx-serialization-kafka-common"))
             api(project(":kotlin-kafka-client-common"))
-            api(libs.kotlinx.io.core)
         }
 
         jvmMain.dependencies { }

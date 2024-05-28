@@ -38,12 +38,11 @@ class SimpleKafkaTopicProducer(
         // TODO: use murmur
         val partitionToNodeMap = topicPartitions()
         val partitions = partitionToNodeMap.keys.sortedBy { it.value }
-        val partitionCount = partitions.size
-        println("partition count $partitionCount")
+
         val keyBytes = key.peek().readByteArray()
         val keyHash = keyBytes.fold(0) { acc, byte -> acc + byte.toInt() }
 
-        val selectedPartition = partitions[keyHash % partitionCount]
+        val selectedPartition = partitions[keyHash % partitions.size]
         return selectedPartition to partitionToNodeMap.getValue(selectedPartition)
     }
 }

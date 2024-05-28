@@ -139,9 +139,7 @@ class KafkaGroupedTopicConsumer(
     }
 
     private suspend fun syncGroup(joinedGroup: JoinedGroup, memberIds: Collection<MemberId>): List<PartitionIndex> {
-        println("syncGroup")
         val partitions = topicStateProvider.topicPartitions()
-        println("syncGroup: topicPartitions $partitions")
 
         val assignments = when (joinedGroup.isLeader) {
             true -> RoundRobinConsumerPartitionAssigner.assign(
@@ -151,7 +149,6 @@ class KafkaGroupedTopicConsumer(
 
             false -> mapOf()
         }
-        println("assigned partitions: $assignments")
 
         val connection = connectionPool.acquire(joinedGroup.coordinatorNodeId)
         val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(SyncGroupRequestV1(
