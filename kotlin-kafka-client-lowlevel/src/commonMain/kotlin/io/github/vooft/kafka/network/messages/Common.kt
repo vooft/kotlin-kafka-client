@@ -64,6 +64,7 @@ enum class ApiKey(override val value: Short): ShortValue {
     OFFSET_FETCH(9),
     FIND_COORDINATOR(10),
     JOIN_GROUP(11),
+    HEARTBEAT(12),
     SYNC_GROUP(14),
     API_VERSIONS(18)
 }

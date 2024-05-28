@@ -10,8 +10,16 @@ import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toInt16String
+import io.github.vooft.kafka.network.messages.ErrorCode
+import io.github.vooft.kafka.network.messages.ErrorCode.ILLEGAL_GENERATION
+import io.github.vooft.kafka.network.messages.ErrorCode.NOT_COORDINATOR
+import io.github.vooft.kafka.network.messages.ErrorCode.NO_ERROR
+import io.github.vooft.kafka.network.messages.ErrorCode.REBALANCE_IN_PROGRESS
+import io.github.vooft.kafka.network.messages.ErrorCode.UNKNOWN_MEMBER_ID
 import io.github.vooft.kafka.network.messages.FindCoordinatorRequestV1
 import io.github.vooft.kafka.network.messages.FindCoordinatorResponseV1
+import io.github.vooft.kafka.network.messages.HeartbeatRequestV0
+import io.github.vooft.kafka.network.messages.HeartbeatResponseV0
 import io.github.vooft.kafka.network.messages.JoinGroupRequestV1
 import io.github.vooft.kafka.network.messages.JoinGroupResponseV1
 import io.github.vooft.kafka.network.messages.MemberAssignment
@@ -22,9 +30,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -40,32 +50,36 @@ class KafkaConsumerGroupManager(
         metadataManager.topicMetadataProvider(topic)
     }
 
-    private val memberMetadata = mutableMapOf<String, MutableStateFlow<GroupMemberMetadata>>()
+    // TODO: merge all of them
+    private val memberMetadataFlows = mutableMapOf<MemberId, MutableStateFlow<GroupMemberMetadata>>()
     private val memberMetadataMutex = Mutex()
 
-    private val assignedPartitionsFlows = mutableMapOf<String, MutableStateFlow<List<PartitionIndex>>>()
+    private val assignedPartitionsFlows = mutableMapOf<MemberId, MutableStateFlow<List<PartitionIndex>>>()
     private val assignedPartitionsMutex = Mutex()
 
-    suspend fun nextGroupedTopicMetadataProvider(): TopicMetadataProvider {
-        topicMetadataProviderDeferred.await().topicMetadata()
+    private val heartbeatJobs = mutableMapOf<MemberId, Job>()
+    private val heartbeatJobsMutex = Mutex()
 
+    suspend fun nextGroupedTopicMetadataProvider(): TopicMetadataProvider {
         val coordinatorNodeId = findCoordinator()
         println("found coordinator $coordinatorNodeId")
 
         val newGroupMemberMetadata = joinGroup(coordinatorNodeId)
         val memberMetadataFlow = MutableStateFlow(newGroupMemberMetadata)
         memberMetadataMutex.withLock {
-            memberMetadata[newGroupMemberMetadata.memberId] = memberMetadataFlow
+            memberMetadataFlows[newGroupMemberMetadata.memberId] = memberMetadataFlow
         }
 
-        val assignedPartitions = syncGroup(
-            coordinatorNodeId = coordinatorNodeId,
-            current = newGroupMemberMetadata,
-            memberIds = memberMetadata.keys.toList()
-        )
+        val assignedPartitions = syncGroup(current = newGroupMemberMetadata, memberIds = memberMetadataFlows.keys.toList())
+
         val assignedPartitionsFlow = MutableStateFlow(assignedPartitions)
         assignedPartitionsMutex.withLock {
             assignedPartitionsFlows[newGroupMemberMetadata.memberId] = assignedPartitionsFlow
+        }
+
+        val heartbeatJob = coroutineScope.launch { sendHeartbeatInfinite(newGroupMemberMetadata.memberId) }
+        heartbeatJobsMutex.withLock {
+            heartbeatJobs[newGroupMemberMetadata.memberId] = heartbeatJob
         }
 
         val topicMetadataProvider = topicMetadataProviderDeferred.await()
@@ -76,7 +90,7 @@ class KafkaConsumerGroupManager(
         )
     }
 
-    private suspend fun joinGroup(coordinatorNodeId: NodeId, memberId: String = ""): GroupMemberMetadata {
+    private suspend fun joinGroup(coordinatorNodeId: NodeId, memberId: MemberId = MemberId("")): GroupMemberMetadata {
         val connection = connectionPool.acquire(coordinatorNodeId)
 
         val response = connection.sendRequest<JoinGroupRequestV1, JoinGroupResponseV1>(
@@ -84,7 +98,7 @@ class KafkaConsumerGroupManager(
                 groupId = groupId,
                 sessionTimeoutMs = 30000,
                 rebalanceTimeoutMs = 60000,
-                memberId = MemberId(memberId),
+                memberId = memberId,
                 protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
                 groupProtocols = listOf(
                     JoinGroupRequestV1.GroupProtocol(
@@ -98,17 +112,53 @@ class KafkaConsumerGroupManager(
         )
 
         return GroupMemberMetadata(
-            memberId = response.memberId.value,
+            coordinatorNodeId = coordinatorNodeId,
+            memberId = response.memberId,
             isLeader = response.memberId == response.leaderId,
             generationId = response.generationId
         )
     }
 
-    suspend fun sendHeartbeat(memberMetadata: GroupMemberMetadata) {
+    private suspend fun sendHeartbeatInfinite(memberId: MemberId) {
+        while (true) {
+            val metadata = memberMetadataFlows[memberId]?.value ?: return
 
+            when (val errorCode = sendHeartbeat(metadata)) {
+                NO_ERROR -> Unit
+                REBALANCE_IN_PROGRESS, NOT_COORDINATOR, ILLEGAL_GENERATION, UNKNOWN_MEMBER_ID -> rejoinGroup(memberId)
+                else -> error("Heartbeat failed with error code $errorCode")
+            }
+
+            delay(5000)
+        }
     }
 
-    private suspend fun syncGroup(coordinatorNodeId: NodeId, current: GroupMemberMetadata, memberIds: List<String>): List<PartitionIndex> {
+    suspend fun sendHeartbeat(metadata: GroupMemberMetadata): ErrorCode {
+        val connection = connectionPool.acquire(metadata.coordinatorNodeId)
+        val response = connection.sendRequest<HeartbeatRequestV0, HeartbeatResponseV0>(
+            HeartbeatRequestV0(
+                groupId = groupId,
+                generationId = metadata.generationId,
+                memberId = metadata.memberId
+            )
+        )
+
+        return response.errorCode
+    }
+
+    private suspend fun rejoinGroup(memberId: MemberId) {
+        val coordinator = findCoordinator()
+
+        val newMemberMetadata = joinGroup(coordinator, memberId)
+        val memberMetadataFlow = memberMetadataMutex.withLock { memberMetadataFlows.getValue(memberId) }
+        memberMetadataFlow.emit(newMemberMetadata)
+
+        val assignedPartitions = syncGroup(current = newMemberMetadata, memberIds = memberMetadataFlows.keys)
+        val assignedPartitionsFlow = assignedPartitionsMutex.withLock { assignedPartitionsFlows.getValue(memberId) }
+        assignedPartitionsFlow.emit(assignedPartitions)
+    }
+
+    private suspend fun syncGroup(current: GroupMemberMetadata, memberIds: Collection<MemberId>): List<PartitionIndex> {
         println("syncGroup")
         val topicMetadata = topicMetadataProviderDeferred.await().topicMetadata()
         println("syncGroup: topicMetadata $topicMetadata")
@@ -116,20 +166,21 @@ class KafkaConsumerGroupManager(
         val assignments = when (current.isLeader) {
             true -> RoundRobinConsumerPartitionAssigner.assign(
                 partitions = topicMetadata.partitions.keys.toList(),
-                members = memberIds
+                members = memberIds.toList()
             )
+
             false -> mapOf()
         }
         println("assignd partitons: $assignments")
 
-        val connection = connectionPool.acquire(coordinatorNodeId)
+        val connection = connectionPool.acquire(current.coordinatorNodeId)
         val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(SyncGroupRequestV1(
             groupId = groupId,
             generationId = current.generationId,
-            memberId = MemberId(current.memberId),
+            memberId = current.memberId,
             assignments = assignments.map { (memberId, partitions) ->
                 SyncGroupRequestV1.Assignment(
-                    memberId = MemberId(memberId),
+                    memberId = memberId,
                     assignment = MemberAssignment(
                         partitionAssignments = listOf(
                             MemberAssignment.PartitionAssignment(
@@ -182,7 +233,7 @@ class KafkaConsumerGroupManager(
     }
 }
 
-data class GroupMemberMetadata(val memberId: String, val isLeader: Boolean, val generationId: Int)
+data class GroupMemberMetadata(val coordinatorNodeId: NodeId, val memberId: MemberId, val isLeader: Boolean, val generationId: Int)
 
 // looks like in kafka itself they use "consumer" for this use case
 private const val CONSUMER_PROTOCOL_TYPE = "consumer"

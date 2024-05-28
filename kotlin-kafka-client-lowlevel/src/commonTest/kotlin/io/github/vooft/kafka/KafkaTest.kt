@@ -12,19 +12,12 @@ import io.github.vooft.kafka.network.messages.JoinGroupRequestV1
 import io.github.vooft.kafka.network.messages.JoinGroupResponseV1
 import io.github.vooft.kafka.network.sendRequest
 import kotlinx.coroutines.test.runTest
-import kotlinx.io.Buffer
-import kotlinx.io.readByteArray
 import kotlin.test.Test
 
 class KafkaTest {
     @Test
     fun test() = runTest {
         val ktorClient = KtorNetworkClient()
-
-        Buffer().apply {
-            writeInt(65540)
-            println(readByteArray().toHexString())
-        }
 
         val connection = ktorClient.connect("localhost", 9093)
 
