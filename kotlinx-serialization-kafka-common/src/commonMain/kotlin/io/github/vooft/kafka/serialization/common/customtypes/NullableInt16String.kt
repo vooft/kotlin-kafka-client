@@ -15,8 +15,6 @@ value class NullableInt16String(val value: String?) : KafkaCustomType {
         }
     }
 
-    val nonNullValue: String get() = requireNotNull(value)
-
     companion object {
         val NULL = NullableInt16String(null)
     }
