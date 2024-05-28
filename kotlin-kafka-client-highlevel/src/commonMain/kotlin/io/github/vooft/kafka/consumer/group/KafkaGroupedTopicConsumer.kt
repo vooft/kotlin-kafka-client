@@ -1,8 +1,7 @@
 package io.github.vooft.kafka.consumer.group
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
-import io.github.vooft.kafka.cluster.TopicMetadata
-import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
@@ -36,7 +35,7 @@ import kotlinx.coroutines.launch
 class KafkaGroupedTopicConsumer(
     override val topic: KafkaTopic,
     private val groupId: GroupId,
-    private val topicMetadataProvider: TopicMetadataProvider,
+    private val topicStateProvider: KafkaTopicStateProvider,
     private val connectionPool: KafkaConnectionPool,
     private val coroutineScope: CoroutineScope
 ) : KafkaTopicConsumer {
@@ -141,12 +140,12 @@ class KafkaGroupedTopicConsumer(
 
     private suspend fun syncGroup(joinedGroup: JoinedGroup, memberIds: Collection<MemberId>): List<PartitionIndex> {
         println("syncGroup")
-        val topicMetadata = topicMetadataProvider.topicMetadata()
-        println("syncGroup: topicMetadata $topicMetadata")
+        val partitions = topicStateProvider.topicPartitions()
+        println("syncGroup: topicPartitions $partitions")
 
         val assignments = when (joinedGroup.isLeader) {
             true -> RoundRobinConsumerPartitionAssigner.assign(
-                partitions = topicMetadata.partitions.keys.toList(),
+                partitions = partitions.keys.toList(),
                 members = memberIds.toList()
             )
 
@@ -178,13 +177,11 @@ class KafkaGroupedTopicConsumer(
 
     }
 
-    inner class GroupedTopicMetadataProvider : TopicMetadataProvider {
+    inner class GroupedTopicMetadataProvider : KafkaTopicStateProvider {
         override val topic: KafkaTopic get() = this@KafkaGroupedTopicConsumer.topic
-        override suspend fun topicMetadata(): TopicMetadata {
-            val metadata = consumerMetadata.await().value
-            val topicMetadata = topicMetadataProvider.topicMetadata()
-            val assignedPartitions = metadata.assignedPartitions
-            return topicMetadata.copy(partitions = topicMetadata.partitions.filterKeys { it in assignedPartitions })
+        override suspend fun topicPartitions(): Map<PartitionIndex, NodeId> {
+            val assignedPartitions = consumerMetadata.await().value.assignedPartitions
+            return topicStateProvider.topicPartitions().filterKeys { it in assignedPartitions }
         }
     }
 }

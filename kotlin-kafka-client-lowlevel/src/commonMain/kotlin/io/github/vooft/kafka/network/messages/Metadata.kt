@@ -20,7 +20,7 @@ sealed interface MetadataRequest: KafkaRequest {
 data class MetadataRequestV1(val topics: List<KafkaTopic>) : MetadataRequest, VersionedV1
 
 fun MetadataRequestV1(topic: String) = MetadataRequestV1(listOf(KafkaTopic(topic)))
-fun MetadataRequestV1(topics: Collection<String>) = MetadataRequestV1(topics.map { KafkaTopic(it) })
+fun MetadataRequestV1(topics: Collection<KafkaTopic>) = MetadataRequestV1(topics.toList())
 
 sealed interface MetadataResponse: KafkaResponse
 

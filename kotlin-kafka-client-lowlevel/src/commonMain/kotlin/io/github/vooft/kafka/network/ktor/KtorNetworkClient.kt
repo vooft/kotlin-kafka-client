@@ -51,7 +51,9 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         requestSerializer: SerializationStrategy<Rq>,
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
+        println("locking write channel mutex")
         writeChannelMutex.withLock {
+            println("locked write channel mutex")
             writeChannel.writeMessage {
                 val header = request.nextHeader()
                 encodeHeader(header)
@@ -60,13 +62,15 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
                 println("encoded $request")
             }
         }
+        println("unlocked write channel mutex")
 
+        println("locking read channel mutex")
         return readChannelMutex.withLock {
+            println("locked read channel mutex")
             readChannel.readMessage {
                 val header = decode<KafkaResponseHeaderV0>()
                 println("response header $header")
 
-                println("${responseDeserializer.descriptor.serialName} bytes ${peek().readByteArray().toHexString()}")
                 val result = decode(responseDeserializer)
                 println("decoded $result")
 
@@ -76,6 +80,7 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
                 result
             }
         }.also {
+            println("unlocked read channel mutex")
             println()
             println()
         }

@@ -37,7 +37,7 @@ fun main() = runBlocking {
         val client = KtorNetworkClient()
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
-            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(listOf(topic)))
+            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(topic))
             println("Metadata response: $response")
         } while (response.topics.single().errorCode != ErrorCode.NO_ERROR)
 

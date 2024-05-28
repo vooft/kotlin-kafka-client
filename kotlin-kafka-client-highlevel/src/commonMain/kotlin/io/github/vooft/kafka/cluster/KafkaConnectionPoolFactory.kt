@@ -6,8 +6,8 @@ interface KafkaConnectionPoolFactory {
     fun create(): KafkaConnectionPool
 }
 
-class KafkaConnectionPoolFactoryImpl(private val networkClient: NetworkClient, private val nodesProvider: NodesProvider) : KafkaConnectionPoolFactory {
+class KafkaConnectionPoolFactoryImpl(private val networkClient: NetworkClient, private val nodesRegistry: KafkaNodesRegistry) : KafkaConnectionPoolFactory {
     override fun create(): KafkaConnectionPool {
-        return KafkaConnectionPoolImpl(networkClient, nodesProvider)
+        return KafkaDynamicNodesListConnectionPool(networkClient, nodesRegistry)
     }
 }

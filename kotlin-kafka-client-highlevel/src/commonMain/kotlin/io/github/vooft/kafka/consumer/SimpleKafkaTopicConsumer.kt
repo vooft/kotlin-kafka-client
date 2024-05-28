@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.consumer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
-import io.github.vooft.kafka.cluster.TopicMetadataProvider
+import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.consumer.requests.ConsumerRequestsFactory
 import io.github.vooft.kafka.network.messages.FetchRequestV4
@@ -14,17 +14,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 class SimpleKafkaTopicConsumer(
-    private val topicMetadataProvider: TopicMetadataProvider,
+    private val topicStateProvider: KafkaTopicStateProvider,
     private val connectionPool: KafkaConnectionPool,
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) : KafkaTopicConsumer {
 
-    override val topic: KafkaTopic get() = topicMetadataProvider.topic
+    override val topic: KafkaTopic get() = topicStateProvider.topic
 
     override suspend fun consume(): KafkaRecordsBatch {
-        val topicMetadata = topicMetadataProvider.topicMetadata()
-
-        val partitionsByNode = topicMetadata.partitions.entries.groupBy({ it.value }, { it.key })
+        val partitionsByNode = topicStateProvider.topicPartitions().entries.groupBy({ it.value }, { it.key })
 
         val responses = partitionsByNode.entries.map {
             coroutineScope.async {

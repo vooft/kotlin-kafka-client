@@ -4,6 +4,8 @@ import io.github.vooft.kafka.common.BrokerAddress
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -11,9 +13,9 @@ interface KafkaConnectionPool {
     suspend fun acquire(nodeId: NodeId? = null): KafkaConnection
 }
 
-class KafkaConnectionPoolImpl(
+class KafkaDynamicNodesListConnectionPool(
     private val networkClient: NetworkClient,
-    private val nodesProvider: NodesProvider
+    private val nodesRegistry: KafkaNodesRegistry
 ) : KafkaConnectionPool {
 
     private val connections = mutableMapOf<BrokerAddress, KafkaConnection>()
@@ -21,7 +23,7 @@ class KafkaConnectionPoolImpl(
 
     // TODO: make it more reactive and update when metadata changes
     override suspend fun acquire(nodeId: NodeId?): KafkaConnection {
-        val nodes = nodesProvider.nodes()
+        val nodes = nodesRegistry.nodes()
         val brokerAddress = nodeId?.let { nodes.getValue(it) } ?: nodes.values.random()
         connectionsMutex.withLock {
             val existing = connections[brokerAddress]
@@ -33,6 +35,22 @@ class KafkaConnectionPoolImpl(
                 return connection
             }
         }
+    }
+}
+
+class KafkaFixedNodesListConnectionPool(
+    networkClient: NetworkClient,
+    nodes: List<BrokerAddress>,
+    coroutineScope: CoroutineScope
+) : KafkaConnectionPool {
+
+    private val connections = nodes.associateWith {
+        coroutineScope.async { networkClient.connect(it.hostname, it.port) }
+    }
+
+    override suspend fun acquire(nodeId: NodeId?): KafkaConnection {
+        require(nodeId == null) { "nodeId is not supported for KafkaFixedBrokerListConnectionPool" }
+        return connections.values.random().await()
     }
 
 }
