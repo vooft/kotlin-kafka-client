@@ -32,13 +32,13 @@ object ProduceRequestFactory {
                                                 lastOffsetDelta = records.size - 1,
                                                 firstTimestamp = 0,
                                                 maxTimestamp = 0,
-                                                records = records.mapIndexed { index, it ->
+                                                records = records.mapIndexed { index, record ->
                                                     KafkaRecordV0(
                                                         recordBody = VarIntBytesSizePrefixed(
                                                             KafkaRecordV0.KafkaRecordBody(
                                                                 offsetDelta = index.toVarInt(),
-                                                                recordKey = it.key.toVarIntByteArray(),
-                                                                recordValue = it.value.toVarIntByteArray()
+                                                                recordKey = record.key.toVarIntByteArray(),
+                                                                recordValue = record.value.toVarIntByteArray()
                                                             )
                                                         )
                                                     )

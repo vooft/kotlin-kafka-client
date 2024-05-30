@@ -40,7 +40,7 @@ class KafkaRecordBatchTest {
         0x00, 0x00, 0x00, 0x02, // lastOffsetDelta
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, // firstTimestamp
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, // maxTimestamp
-        xFF, xFF, xFF, xFF, xFF, xFF, xFF, xFF, // producerId
+        FF, FF, FF, FF, FF, FF, FF, FF, // producerId
         0x00, 0x00, // producerEpoch
         0x00, 0x00, 0x00, 0x05, // firstSequence
 
@@ -107,4 +107,4 @@ class KafkaRecordBatchTest {
     }
 }
 
-private const val xFF = 0xFF.toByte()
+private const val FF = 0xFF.toByte()

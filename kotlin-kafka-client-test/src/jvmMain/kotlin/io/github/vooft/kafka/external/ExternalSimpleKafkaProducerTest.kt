@@ -37,7 +37,7 @@ object ExternalSimpleKafkaProducerTest  {
 
         val consumer = KafkaConsumer<String, String>(properties)
         consumer.subscribe(listOf(topic))
-        consumer.poll(0)
+        consumer.poll(Duration.ZERO)
         consumer.seekToBeginning(consumer.assignment())
         while (received < count) {
             val pollResult = consumer.poll(Duration.ofSeconds(1))

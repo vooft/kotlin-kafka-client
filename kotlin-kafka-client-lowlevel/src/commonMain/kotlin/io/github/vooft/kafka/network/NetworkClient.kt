@@ -20,4 +20,5 @@ interface KafkaConnection {
     suspend fun close()
 }
 
-suspend inline fun <reified Rq: KafkaRequest, reified Rs: KafkaResponse> KafkaConnection.sendRequest(request: Rq): Rs = sendRequest(request, serializer<Rq>(), serializer<Rs>())
+suspend inline fun <reified Rq: KafkaRequest, reified Rs: KafkaResponse> KafkaConnection.sendRequest(request: Rq): Rs =
+    sendRequest(request, serializer<Rq>(), serializer<Rs>())

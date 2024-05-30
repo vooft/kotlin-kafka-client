@@ -9,6 +9,7 @@ import io.github.vooft.kafka.network.messages.KafkaResponse
 import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.utils.toHexString
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
@@ -99,5 +100,3 @@ private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T {
     result.write(dst)
     return result.block()
 }
-
-private fun ByteArray.toHexString() = joinToString(", ", "[", "]") { "0x" + it.toUByte().toString(16).padStart(2, '0').uppercase() }

@@ -91,8 +91,8 @@ class PrimitiveEncoderTest {
 
         val encoded = KafkaSerde.encode(value)
         encoded.readByteArray() shouldBe byteArrayOf(
-            0x1,
-            0x1
+            0x2,
+            0x2
         )
     }
 

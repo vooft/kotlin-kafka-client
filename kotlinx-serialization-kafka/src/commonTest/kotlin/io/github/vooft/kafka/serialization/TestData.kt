@@ -8,8 +8,6 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
 
-private fun ByteArray.toHexString() = joinToString(", ", "[", "]") { "0x" + it.toUByte().toString(16).padStart(2, '0').uppercase() }
-
 @Serializable
 data class NumbersClass(
     val int8: Byte,

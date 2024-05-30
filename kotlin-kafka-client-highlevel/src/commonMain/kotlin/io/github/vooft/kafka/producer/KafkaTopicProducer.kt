@@ -12,7 +12,10 @@ interface KafkaTopicProducer {
     suspend fun send(key: Source, value: Source): RecordMetadata
 }
 
-suspend fun KafkaTopicProducer.send(key: String, value: String) = send(Buffer().apply { writeString(key) }, Buffer().apply { writeString(value) })
+suspend fun KafkaTopicProducer.send(key: String, value: String) = send(
+    key = Buffer().apply { writeString(key) },
+    value = Buffer().apply { writeString(value) }
+)
 
 data class RecordMetadata(val topic: KafkaTopic, val partition: PartitionIndex, val errorCode: ErrorCode)
 

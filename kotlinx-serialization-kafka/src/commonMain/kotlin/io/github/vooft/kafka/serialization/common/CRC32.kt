@@ -1,12 +1,13 @@
 package io.github.vooft.kafka.serialization.common
 
 import kotlinx.io.Source
+import kotlinx.io.readByteArray
 import kotlin.jvm.JvmInline
 
 // CRC32C implementation, adapted from https://github.com/caffeine-mgn/pw.binom.io
 object CRC32 {
-    fun crc32c(buffer: Source, limit: Int = Int.MAX_VALUE): Int {
-        return CRC32C_TABLE.compute(buffer, limit)
+    fun crc32c(buffer: Source): Int {
+        return CRC32C_TABLE.compute(buffer)
     }
 }
 
@@ -31,20 +32,16 @@ private value class CRC32Table(val table: IntArray) {
     })
 }
 
-private inline fun CRC32Table.applyByte(byte: Byte, c: Int): Int {
+private fun CRC32Table.applyByte(byte: Byte, c: Int): Int {
     val o = byte.toInt() and 0xFF
     return (c ushr 8) xor table[o xor (c and 0xff)]
 }
 
-private fun CRC32Table.compute(source: Source, limit: Int): Int {
+private fun CRC32Table.compute(source: Source): Int {
     var crc = 0.inv()
 
-    for (i in 0..<limit) {
-        if (source.exhausted()) {
-            break
-        }
-
-        crc = applyByte(source.readByte(), crc)
+    for (byte in source.readByteArray()) {
+        crc = applyByte(byte, crc)
     }
 
     return crc.inv()

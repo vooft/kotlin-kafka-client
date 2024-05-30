@@ -3,7 +3,6 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.toHexString
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
@@ -14,6 +13,7 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePref
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.utils.toHexString
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test

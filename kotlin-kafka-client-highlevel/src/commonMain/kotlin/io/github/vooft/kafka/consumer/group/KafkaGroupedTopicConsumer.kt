@@ -43,6 +43,7 @@ class KafkaGroupedTopicConsumer(
     private val coroutineScope: CoroutineScope
 ) : KafkaTopicConsumer {
 
+    @Suppress("detekt:UnusedPrivateProperty")
     private val heartbeatJob = coroutineScope.launch {
         sendHeartbeatInfinite()
     }
@@ -74,7 +75,8 @@ class KafkaGroupedTopicConsumer(
             val metadata = consumerMetadata.await()
             when (val errorCode = sendHeartbeat()) {
                 NO_ERROR -> Unit
-                REBALANCE_IN_PROGRESS, NOT_COORDINATOR, ILLEGAL_GENERATION -> metadata.value = rejoinGroup(metadata.value.membership.memberId)
+                REBALANCE_IN_PROGRESS, NOT_COORDINATOR, ILLEGAL_GENERATION ->
+                    metadata.value = rejoinGroup(metadata.value.membership.memberId)
                 UNKNOWN_MEMBER_ID -> metadata.value = rejoinGroup(MemberId.EMPTY)
                 else -> error("Heartbeat failed with error code $errorCode")
             }

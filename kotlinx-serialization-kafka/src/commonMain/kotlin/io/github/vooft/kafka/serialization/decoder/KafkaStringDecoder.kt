@@ -21,6 +21,7 @@ class KafkaStringDecoder(
 
     @ExperimentalSerializationApi
     override fun <T : Any> decodeNullableSerializableValue(deserializer: DeserializationStrategy<T?>): T? {
+        @Suppress("UNCHECKED_CAST")
         return decodeNullableString() as T?
     }
 
