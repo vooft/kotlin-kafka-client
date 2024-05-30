@@ -18,7 +18,7 @@ class KafkaListEncoder(
     private val encodingMode: ListEncodingMode,
     private val sizeEncoding: IntEncoding,
     override val serializersModule: SerializersModule = EmptySerializersModule(),
-) : KafkaValueEncoder(tempBuffer, serializersModule), AbstractKafkaCompositeEncoder2 {
+) : KafkaValueEncoder(tempBuffer, serializersModule), AbstractKafkaCompositeEncoder {
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
         if (encodingMode == SIZE_IN_ITEMS) {

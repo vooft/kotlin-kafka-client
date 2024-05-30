@@ -18,7 +18,7 @@ open class KafkaValueEncoder(
 ) : Encoder {
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
-        return KafkaObjectEncoder(sink, serializersModule, this)
+        return KafkaObjectEncoder(sink, serializersModule)
     }
 
     override fun encodeBoolean(value: Boolean) = sink.writeByte(if (value) 1 else 0)
@@ -27,12 +27,12 @@ open class KafkaValueEncoder(
     override fun encodeLong(value: Long) = sink.writeLong(value)
     override fun encodeShort(value: Short) = sink.writeShort(value)
 
-    override fun encodeString(value: String) = error("Strings should not be encoded directly")
+    override fun encodeString(value: String): Unit = error("Strings should not be encoded directly")
 
     override fun encodeInline(descriptor: SerialDescriptor): Encoder {
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
-            return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule, this)
+            return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule)
         }
 
         val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()

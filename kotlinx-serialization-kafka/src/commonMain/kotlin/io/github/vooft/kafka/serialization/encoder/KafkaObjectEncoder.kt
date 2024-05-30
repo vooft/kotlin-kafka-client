@@ -14,7 +14,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
@@ -22,8 +21,7 @@ import kotlinx.serialization.modules.SerializersModule
 class KafkaObjectEncoder(
     private val sink: Sink,
     override val serializersModule: SerializersModule = EmptySerializersModule(),
-    valueEncoder: KafkaValueEncoder = KafkaValueEncoder(sink, serializersModule)
-) : AbstractKafkaCompositeEncoder(valueEncoder), Encoder by valueEncoder {
+) : KafkaValueEncoder(sink, serializersModule), AbstractKafkaCompositeEncoder {
 
     override fun <T> encodeSerializableElement(descriptor: SerialDescriptor, index: Int, serializer: SerializationStrategy<T>, value: T) {
         val annotations = descriptor.getElementAnnotations(index)
