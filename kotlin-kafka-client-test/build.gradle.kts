@@ -11,7 +11,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.ktor.network)
             implementation(project(":kotlin-kafka-client-lowlevel"))
-            implementation(project(":kotlin-kafka-client-highlevel"))
+            implementation(project(":kotlin-kafka-client-core"))
         }
 
         jvmMain.dependencies {
