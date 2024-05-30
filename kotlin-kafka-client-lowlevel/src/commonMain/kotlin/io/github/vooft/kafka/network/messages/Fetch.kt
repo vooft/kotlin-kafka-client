@@ -3,8 +3,7 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
@@ -83,8 +82,8 @@ data class FetchResponseV4(
             val errorCode: ErrorCode,
             val highwaterMarkOffset: Long,
             val lastStableOffset: Long,
-            val abortedTransaction: Int32List<AbortedTransaction>,
-            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0?
+            val abortedTransactions: Int32List<AbortedTransaction>,
+            val batchContainer: Int32BytesSizePrefixed<KafkaRecordBatchContainerV0?>
         ) {
             @Serializable
             data class AbortedTransaction(
