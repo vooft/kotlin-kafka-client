@@ -1,27 +1,34 @@
 package io.github.vooft.kafka.serialization.decoder
 
+import io.github.vooft.kafka.serialization.common.decodeVarInt
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
 import kotlinx.io.Source
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
 internal class KafkaListDecoder(
-    private val size: Int,
-    private val source: Source,
+    source: Source,
+    sizeEncoding: IntEncoding,
     override val serializersModule: SerializersModule,
-    valueDecoder: KafkaValueDecoder = KafkaValueDecoder(source, serializersModule)
-) : AbstractKafkaCompositeDecoder(valueDecoder), Decoder by valueDecoder {
+) : KafkaValueDecoder(source, serializersModule), AbstractKafkaCompositeDecoder {
 
     private var currentListElementIndex = 0
+    private val size: Int = when (sizeEncoding) {
+        IntEncoding.INT16 -> decodeShort().toInt()
+        IntEncoding.INT32 -> decodeInt()
+        IntEncoding.VARINT -> decodeVarInt().toDecoded()
+    }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
-        return when (descriptor.kind) {
-            StructureKind.LIST -> this
-            else -> delegate.beginStructure(descriptor)
+        if (currentListElementIndex == 0) {
+            require(descriptor.kind == StructureKind.LIST) { "Only list deserialization is supported" }
+            return this
+        } else {
+            return super.beginStructure(descriptor)
         }
     }
 

@@ -1,13 +1,12 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.encodeVarInt
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import kotlinx.io.Sink
 import kotlinx.io.writeString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
@@ -15,8 +14,7 @@ class KafkaStringEncoder(
     private val sink: Sink,
     private val lengthEncoding: IntEncoding,
     override val serializersModule: SerializersModule = EmptySerializersModule(),
-    valueEncoder: KafkaValueEncoder = KafkaValueEncoder(sink, serializersModule)
-) : Encoder by valueEncoder {
+) : KafkaValueEncoder(sink, serializersModule) {
     override fun encodeString(value: String) {
         when (lengthEncoding) {
             IntEncoding.INT16 -> sink.writeShort(value.length.toShort())

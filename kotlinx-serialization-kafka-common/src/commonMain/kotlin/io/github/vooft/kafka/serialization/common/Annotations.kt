@@ -2,27 +2,23 @@
 
 package io.github.vooft.kafka.serialization.common
 
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialInfo
 
 @SerialInfo
-@Target(AnnotationTarget.PROPERTY)
-annotation class KafkaCrc32Prefixed
-
-@SerialInfo
-@Target(AnnotationTarget.PROPERTY)
-annotation class KafkaSizeInBytesPrefixed(val encoding: IntEncoding)
-
-@SerialInfo
-@Target(AnnotationTarget.PROPERTY)
-annotation class KafkaCollectionWithVarIntSize
+@Target(AnnotationTarget.CLASS)
+annotation class KafkaCollection(val sizeEncoding: IntEncoding)
 
 @SerialInfo
 @Target(AnnotationTarget.CLASS)
-annotation class KafkaString(val encoding: IntEncoding)
+annotation class KafkaBytesSizePrefixed(val sizeEncoding: IntEncoding)
 
-enum class IntEncoding {
-    INT16,
-    INT32,
-    VARINT
-}
+@SerialInfo
+@Target(AnnotationTarget.CLASS)
+annotation class KafkaCrc32cPrefixed
+
+@SerialInfo
+@Target(AnnotationTarget.CLASS)
+annotation class KafkaString(val lengthEncoding: IntEncoding)
+

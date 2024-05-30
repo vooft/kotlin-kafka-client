@@ -1,12 +1,11 @@
 package io.github.vooft.kafka.serialization.decoder
 
-import io.github.vooft.kafka.serialization.common.IntEncoding
 import io.github.vooft.kafka.serialization.common.decodeVarInt
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
@@ -14,8 +13,7 @@ class KafkaStringDecoder(
     private val source: Source,
     private val lengthEncoding: IntEncoding,
     override val serializersModule: SerializersModule = EmptySerializersModule(),
-    valueDecoder: KafkaValueDecoder = KafkaValueDecoder(source, serializersModule)
-) : Decoder by valueDecoder {
+) : KafkaValueDecoder(source, serializersModule) {
     override fun decodeString(): String {
         val string = decodeNullableString()
         return string ?: error("String can not be null")

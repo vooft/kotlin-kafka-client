@@ -2,9 +2,10 @@ package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.network.common.ErrorCode
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import kotlinx.serialization.Serializable
 
 sealed interface ProduceRequest : KafkaRequest {
@@ -26,18 +27,18 @@ sealed interface ProduceRequest : KafkaRequest {
 data class ProduceRequestV3(
     val transactionalId: NullableInt16String = NullableInt16String.NULL,
     val acks: Short = -1,
-    val timeoutMs: Int = 1000,
-    val topicData: List<TopicData>
+    val timeoutMs: Int,
+    val topic: Int32List<Topic>
 ) : ProduceRequest, VersionedV3 {
     @Serializable
-    data class TopicData(
+    data class Topic(
         val topic: KafkaTopic,
-        val partitionData: List<PartitionData>
+        val partition: Int32List<Partition>
     ) {
         @Serializable
-        data class PartitionData(
+        data class Partition(
             val partition: PartitionIndex,
-            @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0
+            val batchContainer: Int32BytesSizePrefixed<KafkaRecordBatchContainerV0>
         )
     }
 }
@@ -57,20 +58,20 @@ sealed interface ProduceResponse : KafkaResponse
  */
 @Serializable
 data class ProduceResponseV3(
-    val topicResponses: List<TopicResponse>,
+    val topics: Int32List<Topic>,
     val throttleTimeMs: Int
 ) : ProduceResponse, VersionedV3 {
     @Serializable
-    data class TopicResponse(
+    data class Topic(
         val topic: KafkaTopic,
-        val partitionResponses: List<PartitionResponse>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
-        data class PartitionResponse(
+        data class Partition(
             val index: PartitionIndex,
             val errorCode: ErrorCode,
             val baseOffset: Long,
-            val logAppendTime: Long
+            val logAppendTimeMs: Long
         )
     }
 }

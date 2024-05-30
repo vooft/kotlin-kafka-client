@@ -4,8 +4,10 @@ import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.network.common.ErrorCode
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import kotlinx.serialization.Serializable
 
 interface SyncGroupRequest : KafkaRequest {
@@ -26,12 +28,12 @@ data class SyncGroupRequestV1(
     val groupId: GroupId,
     val generationId: Int,
     val memberId: MemberId,
-    val assignments: List<Assignment>
+    val assignments: Int32List<Assignment>
 ) : SyncGroupRequest, VersionedV1 {
     @Serializable
     data class Assignment(
         val memberId: MemberId,
-        @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment
+        val assignment: Int32BytesSizePrefixed<MemberAssignment>
     )
 }
 
@@ -47,8 +49,7 @@ interface SyncGroupResponse : KafkaResponse
 data class SyncGroupResponseV1(
     val throttleTimeMs: Int,
     val errorCode: ErrorCode,
-    // TODO: when there is an error, assignment is not returned at all, even length
-    @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment?
+    val assignment: Int32BytesSizePrefixed<MemberAssignment?>
 ) : SyncGroupResponse, VersionedV1
 
 /**
@@ -65,12 +66,12 @@ data class SyncGroupResponseV1(
 @Serializable
 data class MemberAssignment(
     val version: Short = 0,
-    val partitionAssignments: List<PartitionAssignment>,
-    val userData: List<Byte> = listOf()
+    val partitionAssignments: Int32List<PartitionAssignment>,
+    val userData: Int32List<Byte> = int32ListOf()
 ) {
     @Serializable
     data class PartitionAssignment(
         val topic: KafkaTopic,
-        val partitions: List<PartitionIndex>
+        val partitions: Int32List<PartitionIndex>
     )
 }

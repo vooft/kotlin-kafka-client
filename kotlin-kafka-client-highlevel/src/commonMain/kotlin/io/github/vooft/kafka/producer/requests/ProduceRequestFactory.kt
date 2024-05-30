@@ -7,32 +7,46 @@ import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
 import io.github.vooft.kafka.network.messages.KafkaRecordV0
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
+import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.primitives.toInt32List
 import kotlinx.io.Source
 
 object ProduceRequestFactory {
     fun createProduceRequest(topic: KafkaTopic, partitionIndex: PartitionIndex, records: List<ProducedRecord>) = ProduceRequestV3(
-        topicData = listOf(
-            ProduceRequestV3.TopicData(
+        timeoutMs = 1000,
+        topic = int32ListOf(
+            ProduceRequestV3.Topic(
                 topic = topic,
-                partitionData = listOf(
-                    ProduceRequestV3.TopicData.PartitionData(
+                partition = int32ListOf(
+                    ProduceRequestV3.Topic.Partition(
                         partition = partitionIndex,
-                        batchContainer = KafkaRecordBatchContainerV0(
-                            batch = KafkaRecordBatchContainerV0.KafkaRecordBatch(
-                                body = KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
-                                    lastOffsetDelta = records.size - 1,
-                                    firstTimestamp = 0,
-                                    maxTimestamp = 0,
-                                    records = records.mapIndexed { index, it ->
-                                        KafkaRecordV0(
-                                            recordBody = KafkaRecordV0.KafkaRecordBody(
-                                                offsetDelta = index.toVarInt(),
-                                                recordKey = it.key.toVarIntByteArray(),
-                                                recordValue = it.value.toVarIntByteArray()
+                        batchContainer = Int32BytesSizePrefixed(
+                            KafkaRecordBatchContainerV0(
+                                batch = Int32BytesSizePrefixed(
+                                    KafkaRecordBatchContainerV0.KafkaRecordBatch(
+                                        body = Crc32cPrefixed(
+                                            KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
+                                                lastOffsetDelta = records.size - 1,
+                                                firstTimestamp = 0,
+                                                maxTimestamp = 0,
+                                                records = records.mapIndexed { index, it ->
+                                                    KafkaRecordV0(
+                                                        recordBody = VarIntBytesSizePrefixed(
+                                                            KafkaRecordV0.KafkaRecordBody(
+                                                                offsetDelta = index.toVarInt(),
+                                                                recordKey = it.key.toVarIntByteArray(),
+                                                                recordValue = it.value.toVarIntByteArray()
+                                                            )
+                                                        )
+                                                    )
+                                                }.toInt32List()
+
                                             )
                                         )
-                                    }
-
+                                    )
                                 )
                             )
                         )

@@ -7,51 +7,51 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 
 @OptIn(ExperimentalSerializationApi::class)
-abstract class AbstractKafkaCompositeEncoder(private val delegate: Encoder) : CompositeEncoder {
+interface AbstractKafkaCompositeEncoder : CompositeEncoder, Encoder {
 
-    open fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean = true
+    fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean = true
 
     override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
-        if (encodeElement(descriptor, index)) delegate.encodeBoolean(value)
+        if (encodeElement(descriptor, index)) encodeBoolean(value)
     }
 
     override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-        if (encodeElement(descriptor, index)) delegate.encodeByte(value)
+        if (encodeElement(descriptor, index)) encodeByte(value)
     }
 
     override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
-        if (encodeElement(descriptor, index)) delegate.encodeShort(value)
+        if (encodeElement(descriptor, index)) encodeShort(value)
     }
 
     override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-        if (encodeElement(descriptor, index)) delegate.encodeInt(value)
+        if (encodeElement(descriptor, index)) encodeInt(value)
     }
 
     override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-        if (encodeElement(descriptor, index)) delegate.encodeLong(value)
+        if (encodeElement(descriptor, index)) encodeLong(value)
     }
 
     override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) {
-        if (encodeElement(descriptor, index)) delegate.encodeFloat(value)
+        if (encodeElement(descriptor, index)) encodeFloat(value)
     }
 
     override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) {
-        if (encodeElement(descriptor, index)) delegate.encodeDouble(value)
+        if (encodeElement(descriptor, index)) encodeDouble(value)
     }
 
     override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) {
-        if (encodeElement(descriptor, index)) delegate.encodeChar(value)
+        if (encodeElement(descriptor, index)) encodeChar(value)
     }
 
     override fun encodeStringElement(descriptor: SerialDescriptor, index: Int, value: String) {
-        if (encodeElement(descriptor, index)) delegate.encodeString(value)
+        if (encodeElement(descriptor, index)) encodeString(value)
     }
 
     override fun encodeInlineElement(
         descriptor: SerialDescriptor,
         index: Int
     ): Encoder =
-        if (encodeElement(descriptor, index)) delegate.encodeInline(descriptor.getElementDescriptor(index)) else delegate
+        if (encodeElement(descriptor, index)) encodeInline(descriptor.getElementDescriptor(index)) else this
 
     override fun <T : Any?> encodeSerializableElement(
         descriptor: SerialDescriptor,
@@ -60,7 +60,7 @@ abstract class AbstractKafkaCompositeEncoder(private val delegate: Encoder) : Co
         value: T
     ) {
         if (encodeElement(descriptor, index))
-            delegate.encodeSerializableValue(serializer, value)
+            encodeSerializableValue(serializer, value)
     }
 
     override fun <T : Any> encodeNullableSerializableElement(
@@ -70,6 +70,6 @@ abstract class AbstractKafkaCompositeEncoder(private val delegate: Encoder) : Co
         value: T?
     ) {
         if (encodeElement(descriptor, index))
-            delegate.encodeNullableSerializableValue(serializer, value)
+            encodeNullableSerializableValue(serializer, value)
     }
 }

@@ -1,5 +1,8 @@
 package io.github.vooft.kafka.serialization.encoder
 
+import io.github.vooft.kafka.serialization.common.KafkaBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.KafkaCollection
+import io.github.vooft.kafka.serialization.common.KafkaCrc32cPrefixed
 import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -11,13 +14,13 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
-class KafkaValueEncoder(
+open class KafkaValueEncoder(
     private val sink: Sink,
     override val serializersModule: SerializersModule = EmptySerializersModule()
 ) : Encoder {
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
-        return KafkaObjectEncoder(sink, serializersModule, this)
+        return KafkaObjectEncoder(sink, serializersModule)
     }
 
     override fun encodeBoolean(value: Boolean) = sink.writeByte(if (value) 1 else 0)
@@ -26,12 +29,34 @@ class KafkaValueEncoder(
     override fun encodeLong(value: Long) = sink.writeLong(value)
     override fun encodeShort(value: Short) = sink.writeShort(value)
 
-    override fun encodeString(value: String) = error("Strings should not be encoded directly")
+    override fun encodeString(value: String): Unit = error("Strings should not be encoded directly")
 
     override fun encodeInline(descriptor: SerialDescriptor): Encoder {
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
-            return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule, this)
+            return KafkaStringEncoder(sink = sink, lengthEncoding = kafkaString.lengthEncoding, serializersModule = serializersModule)
+        }
+
+        val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()
+        if (kafkaCollection != null) {
+            return KafkaListEncoder(sink = sink, sizeEncoding = kafkaCollection.sizeEncoding, serializersModule = serializersModule)
+        }
+
+        val kafkaBytesSizePrefixed = descriptor.annotations.filterIsInstance<KafkaBytesSizePrefixed>().singleOrNull()
+        if (kafkaBytesSizePrefixed != null) {
+            return KafkaBytesSizePrefixedEncoder(
+                sink = sink,
+                sizeEncoding = kafkaBytesSizePrefixed.sizeEncoding,
+                serializersModule = serializersModule
+            )
+        }
+
+        val crc32cPrefixed = descriptor.annotations.filterIsInstance<KafkaCrc32cPrefixed>().singleOrNull()
+        if (crc32cPrefixed != null) {
+            return KafkaCrc32cPrefixedEncoder(
+                sink = sink,
+                serializersModule = serializersModule
+            )
         }
 
         return this
@@ -56,12 +81,6 @@ class KafkaValueEncoder(
     @ExperimentalSerializationApi
     override fun encodeNull() = error("Nulls are not supported")
 
-    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        // add crc32 prefixed composite encoder?
-        // add size prefixed composite encoder?
-        super.encodeSerializableValue(serializer, value)
-    }
-
     @ExperimentalSerializationApi
     override fun <T : Any> encodeNullableSerializableValue(serializer: SerializationStrategy<T>, value: T?) {
         if (value == null) {
@@ -70,14 +89,5 @@ class KafkaValueEncoder(
         } else {
             encodeSerializableValue(serializer, value)
         }
-
-//        if (value == null) {
-//            when (elementDescriptor.serialName) {
-//                Constants.NULLABLE_STRING, Constants.REGULAR_STRING -> sink.writeShort(-1)
-//                else -> error("Unsupported nullable type: ${elementDescriptor.serialName}")
-//            }
-//        } else {
-//            encodeSerializableValue(serializer, value)
-//        }
     }
 }

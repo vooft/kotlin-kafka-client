@@ -18,6 +18,7 @@ interface ByteValue {
     val value: Byte
 }
 
+// TODO: refactor
 abstract class ShortValueSerializer<T: ShortValue>(
     private val factory: (Short) -> T
 ) : KSerializer<T> {

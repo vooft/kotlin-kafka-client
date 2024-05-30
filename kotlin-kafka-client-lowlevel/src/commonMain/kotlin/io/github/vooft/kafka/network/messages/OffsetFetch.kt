@@ -3,8 +3,10 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.network.common.ErrorCode
+import io.github.vooft.kafka.serialization.common.primitives.Int16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import kotlinx.serialization.Serializable
 
 interface OffsetFetchRequest : KafkaRequest {
@@ -21,12 +23,12 @@ interface OffsetFetchRequest : KafkaRequest {
 @Serializable
 data class OffsetFetchRequestV1(
     val groupId: GroupId,
-    val topics: List<Topic>
+    val topics: Int32List<Topic>
 ) : OffsetFetchRequest, VersionedV1 {
     @Serializable
     data class Topic(
         val topic: Int16String,
-        val partitions: List<Partition>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
         data class Partition(
@@ -49,12 +51,12 @@ interface OffsetFetchResponse : KafkaResponse
  */
 @Serializable
 data class OffsetFetchResponseV1(
-    val topics: List<Topic>
+    val topics: Int32List<Topic>
 ) : OffsetFetchResponse, VersionedV1 {
     @Serializable
     data class Topic(
         val topic: KafkaTopic,
-        val partitions: List<Partition>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
         data class Partition(

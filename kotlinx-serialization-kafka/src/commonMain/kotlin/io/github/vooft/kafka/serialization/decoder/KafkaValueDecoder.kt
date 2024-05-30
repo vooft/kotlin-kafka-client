@@ -1,5 +1,8 @@
 package io.github.vooft.kafka.serialization.decoder
 
+import io.github.vooft.kafka.serialization.common.KafkaBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.KafkaCollection
+import io.github.vooft.kafka.serialization.common.KafkaCrc32cPrefixed
 import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.io.Source
 import kotlinx.io.readString
@@ -12,14 +15,14 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
-class KafkaValueDecoder(
+open class KafkaValueDecoder(
     private val source: Source,
     override val serializersModule: SerializersModule
 ) : Decoder {
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
         StructureKind.OBJECT, StructureKind.CLASS -> KafkaObjectDecoder(source, serializersModule)
-//        StructureKind.LIST -> KafkaListDecoder(source.readInt(), source, serializersModule)
-        else -> error("Not supported ${descriptor.kind}")
+        StructureKind.LIST -> error("Lists should not be encoded directly")
+        else -> error("Not supported ${descriptor.kind} for ${descriptor.serialName}")
     }
 
     override fun decodeBoolean(): Boolean {
@@ -40,7 +43,30 @@ class KafkaValueDecoder(
     override fun decodeInline(descriptor: SerialDescriptor): Decoder {
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
-            return KafkaStringDecoder(source, kafkaString.encoding, serializersModule, this)
+            return KafkaStringDecoder(source = source, lengthEncoding = kafkaString.lengthEncoding, serializersModule = serializersModule)
+        }
+
+
+        val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()
+        if (kafkaCollection != null) {
+            return KafkaListDecoder(source = source, sizeEncoding = kafkaCollection.sizeEncoding, serializersModule = serializersModule)
+        }
+
+        val kafkaBytesSizePrefixed = descriptor.annotations.filterIsInstance<KafkaBytesSizePrefixed>().singleOrNull()
+        if (kafkaBytesSizePrefixed != null) {
+            return KafkaBytesSizePrefixedDecoder(
+                source = source,
+                sizeEncoding = kafkaBytesSizePrefixed.sizeEncoding,
+                serializersModule = serializersModule
+            )
+        }
+
+        val crc32cPrefixed = descriptor.annotations.filterIsInstance<KafkaCrc32cPrefixed>().singleOrNull()
+        if (crc32cPrefixed != null) {
+            return KafkaCrc32PrefixedDecoder(
+                source = source,
+                serializersModule = serializersModule
+            )
         }
 
         return this

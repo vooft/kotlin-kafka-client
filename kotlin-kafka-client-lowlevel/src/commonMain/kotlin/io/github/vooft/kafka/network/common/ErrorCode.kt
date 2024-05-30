@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.network.messages
+package io.github.vooft.kafka.network.common
 
 import io.github.vooft.kafka.serialization.common.ShortValue
 import io.github.vooft.kafka.serialization.common.ShortValueSerializer

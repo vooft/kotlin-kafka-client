@@ -28,9 +28,9 @@ class SimpleKafkaTopicProducer(
         val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(request)
 
         return RecordMetadata(
-            topic = response.topicResponses.single().topic,
-            partition = response.topicResponses.single().partitionResponses.single().index,
-            errorCode = response.topicResponses.single().partitionResponses.single().errorCode
+            topic = response.topics.single().topic,
+            partition = response.topics.single().partitions.single().index,
+            errorCode = response.topics.single().partitions.single().errorCode
         )
     }
 

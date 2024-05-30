@@ -1,20 +1,20 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.network.common.toVarLong
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.IntEncoding.VARINT
-import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
-import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.VarInt
-import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
-import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
-import io.github.vooft.kafka.serialization.common.customtypes.VarLong
+import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
+import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.VarIntList
+import io.github.vooft.kafka.serialization.common.primitives.VarIntString
+import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class KafkaRecordV0(
-    @KafkaSizeInBytesPrefixed(encoding = VARINT) val recordBody: KafkaRecordBody
+    val recordBody: VarIntBytesSizePrefixed<KafkaRecordBody>
 ) {
     @Serializable
     data class KafkaRecordBody(
@@ -23,7 +23,7 @@ data class KafkaRecordV0(
         val offsetDelta: VarInt, // index of the current record, starting from 0
         val recordKey: VarIntByteArray,
         val recordValue: VarIntByteArray,
-        @KafkaCollectionWithVarIntSize val headers: List<KafkaRecordHeader> = listOf()
+        val headers: VarIntList<KafkaRecordHeader> = VarIntList(emptyList())
     ) {
         @Serializable
         data class KafkaRecordHeader(val headerKey: VarIntString, val headerValue: VarIntByteArray)
@@ -33,13 +33,13 @@ data class KafkaRecordV0(
 @Serializable
 data class KafkaRecordBatchContainerV0(
     val firstOffset: Long = 0,
-    @KafkaSizeInBytesPrefixed(encoding = INT32) val batch: KafkaRecordBatch
+    val batch: Int32BytesSizePrefixed<KafkaRecordBatch>
 ) {
     @Serializable
     data class KafkaRecordBatch(
         val partitionLeaderEpoch: Int = 0,
         val magic: Byte = 2,
-        @KafkaCrc32Prefixed val body: KafkaRecordBatchBody
+        val body: Crc32cPrefixed<KafkaRecordBatchBody>
     ) {
         @Serializable
         data class KafkaRecordBatchBody(
@@ -53,7 +53,7 @@ data class KafkaRecordBatchContainerV0(
             val producerId: Long = -1, // for transactions
             val producerEpoch: Short = 0, // ignored
             val firstSequence: Int = 0, // for transactions
-            val records: List<KafkaRecordV0> // written with size
+            val records: Int32List<KafkaRecordV0> // written with size
         )
     }
 
