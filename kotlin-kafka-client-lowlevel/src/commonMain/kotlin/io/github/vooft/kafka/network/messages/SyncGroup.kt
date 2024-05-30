@@ -5,8 +5,7 @@ import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import kotlinx.serialization.Serializable
@@ -34,7 +33,7 @@ data class SyncGroupRequestV1(
     @Serializable
     data class Assignment(
         val memberId: MemberId,
-        @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment
+        val assignment: Int32BytesSizePrefixed<MemberAssignment>
     )
 }
 
@@ -50,8 +49,7 @@ interface SyncGroupResponse : KafkaResponse
 data class SyncGroupResponseV1(
     val throttleTimeMs: Int,
     val errorCode: ErrorCode,
-    // TODO: when there is an error, assignment is not returned at all, even length
-    @KafkaSizeInBytesPrefixed(encoding = INT32) val assignment: MemberAssignment?
+    val assignment: Int32BytesSizePrefixed<MemberAssignment?>
 ) : SyncGroupResponse, VersionedV1
 
 /**

@@ -18,12 +18,18 @@ class KafkaBytesSizePrefixedDecoder(
     override fun decodeNotNullMark(): Boolean = length != 0
 }
 
-private fun Source.readPrefix(sizeEncoding: IntEncoding): Int = when (sizeEncoding) {
-    IntEncoding.INT16 -> readShort().toInt()
-    IntEncoding.INT32 -> readInt()
-    IntEncoding.VARINT -> {
-        val objectDecoder = KafkaObjectDecoder(this)
-        objectDecoder.decodeVarInt().toDecoded()
+private fun Source.readPrefix(sizeEncoding: IntEncoding): Int {
+    if (exhausted()) {
+        return 0
+    }
+
+    return when (sizeEncoding) {
+        IntEncoding.INT16 -> readShort().toInt()
+        IntEncoding.INT32 -> readInt()
+        IntEncoding.VARINT -> {
+            val objectDecoder = KafkaObjectDecoder(this)
+            objectDecoder.decodeVarInt().toDecoded()
+        }
     }
 }
 
