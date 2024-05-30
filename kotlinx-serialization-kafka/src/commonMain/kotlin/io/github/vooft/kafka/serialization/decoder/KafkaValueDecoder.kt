@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.serialization.decoder
 
 import io.github.vooft.kafka.serialization.common.KafkaString
+import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
@@ -12,7 +13,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
-class KafkaValueDecoder(
+open class KafkaValueDecoder(
     private val source: Source,
     override val serializersModule: SerializersModule
 ) : Decoder {
@@ -40,7 +41,13 @@ class KafkaValueDecoder(
     override fun decodeInline(descriptor: SerialDescriptor): Decoder {
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
-            return KafkaStringDecoder(source, kafkaString.encoding, serializersModule, this)
+            return KafkaStringDecoder(source, kafkaString.encoding, serializersModule)
+        }
+
+
+        val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()
+        if (kafkaCollection != null) {
+            return KafkaListDecoder(source = source, sizeEncoding = kafkaCollection.sizeEncoding, serializersModule = serializersModule)
         }
 
         return this

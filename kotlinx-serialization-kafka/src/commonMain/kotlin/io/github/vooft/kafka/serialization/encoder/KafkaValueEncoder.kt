@@ -37,12 +37,7 @@ open class KafkaValueEncoder(
 
         val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()
         if (kafkaCollection != null) {
-            return KafkaListEncoder(
-                targetSink = sink,
-                encodingMode = ListEncodingMode.SIZE_IN_ITEMS,
-                sizeEncoding = kafkaCollection.sizeEncoding,
-                serializersModule = serializersModule
-            )
+            return KafkaListEncoder(sink = sink, sizeEncoding = kafkaCollection.sizeEncoding, serializersModule = serializersModule)
         }
 
         return this

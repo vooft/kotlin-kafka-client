@@ -7,29 +7,29 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 
 @OptIn(ExperimentalSerializationApi::class)
-abstract class AbstractKafkaCompositeDecoder(protected val delegate: Decoder) : CompositeDecoder {
+interface AbstractKafkaCompositeDecoder : CompositeDecoder, Decoder {
 
-    override fun decodeBooleanElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeBoolean()
+    override fun decodeBooleanElement(descriptor: SerialDescriptor, index: Int) = decodeBoolean()
 
-    override fun decodeByteElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeByte()
+    override fun decodeByteElement(descriptor: SerialDescriptor, index: Int) = decodeByte()
 
-    override fun decodeCharElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeChar()
+    override fun decodeCharElement(descriptor: SerialDescriptor, index: Int) = decodeChar()
 
-    override fun decodeDoubleElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeDouble()
+    override fun decodeDoubleElement(descriptor: SerialDescriptor, index: Int) = decodeDouble()
 
-    override fun decodeElementIndex(descriptor: SerialDescriptor) = delegate.decodeInt()
+    override fun decodeElementIndex(descriptor: SerialDescriptor) = decodeInt()
 
-    override fun decodeFloatElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeFloat()
+    override fun decodeFloatElement(descriptor: SerialDescriptor, index: Int) = decodeFloat()
 
-    override fun decodeInlineElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeInline(descriptor)
+    override fun decodeInlineElement(descriptor: SerialDescriptor, index: Int) = decodeInline(descriptor)
 
-    override fun decodeIntElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeInt()
+    override fun decodeIntElement(descriptor: SerialDescriptor, index: Int) = decodeInt()
 
-    override fun decodeLongElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeLong()
+    override fun decodeLongElement(descriptor: SerialDescriptor, index: Int) = decodeLong()
 
-    override fun decodeShortElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeShort()
+    override fun decodeShortElement(descriptor: SerialDescriptor, index: Int) = decodeShort()
 
-    override fun decodeStringElement(descriptor: SerialDescriptor, index: Int) = delegate.decodeString()
+    override fun decodeStringElement(descriptor: SerialDescriptor, index: Int) = decodeString()
 
     override fun endStructure(descriptor: SerialDescriptor) = Unit
 
@@ -38,13 +38,13 @@ abstract class AbstractKafkaCompositeDecoder(protected val delegate: Decoder) : 
         index: Int,
         deserializer: DeserializationStrategy<T?>,
         previousValue: T?
-    ): T? = delegate.decodeNullableSerializableValue(deserializer)
+    ): T? = decodeNullableSerializableValue(deserializer)
 
     override fun <T> decodeSerializableElement(
         descriptor: SerialDescriptor,
         index: Int,
         deserializer: DeserializationStrategy<T>,
         previousValue: T?
-    ) = delegate.decodeSerializableValue(deserializer)
+    ) = decodeSerializableValue(deserializer)
 }
 

@@ -2,19 +2,15 @@ package io.github.vooft.kafka.serialization.decoder
 
 import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.KafkaCustomTypeSerializer
 import io.github.vooft.kafka.serialization.common.decodeVarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Source
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
@@ -22,8 +18,7 @@ import kotlinx.serialization.modules.SerializersModule
 internal class KafkaObjectDecoder(
     private val source: Source,
     override val serializersModule: SerializersModule = EmptySerializersModule(),
-    valueDecoder: KafkaValueDecoder = KafkaValueDecoder(source, serializersModule)
-) : AbstractKafkaCompositeDecoder(valueDecoder), Decoder by valueDecoder {
+) : KafkaValueDecoder(source, serializersModule), AbstractKafkaCompositeDecoder {
 
     private var elementIndex = 0
 
@@ -102,20 +97,20 @@ internal class KafkaObjectDecoder(
                 decodeSerializableValue(deserializer)
             }
 
-            elementDescriptor.kind == StructureKind.LIST -> {
-                if (deserializer !is KafkaCustomTypeSerializer) {
-                    // if this is just an annotated collection, then use special decoder
-                    val size = when {
-                        annotations.any { it is KafkaCollectionWithVarIntSize } -> decodeVarInt().toDecoded()
-                        else -> decodeInt()
-                    }
-
-                    deserializer.deserialize(KafkaListDecoder(size, source, serializersModule))
-                } else {
-                    // if it is a custom type, then use the defined serializer
-                    decodeSerializableValue(deserializer)
-                }
-            }
+//            elementDescriptor.kind == StructureKind.LIST -> {
+//                if (deserializer !is KafkaCustomTypeSerializer) {
+//                    // if this is just an annotated collection, then use special decoder
+//                    val size = when {
+//                        annotations.any { it is KafkaCollectionWithVarIntSize } -> decodeVarInt().toDecoded()
+//                        else -> decodeInt()
+//                    }
+//
+//                    deserializer.deserialize(KafkaListDecoder(size, source, serializersModule))
+//                } else {
+//                    // if it is a custom type, then use the defined serializer
+//                    decodeSerializableValue(deserializer)
+//                }
+//            }
 
             else -> decodeSerializableValue(deserializer)
         }
