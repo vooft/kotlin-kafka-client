@@ -12,7 +12,10 @@ import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -46,25 +49,29 @@ fun main() = runBlocking {
         repeat(COUNT) {
             val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(
                 ProduceRequestV3(
-                    topicData = listOf(
+                    topicData = int32ListOf(
                         ProduceRequestV3.TopicData(
                             topic = KafkaTopic(topic),
-                            partitionData = listOf(
+                            partitionData = int32ListOf(
                                 ProduceRequestV3.TopicData.PartitionData(
                                     partition = PartitionIndex(0),
                                     batchContainer = KafkaRecordBatchContainerV0(
-                                        batch = KafkaRecordBatchContainerV0.KafkaRecordBatch(
-                                            body = KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
-                                                lastOffsetDelta = 0,
-                                                firstTimestamp = System.currentTimeMillis(),
-                                                maxTimestamp = System.currentTimeMillis(),
-                                                records = listOf(
-                                                    KafkaRecordV0(
-                                                        recordBody = VarIntBytesSizePrefixed(
-                                                            KafkaRecordV0.KafkaRecordBody(
-                                                                offsetDelta = 0.toVarInt(),
-                                                                recordKey = "key $it".toVarIntByteArray(),
-                                                                recordValue = "value $it".toVarIntByteArray()
+                                        batch = Int32BytesSizePrefixed(
+                                            KafkaRecordBatchContainerV0.KafkaRecordBatch(
+                                                body = Crc32cPrefixed(
+                                                    KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
+                                                        lastOffsetDelta = 0,
+                                                        firstTimestamp = System.currentTimeMillis(),
+                                                        maxTimestamp = System.currentTimeMillis(),
+                                                        records = int32ListOf(
+                                                            KafkaRecordV0(
+                                                                recordBody = VarIntBytesSizePrefixed(
+                                                                    KafkaRecordV0.KafkaRecordBody(
+                                                                        offsetDelta = 0.toVarInt(),
+                                                                        recordKey = "key $it".toVarIntByteArray(),
+                                                                        recordValue = "value $it".toVarIntByteArray()
+                                                                    )
+                                                                )
                                                             )
                                                         )
                                                     )

@@ -1,8 +1,6 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.encodeVarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
@@ -25,14 +23,6 @@ class KafkaObjectEncoder(
         val elementDescriptor = descriptor.getElementDescriptor(index)
         when {
             // TODO: move to a separate class?
-            annotations.any { it is KafkaCrc32Prefixed } -> {
-                val buffer = Buffer()
-                val nestedEncoder = KafkaObjectEncoder(buffer, serializersModule)
-                nestedEncoder.encodeSerializableValue(serializer, value)
-
-                sink.writeInt(CRC32.crc32c(buffer.peek()))
-                sink.write(buffer, buffer.size)
-            }
             annotations.any { it  is KafkaSizeInBytesPrefixed } -> {
                 val buffer = Buffer()
                 val nestedEncoder = KafkaObjectEncoder(buffer, serializersModule)

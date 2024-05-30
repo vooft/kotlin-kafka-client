@@ -1,11 +1,10 @@
 package io.github.vooft.kafka.serialization.common.primitives
 
 import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
-@KafkaString(encoding = IntEncoding.INT16)
+@KafkaString(lengthEncoding = IntEncoding.INT16)
 @Serializable
 @JvmInline
 value class Int16String(val value: String) {
@@ -14,7 +13,7 @@ value class Int16String(val value: String) {
     }
 }
 
-@KafkaString(encoding = IntEncoding.INT16)
+@KafkaString(lengthEncoding = IntEncoding.INT16)
 @Serializable
 @JvmInline
 value class NullableInt16String(val value: String?) {
@@ -29,7 +28,7 @@ value class NullableInt16String(val value: String?) {
     }
 }
 
-@KafkaString(encoding = IntEncoding.VARINT)
+@KafkaString(lengthEncoding = IntEncoding.VARINT)
 @Serializable
 @JvmInline
 value class VarIntString(val value: String?)

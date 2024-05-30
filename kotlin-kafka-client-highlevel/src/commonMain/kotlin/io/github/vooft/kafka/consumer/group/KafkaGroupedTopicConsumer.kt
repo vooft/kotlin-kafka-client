@@ -26,6 +26,9 @@ import io.github.vooft.kafka.network.messages.MemberAssignment
 import io.github.vooft.kafka.network.messages.SyncGroupRequestV1
 import io.github.vooft.kafka.network.messages.SyncGroupResponseV1
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.primitives.toInt32List
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -118,12 +121,12 @@ class KafkaGroupedTopicConsumer(
                 rebalanceTimeoutMs = 60000,
                 memberId = memberId,
                 protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
-                groupProtocols = listOf(
+                groupProtocols = int32ListOf(
                     JoinGroupRequestV1.GroupProtocol(
                         protocol = "mybla".toInt16String(), // TODO: change to proper assigner
-                        metadata = JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = listOf(topic)
-                        )
+                        metadata = Int32BytesSizePrefixed( JoinGroupRequestV1.GroupProtocol.Metadata(
+                            topics = int32ListOf(topic)
+                        ))
                     )
                 )
             )
@@ -159,18 +162,18 @@ class KafkaGroupedTopicConsumer(
                 SyncGroupRequestV1.Assignment(
                     memberId = memberId,
                     assignment = MemberAssignment(
-                        partitionAssignments = listOf(
+                        partitionAssignments = int32ListOf(
                             MemberAssignment.PartitionAssignment(
                                 topic = topic,
-                                partitions = partitions
+                                partitions = partitions.toInt32List()
                             )
                         ),
                     )
                 )
-            }
+            }.toInt32List()
         ))
 
-        return syncResponse.assignment?.partitionAssignments?.single()?.partitions ?: listOf()
+        return syncResponse.assignment?.partitionAssignments?.single()?.partitions?.value ?: listOf()
 
     }
 

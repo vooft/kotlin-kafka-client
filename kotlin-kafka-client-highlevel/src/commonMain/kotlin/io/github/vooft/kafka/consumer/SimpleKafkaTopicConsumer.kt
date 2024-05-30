@@ -35,7 +35,7 @@ class SimpleKafkaTopicConsumer(
             response.topics.flatMap { topic ->
                 topic.partitions.flatMap { partition ->
                     partition.batchContainer?.let { batchContainer ->
-                        batchContainer.batch.body.records.map { record ->
+                        batchContainer.batch.value.body.value.records.map { record ->
                             KafkaRecord(
                                 partition = partition.partition,
                                 offset = batchContainer.firstOffset + record.recordBody.value.offsetDelta.toDecoded(),

@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.KafkaString
 import io.github.vooft.kafka.serialization.common.primitives.KafkaBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
 import io.github.vooft.kafka.serialization.common.primitives.KafkaCrc32cPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.KafkaString
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
@@ -34,7 +34,7 @@ open class KafkaValueEncoder(
     override fun encodeInline(descriptor: SerialDescriptor): Encoder {
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
-            return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule)
+            return KafkaStringEncoder(sink = sink, lengthEncoding = kafkaString.lengthEncoding, serializersModule = serializersModule)
         }
 
         val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()

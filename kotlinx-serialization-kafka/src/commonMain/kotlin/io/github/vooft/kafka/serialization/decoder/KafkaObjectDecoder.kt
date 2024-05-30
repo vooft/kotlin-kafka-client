@@ -1,8 +1,6 @@
 package io.github.vooft.kafka.serialization.decoder
 
-import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.decodeVarInt
 import kotlinx.io.Buffer
@@ -87,14 +85,6 @@ internal class KafkaObjectDecoder(
 
                 val nestedDecoder = KafkaObjectDecoder(buffer, serializersModule)
                 nestedDecoder.decodeSerializableValue(deserializer)
-            }
-
-            annotations.any { it is KafkaCrc32Prefixed } -> {
-                val crc32 = decodeInt()
-                val calculated = CRC32.crc32c(source.peek())
-
-                require(crc32 == calculated) { "CRC32 mismatch: expected $crc32, but calculated $calculated" }
-                decodeSerializableValue(deserializer)
             }
 
 //            elementDescriptor.kind == StructureKind.LIST -> {

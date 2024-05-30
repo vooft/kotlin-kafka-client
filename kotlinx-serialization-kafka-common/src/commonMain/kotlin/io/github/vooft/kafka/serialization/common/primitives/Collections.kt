@@ -22,6 +22,7 @@ value class Int32List<T>(val value: List<T>): Iterable<T> by value {
     }
 }
 
+fun <T> List<T>.toInt32List() = Int32List(this)
 fun <T> int32ListOf() = Int32List<T>(emptyList())
 fun <T> int32ListOf(vararg values: T): Int32List<T> = Int32List(values.toList())
 
