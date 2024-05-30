@@ -21,7 +21,7 @@ open class KafkaValueDecoder(
 ) : Decoder {
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
         StructureKind.OBJECT, StructureKind.CLASS -> KafkaObjectDecoder(source, serializersModule)
-//        StructureKind.LIST -> KafkaListDecoder(source.readInt(), source, serializersModule)
+        StructureKind.LIST -> error("Lists should not be encoded directly")
         else -> error("Not supported ${descriptor.kind} for ${descriptor.serialName}")
     }
 

@@ -81,12 +81,6 @@ open class KafkaValueEncoder(
     @ExperimentalSerializationApi
     override fun encodeNull() = error("Nulls are not supported")
 
-    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        // add crc32 prefixed composite encoder?
-        // add size prefixed composite encoder?
-        super.encodeSerializableValue(serializer, value)
-    }
-
     @ExperimentalSerializationApi
     override fun <T : Any> encodeNullableSerializableValue(serializer: SerializationStrategy<T>, value: T?) {
         if (value == null) {
@@ -95,14 +89,5 @@ open class KafkaValueEncoder(
         } else {
             encodeSerializableValue(serializer, value)
         }
-
-//        if (value == null) {
-//            when (elementDescriptor.serialName) {
-//                Constants.NULLABLE_STRING, Constants.REGULAR_STRING -> sink.writeShort(-1)
-//                else -> error("Unsupported nullable type: ${elementDescriptor.serialName}")
-//            }
-//        } else {
-//            encodeSerializableValue(serializer, value)
-//        }
     }
 }
