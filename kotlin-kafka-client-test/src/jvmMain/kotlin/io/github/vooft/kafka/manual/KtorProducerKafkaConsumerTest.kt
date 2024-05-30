@@ -49,27 +49,30 @@ fun main() = runBlocking {
         repeat(COUNT) {
             val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(
                 ProduceRequestV3(
-                    topicData = int32ListOf(
-                        ProduceRequestV3.TopicData(
+                    timeoutMs = 1000,
+                    topic = int32ListOf(
+                        ProduceRequestV3.Topic(
                             topic = KafkaTopic(topic),
-                            partitionData = int32ListOf(
-                                ProduceRequestV3.TopicData.PartitionData(
+                            partition = int32ListOf(
+                                ProduceRequestV3.Topic.Partition(
                                     partition = PartitionIndex(0),
-                                    batchContainer = KafkaRecordBatchContainerV0(
-                                        batch = Int32BytesSizePrefixed(
-                                            KafkaRecordBatchContainerV0.KafkaRecordBatch(
-                                                body = Crc32cPrefixed(
-                                                    KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
-                                                        lastOffsetDelta = 0,
-                                                        firstTimestamp = System.currentTimeMillis(),
-                                                        maxTimestamp = System.currentTimeMillis(),
-                                                        records = int32ListOf(
-                                                            KafkaRecordV0(
-                                                                recordBody = VarIntBytesSizePrefixed(
-                                                                    KafkaRecordV0.KafkaRecordBody(
-                                                                        offsetDelta = 0.toVarInt(),
-                                                                        recordKey = "key $it".toVarIntByteArray(),
-                                                                        recordValue = "value $it".toVarIntByteArray()
+                                    batchContainer = Int32BytesSizePrefixed(
+                                        KafkaRecordBatchContainerV0(
+                                            batch = Int32BytesSizePrefixed(
+                                                KafkaRecordBatchContainerV0.KafkaRecordBatch(
+                                                    body = Crc32cPrefixed(
+                                                        KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
+                                                            lastOffsetDelta = 0,
+                                                            firstTimestamp = System.currentTimeMillis(),
+                                                            maxTimestamp = System.currentTimeMillis(),
+                                                            records = int32ListOf(
+                                                                KafkaRecordV0(
+                                                                    recordBody = VarIntBytesSizePrefixed(
+                                                                        KafkaRecordV0.KafkaRecordBody(
+                                                                            offsetDelta = 0.toVarInt(),
+                                                                            recordKey = "key $it".toVarIntByteArray(),
+                                                                            recordValue = "value $it".toVarIntByteArray()
+                                                                        )
                                                                     )
                                                                 )
                                                             )
@@ -86,7 +89,7 @@ fun main() = runBlocking {
                 )
             )
 
-            println("Produced $it: ${response.topicResponses.single().partitionResponses.single().errorCode}")
+            println("Produced $it: ${response.topics.single().partitions.single().errorCode}")
         }
 
         val properties = Properties()

@@ -34,7 +34,7 @@ class SimpleKafkaTopicConsumer(
         val records = responses.flatMap { response ->
             response.topics.flatMap { topic ->
                 topic.partitions.flatMap { partition ->
-                    partition.batchContainer?.let { batchContainer ->
+                    partition.batchContainer.value?.let { batchContainer ->
                         batchContainer.batch.value.body.value.records.map { record ->
                             KafkaRecord(
                                 partition = partition.partition,
