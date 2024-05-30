@@ -1,19 +1,22 @@
 package io.github.vooft.kafka.serialization.encoder
 
+import io.github.vooft.kafka.serialization.CollectionsClass
 import io.github.vooft.kafka.serialization.Int16StringClass
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.NumbersClass
 import io.github.vooft.kafka.serialization.VarNumberClass
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test
 
-class SimpleEncoderTest {
+class PrimitiveEncoderTest {
     @Test
     fun should_encode_simple_numbers() {
         val value = NumbersClass(
@@ -109,7 +112,31 @@ class SimpleEncoderTest {
         )
     }
 
+    @Test
+    fun should_encode_collections() {
+        val value = CollectionsClass(
+            int32Collection = Int32Collection(listOf(Int16String("test1"), Int16String("test2"))),
+            varIntCollection = VarIntCollection(listOf(Int16String("test3"), Int16String("test4")))
+        )
 
+        val encoded = KafkaSerde.encode(value)
+        encoded.readByteArray() shouldBe byteArrayOf(
+            0x0, 0x0, 0x0, 0x2, // int32 size 2
+
+            0x0, 0x5, // test1 length
+            0x74, 0x65, 0x73, 0x74, 0x31, // test1
+
+            0x0, 0x5, // test2 length
+            0x74, 0x65, 0x73, 0x74, 0x32, // test2
+
+            0x4, // varint size 2
+
+            0x0, 0x5, // test3 length
+            0x74, 0x65, 0x73, 0x74, 0x33, // test3
+
+            0x0, 0x5, // test4 length
+            0x74, 0x65, 0x73, 0x74, 0x34 // test4
+        )
+    }
 }
 
-private fun ByteArray.toHexString() = joinToString(", ", "[", "]") { "0x" + it.toUByte().toString(16).padStart(2, '0').uppercase() }

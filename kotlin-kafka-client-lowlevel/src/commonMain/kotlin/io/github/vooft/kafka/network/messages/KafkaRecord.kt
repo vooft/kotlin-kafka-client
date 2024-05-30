@@ -3,12 +3,12 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.network.common.toVarLong
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.IntEncoding.VARINT
-import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
 
@@ -23,7 +23,7 @@ data class KafkaRecordV0(
         val offsetDelta: VarInt, // index of the current record, starting from 0
         val recordKey: VarIntByteArray,
         val recordValue: VarIntByteArray,
-        @KafkaCollectionWithVarIntSize val headers: List<KafkaRecordHeader> = listOf()
+        val headers: VarIntCollection<KafkaRecordHeader> = VarIntCollection(emptyList())
     ) {
         @Serializable
         data class KafkaRecordHeader(val headerKey: VarIntString, val headerValue: VarIntByteArray)

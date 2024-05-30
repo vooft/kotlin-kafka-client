@@ -2,10 +2,8 @@ package io.github.vooft.kafka.serialization.encoder
 
 import io.github.vooft.kafka.serialization.common.CRC32
 import io.github.vooft.kafka.serialization.common.IntEncoding
-import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.encodeVarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import kotlinx.io.Buffer
@@ -13,7 +11,6 @@ import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
@@ -52,24 +49,24 @@ class KafkaObjectEncoder(
 
                 sink.write(buffer, buffer.size)
             }
-            elementDescriptor.kind == StructureKind.LIST -> {
-                val size = when (value) {
-                    is Collection<*> -> value.size
-                    is ByteArray -> value.size
-                    is VarIntByteArray -> null
-                    null -> -1
-                    else -> error("Unsupported collection type: ${value!!::class}")
-                }
-
-                if (size != null) {
-                    when {
-                        annotations.any { it is KafkaCollectionWithVarIntSize } -> encodeVarInt(VarInt.fromDecoded(size))
-                        else -> encodeInt(size)
-                    }
-                }
-
-                encodeSerializableValue(serializer, value)
-            }
+//            elementDescriptor.kind == StructureKind.LIST -> {
+//                val size = when (value) {
+//                    is Collection<*> -> value.size
+//                    is ByteArray -> value.size
+//                    is VarIntByteArray -> null
+//                    null -> -1
+//                    else -> error("Unsupported collection type: ${value!!::class}")
+//                }
+//
+//                if (size != null) {
+//                    when {
+//                        annotations.any { it is KafkaCollectionWithVarIntSize } -> encodeVarInt(VarInt.fromDecoded(size))
+//                        else -> encodeInt(size)
+//                    }
+//                }
+//
+//                encodeSerializableValue(serializer, value)
+//            }
             else -> encodeSerializableValue(serializer, value)
         }
     }

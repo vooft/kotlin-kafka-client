@@ -2,9 +2,13 @@ package io.github.vooft.kafka.serialization
 
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
+
+private fun ByteArray.toHexString() = joinToString(", ", "[", "]") { "0x" + it.toUByte().toString(16).padStart(2, '0').uppercase() }
 
 @Serializable
 data class NumbersClass(
@@ -24,4 +28,10 @@ data class Int16StringClass(
 data class VarNumberClass(
     val varInt: VarInt,
     val varLong: VarLong
+)
+
+@Serializable
+data class CollectionsClass(
+    val int32Collection: Int32Collection<Int16String>,
+    val varIntCollection: VarIntCollection<Int16String>
 )
