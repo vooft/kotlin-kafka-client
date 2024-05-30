@@ -197,6 +197,24 @@ class FetchTest {
     }
 
     @Test
+    fun should_decode_response_partition_with_missing_batch_container() {
+        val encoded = byteArrayOf(
+            0x00, 0x00, 0x00, 0x0A, // partition
+            0x00, 0x00, // errorCode
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7B, // highwaterMarkOffset
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xC8.toByte(), // lastStableOffset,
+
+            0x00, 0x00, 0x00, 0x01, // abortedTransactions size
+            *encodedResponseAbortedTransaction,
+
+            0x00, 0x00, 0x00, 0x00, // 0 length for batch container
+        )
+
+        val actual = KafkaSerde.decode<FetchResponseV4.Topic.Partition>(encoded)
+        actual.batchContainer.value shouldBe null
+    }
+
+    @Test
     fun should_encode_response_topic() {
         val actual = KafkaSerde.encode(responseTopic)
         actual.readByteArray() shouldBe encodedResponseTopic
