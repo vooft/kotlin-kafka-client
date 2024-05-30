@@ -4,6 +4,7 @@ import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
 interface FetchRequest : KafkaRequest {
@@ -32,12 +33,12 @@ data class FetchRequestV4(
     val minBytes: Int,
     val maxBytes: Int,
     val isolationLevel: Byte = 1, // 0=READ_UNCOMMITED, 1=READ_COMMITTED
-    val topics: List<Topic>
+    val topics: Int32List<Topic>
 ) : FetchRequest, VersionedV4 {
     @Serializable
     data class Topic(
         val topic: KafkaTopic,
-        val partitions: List<Partition>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
         data class Partition(
@@ -68,12 +69,12 @@ interface FetchResponse : KafkaResponse
 @Serializable
 data class FetchResponseV4(
     val throttleTimeMs: Int,
-    val topics: List<Topic>
+    val topics: Int32List<Topic>
 ) : FetchResponse, VersionedV4 {
     @Serializable
     data class Topic(
         val topic: KafkaTopic,
-        val partitions: List<Partition>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
         data class Partition(
@@ -81,7 +82,7 @@ data class FetchResponseV4(
             val errorCode: ErrorCode,
             val highwaterMarkOffset: Long,
             val lastStableOffset: Long,
-            val abortedTransaction: List<AbortedTransaction>,
+            val abortedTransaction: Int32List<AbortedTransaction>,
             @KafkaSizeInBytesPrefixed(encoding = INT32) val batchContainer: KafkaRecordBatchContainerV0?
         ) {
             @Serializable

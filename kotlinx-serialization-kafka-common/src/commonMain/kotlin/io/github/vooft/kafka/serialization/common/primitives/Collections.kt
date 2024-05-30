@@ -14,4 +14,11 @@ value class VarIntList<T>(val value: List<T>): Iterable<T> by value
 @JvmInline
 value class Int32List<T>(val value: List<T>): Iterable<T> by value {
     constructor(vararg values: T): this(values.toList())
+
+    companion object {
+        fun <T> empty(): Int32List<T> = Int32List(emptyList())
+    }
 }
+
+fun <T> int32ListOf() = Int32List<T>(emptyList())
+fun <T> int32ListOf(vararg values: T): Int32List<T> = Int32List(values.toList())

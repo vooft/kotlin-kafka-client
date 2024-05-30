@@ -5,6 +5,7 @@ import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
 sealed interface ProduceRequest : KafkaRequest {
@@ -27,12 +28,12 @@ data class ProduceRequestV3(
     val transactionalId: NullableInt16String = NullableInt16String.NULL,
     val acks: Short = -1,
     val timeoutMs: Int = 1000,
-    val topicData: List<TopicData>
+    val topicData: Int32List<TopicData>
 ) : ProduceRequest, VersionedV3 {
     @Serializable
     data class TopicData(
         val topic: KafkaTopic,
-        val partitionData: List<PartitionData>
+        val partitionData: Int32List<PartitionData>
     ) {
         @Serializable
         data class PartitionData(
@@ -57,13 +58,13 @@ sealed interface ProduceResponse : KafkaResponse
  */
 @Serializable
 data class ProduceResponseV3(
-    val topicResponses: List<TopicResponse>,
+    val topicResponses: Int32List<TopicResponse>,
     val throttleTimeMs: Int
 ) : ProduceResponse, VersionedV3 {
     @Serializable
     data class TopicResponse(
         val topic: KafkaTopic,
-        val partitionResponses: List<PartitionResponse>
+        val partitionResponses: Int32List<PartitionResponse>
     ) {
         @Serializable
         data class PartitionResponse(

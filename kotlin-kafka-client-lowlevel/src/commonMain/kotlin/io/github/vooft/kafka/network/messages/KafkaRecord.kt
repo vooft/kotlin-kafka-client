@@ -6,6 +6,7 @@ import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.VarIntList
@@ -53,7 +54,7 @@ data class KafkaRecordBatchContainerV0(
             val producerId: Long = -1, // for transactions
             val producerEpoch: Short = 0, // ignored
             val firstSequence: Int = 0, // for transactions
-            val records: List<KafkaRecordV0> // written with size
+            val records: Int32List<KafkaRecordV0> // written with size
         )
     }
 

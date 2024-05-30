@@ -11,6 +11,7 @@ import io.github.vooft.kafka.network.messages.FindCoordinatorResponseV1
 import io.github.vooft.kafka.network.messages.JoinGroupRequestV1
 import io.github.vooft.kafka.network.messages.JoinGroupResponseV1
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
@@ -34,11 +35,11 @@ class KafkaTest {
                 rebalanceTimeoutMs = 10000,
                 memberId = MemberId(""),
                 protocolType = "consumer".toInt16String(),
-                groupProtocols = listOf(
+                groupProtocols = int32ListOf(
                     JoinGroupRequestV1.GroupProtocol(
                         protocol = "mybla".toInt16String(),
                         metadata = JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = listOf(KafkaTopic("test"))
+                            topics = int32ListOf(KafkaTopic("test"))
                         )
                     )
                 )

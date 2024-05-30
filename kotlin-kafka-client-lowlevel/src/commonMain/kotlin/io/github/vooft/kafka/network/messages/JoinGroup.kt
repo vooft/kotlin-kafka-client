@@ -6,6 +6,7 @@ import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
 interface JoinGroupRequest : KafkaRequest {
@@ -30,7 +31,7 @@ data class JoinGroupRequestV1(
     val rebalanceTimeoutMs: Int,
     val memberId: MemberId,
     val protocolType: Int16String,
-    val groupProtocols: List<GroupProtocol>
+    val groupProtocols: Int32List<GroupProtocol>
 ) : JoinGroupRequest, VersionedV1 {
     @Serializable
     data class GroupProtocol(
@@ -43,8 +44,8 @@ data class JoinGroupRequestV1(
         @Serializable
         data class Metadata(
             val version: Short = 0,
-            val topics: List<KafkaTopic>,
-            val userData: List<Byte> = listOf()
+            val topics: Int32List<KafkaTopic>,
+            val userData: Int32List<Byte> = Int32List.empty()
         )
     }
 }
@@ -69,7 +70,7 @@ data class JoinGroupResponseV1(
     val groupProtocol: Int16String,
     val leaderId: MemberId,
     val memberId: MemberId,
-    val members: List<Member>
+    val members: Int32List<Member>
 ) : JoinGroupResponse, VersionedV1 {
     @Serializable
     data class Member(

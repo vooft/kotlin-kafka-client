@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
 sealed interface ApiVersionRequest: KafkaRequest {
@@ -14,7 +15,7 @@ sealed interface ApiVersionResponse: KafkaResponse
 @Serializable
 data class ApiVersionsResponseV1(
     val errorCode: ErrorCode,
-    val apiKeys: List<ApiVersion>,
+    val apiKeys: Int32List<ApiVersion>,
     val throttleTimeMs: Int = 0
 ) : ApiVersionResponse, VersionedV1 {
     @Serializable
