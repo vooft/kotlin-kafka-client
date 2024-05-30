@@ -3,7 +3,7 @@ package io.github.vooft.kafka.network.headers
 import io.github.vooft.kafka.network.messages.ApiKey
 import io.github.vooft.kafka.network.messages.ApiVersion
 import io.github.vooft.kafka.network.messages.CorrelationId
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import kotlinx.serialization.Serializable
 
 sealed interface KafkaRequestHeader {

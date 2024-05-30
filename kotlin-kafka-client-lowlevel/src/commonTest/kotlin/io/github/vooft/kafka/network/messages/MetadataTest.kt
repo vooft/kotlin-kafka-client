@@ -7,9 +7,9 @@ import io.github.vooft.kafka.network.messages.MetadataResponseV1.Broker
 import io.github.vooft.kafka.network.messages.MetadataResponseV1.Topic
 import io.github.vooft.kafka.network.messages.MetadataResponseV1.Topic.Partition
 import io.github.vooft.kafka.serialization.KafkaSerde
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe

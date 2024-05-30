@@ -1,8 +1,8 @@
 package io.github.vooft.kafka.serialization
 
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarLong

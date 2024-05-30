@@ -3,11 +3,11 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.network.messages.KafkaRecordV0.KafkaRecordBody
 import io.github.vooft.kafka.network.messages.KafkaRecordV0.KafkaRecordBody.KafkaRecordHeader
 import io.github.vooft.kafka.serialization.KafkaSerde
-import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
-import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.VarIntList
+import io.github.vooft.kafka.serialization.common.primitives.VarIntString
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode

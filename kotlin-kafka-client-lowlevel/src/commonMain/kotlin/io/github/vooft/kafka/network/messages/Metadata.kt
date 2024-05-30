@@ -3,9 +3,9 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
-import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import kotlinx.serialization.Serializable
 
 sealed interface MetadataRequest: KafkaRequest {

@@ -7,7 +7,7 @@ import io.github.vooft.kafka.consumer.requests.ConsumerRequestsFactory
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
 import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.customtypes.toBuffer
+import io.github.vooft.kafka.serialization.common.primitives.toBuffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

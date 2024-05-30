@@ -3,9 +3,9 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.Int16String
+import io.github.vooft.kafka.serialization.common.primitives.Int16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32ByteArray
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
@@ -36,7 +36,7 @@ data class JoinGroupRequestV1(
     @Serializable
     data class GroupProtocol(
         val protocol: Int16String,
-        @KafkaSizeInBytesPrefixed(INT32) val metadata: Metadata
+        val metadata: Int32BytesSizePrefixed<Metadata>
     ) {
         /**
          * This data structure is not documented in the protocol, structure taken from kafka source code
@@ -75,6 +75,6 @@ data class JoinGroupResponseV1(
     @Serializable
     data class Member(
         val memberId: MemberId,
-        val metadata: ByteArray
+        val metadata: Int32ByteArray
     )
 }
