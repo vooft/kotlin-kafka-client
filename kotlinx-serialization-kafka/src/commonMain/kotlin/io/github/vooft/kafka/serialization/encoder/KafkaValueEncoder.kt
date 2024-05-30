@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.primitives.KafkaBytesSizePrefixed
-import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
-import io.github.vooft.kafka.serialization.common.primitives.KafkaCrc32cPrefixed
-import io.github.vooft.kafka.serialization.common.primitives.KafkaString
+import io.github.vooft.kafka.serialization.common.KafkaBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.KafkaCollection
+import io.github.vooft.kafka.serialization.common.KafkaCrc32cPrefixed
+import io.github.vooft.kafka.serialization.common.KafkaString
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy

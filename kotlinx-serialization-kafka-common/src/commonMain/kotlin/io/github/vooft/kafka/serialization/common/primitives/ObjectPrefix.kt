@@ -1,5 +1,7 @@
 package io.github.vooft.kafka.serialization.common.primitives
 
+import io.github.vooft.kafka.serialization.common.KafkaBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.KafkaCrc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.primitives.IntEncoding.VARINT
 import kotlinx.serialization.Serializable

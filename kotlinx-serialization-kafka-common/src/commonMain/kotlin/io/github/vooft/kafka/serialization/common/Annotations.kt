@@ -1,7 +1,8 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package io.github.vooft.kafka.serialization.common.primitives
+package io.github.vooft.kafka.serialization.common
 
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialInfo
 
