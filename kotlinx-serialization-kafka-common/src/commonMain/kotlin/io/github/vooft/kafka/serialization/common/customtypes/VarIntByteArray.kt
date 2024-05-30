@@ -15,9 +15,15 @@ import kotlin.jvm.JvmInline
 
 @Serializable(with = VarIntByteArraySerializer::class)
 @JvmInline
-value class VarIntByteArray(val data: ByteArray): KafkaCustomType
+// TODO: replace with ByteArray once figure out how to make comparision work
+// https://youtrack.jetbrains.com/issue/KT-24874/Support-custom-equals-and-hashCode-for-value-classes
+value class VarIntByteArray(val data: List<Byte>): KafkaCustomType {
+    constructor(data: ByteArray): this(data.toList())
+}
 
-fun VarIntByteArray.toBuffer() = Buffer().apply { write(data) }
+fun VarIntByteArray(value: String) = VarIntByteArray(value.encodeToByteArray())
+
+fun VarIntByteArray.toBuffer() = Buffer().apply { write(data.toByteArray()) }
 
 @OptIn(ExperimentalSerializationApi::class)
 object VarIntByteArraySerializer : KSerializer<VarIntByteArray>, KafkaCustomTypeSerializer {

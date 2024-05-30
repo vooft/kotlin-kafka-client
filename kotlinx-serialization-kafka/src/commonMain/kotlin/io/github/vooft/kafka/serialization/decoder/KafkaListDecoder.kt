@@ -24,8 +24,12 @@ internal class KafkaListDecoder(
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
-        require(descriptor.kind == StructureKind.LIST) { "Only list deserialization is supported" }
-        return this
+        if (currentListElementIndex == 0) {
+            require(descriptor.kind == StructureKind.LIST) { "Only list deserialization is supported" }
+            return this
+        } else {
+            return super.beginStructure(descriptor)
+        }
     }
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
