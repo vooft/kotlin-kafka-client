@@ -1,14 +1,14 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.common.BrokerAddress
-import io.github.vooft.kafka.common.GroupId
-import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
 import io.github.vooft.kafka.consumer.group.KafkaConsumerGroupManager
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.producer.KafkaTopicProducer
 import io.github.vooft.kafka.producer.SimpleKafkaTopicProducer
+import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
+import io.github.vooft.kafka.serialization.common.wrappers.GroupId
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex

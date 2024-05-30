@@ -1,6 +1,4 @@
 package io.github.vooft.kafka.manual
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
@@ -16,6 +14,8 @@ import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer

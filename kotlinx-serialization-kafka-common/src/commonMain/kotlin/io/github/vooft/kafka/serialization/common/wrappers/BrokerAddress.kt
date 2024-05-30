@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.common
+package io.github.vooft.kafka.serialization.common.wrappers
 
 data class BrokerAddress(val hostname: String, val port: Int) {
     companion object {

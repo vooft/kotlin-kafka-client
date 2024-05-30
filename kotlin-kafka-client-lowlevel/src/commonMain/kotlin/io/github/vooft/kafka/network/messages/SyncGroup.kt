@@ -1,13 +1,13 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.common.GroupId
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.MemberId
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.wrappers.GroupId
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.MemberId
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.serialization.Serializable
 
 interface SyncGroupRequest : KafkaRequest {

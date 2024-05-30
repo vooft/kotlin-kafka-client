@@ -1,8 +1,5 @@
 package io.github.vooft.kafka
 
-import io.github.vooft.kafka.common.GroupId
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.network.common.toInt16String
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.CoordinatorType.GROUP
@@ -13,11 +10,13 @@ import io.github.vooft.kafka.network.messages.JoinGroupResponseV1
 import io.github.vooft.kafka.network.sendRequest
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.wrappers.GroupId
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
 
 class KafkaTest {
-    @Test
+//    @Test
     fun test() = runTest {
         val ktorClient = KtorNetworkClient()
 

@@ -23,7 +23,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.canard)
             implementation(project(":kotlin-kafka-client-lowlevel"))
-            implementation(project(":kotlin-kafka-client-common"))
         }
 
         commonTest.dependencies {

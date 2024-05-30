@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.common
+package io.github.vooft.kafka.serialization.common.wrappers
 
 import io.github.vooft.kafka.serialization.common.IntValue
 import kotlinx.serialization.Serializable

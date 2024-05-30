@@ -1,10 +1,10 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.serialization.Serializable
 
 interface FetchRequest : KafkaRequest {

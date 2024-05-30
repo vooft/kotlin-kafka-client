@@ -1,7 +1,5 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
@@ -10,6 +8,8 @@ import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe

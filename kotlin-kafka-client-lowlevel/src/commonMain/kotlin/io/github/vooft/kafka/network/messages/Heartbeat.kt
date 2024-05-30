@@ -1,8 +1,8 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.common.GroupId
-import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.network.common.ErrorCode
+import io.github.vooft.kafka.serialization.common.wrappers.GroupId
+import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import kotlinx.serialization.Serializable
 
 interface HeartbeatRequest : KafkaRequest {

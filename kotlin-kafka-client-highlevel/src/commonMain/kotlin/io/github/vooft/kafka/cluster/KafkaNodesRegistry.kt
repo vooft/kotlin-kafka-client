@@ -1,11 +1,11 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.common.BrokerAddress
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.network.messages.MetadataRequestV1
 import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

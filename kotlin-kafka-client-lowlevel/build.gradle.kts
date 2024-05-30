@@ -13,10 +13,6 @@ kotlin {
 
     macosArm64()
 
-//    js(IR) {
-//        nodejs()
-//    }
-
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -27,7 +23,6 @@ kotlin {
             api(libs.kotlinx.io.core)
             implementation(project(":kotlinx-serialization-kafka"))
             api(project(":kotlinx-serialization-kafka-common"))
-            api(project(":kotlin-kafka-client-common"))
         }
 
         jvmMain.dependencies { }

@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.common
+package io.github.vooft.kafka.serialization.common.wrappers
 
 import io.github.vooft.kafka.serialization.common.KafkaString
 import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
@@ -8,4 +8,8 @@ import kotlin.jvm.JvmInline
 @KafkaString(lengthEncoding = IntEncoding.INT16)
 @Serializable
 @JvmInline
-value class GroupId(val value: String)
+value class MemberId(val value: String) {
+    companion object {
+        val EMPTY = MemberId("")
+    }
+}

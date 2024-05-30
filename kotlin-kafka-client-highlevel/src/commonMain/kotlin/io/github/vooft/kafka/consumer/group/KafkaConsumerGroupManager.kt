@@ -2,12 +2,12 @@ package io.github.vooft.kafka.consumer.group
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPoolFactory
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
-import io.github.vooft.kafka.common.GroupId
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.MemberId
-import io.github.vooft.kafka.common.NodeId
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
+import io.github.vooft.kafka.serialization.common.wrappers.GroupId
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.MemberId
+import io.github.vooft.kafka.serialization.common.wrappers.NodeId
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex

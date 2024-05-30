@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.consumer
 
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.io.Source
 
 interface KafkaTopicConsumer {

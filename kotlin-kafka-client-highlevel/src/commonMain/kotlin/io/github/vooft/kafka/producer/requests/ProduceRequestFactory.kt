@@ -1,7 +1,5 @@
 package io.github.vooft.kafka.producer.requests
 
-import io.github.vooft.kafka.common.KafkaTopic
-import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
@@ -12,6 +10,8 @@ import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefi
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import io.github.vooft.kafka.serialization.common.primitives.toInt32List
+import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.io.Source
 
 object ProduceRequestFactory {
