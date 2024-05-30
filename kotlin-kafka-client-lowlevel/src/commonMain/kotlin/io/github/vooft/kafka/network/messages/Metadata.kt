@@ -5,7 +5,7 @@ import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
-import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 
 sealed interface MetadataRequest: KafkaRequest {
@@ -18,10 +18,10 @@ sealed interface MetadataRequest: KafkaRequest {
  *     name => STRING
  */
 @Serializable
-data class MetadataRequestV1(val topics: Int32Collection<KafkaTopic>) : MetadataRequest, VersionedV1
+data class MetadataRequestV1(val topics: Int32List<KafkaTopic>) : MetadataRequest, VersionedV1
 
 fun MetadataRequestV1(topic: String) = MetadataRequestV1(listOf(KafkaTopic(topic)))
-fun MetadataRequestV1(topics: Collection<KafkaTopic>) = MetadataRequestV1(Int32Collection(topics.toList()))
+fun MetadataRequestV1(topics: Collection<KafkaTopic>) = MetadataRequestV1(Int32List(topics.toList()))
 
 sealed interface MetadataResponse: KafkaResponse
 
@@ -46,9 +46,9 @@ sealed interface MetadataResponse: KafkaResponse
  */
 @Serializable
 data class MetadataResponseV1(
-    val brokers: List<Broker>,
+    val brokers: Int32List<Broker>,
     val controllerId: Int,
-    val topics: List<Topic>,
+    val topics: Int32List<Topic>,
 ) : MetadataResponse, VersionedV1 {
     @Serializable
     data class Broker(
@@ -63,15 +63,15 @@ data class MetadataResponseV1(
         val errorCode: ErrorCode,
         val topic: KafkaTopic,
         val isInternal: Boolean,
-        val partitions: List<Partition>
+        val partitions: Int32List<Partition>
     ) {
         @Serializable
         data class Partition(
             val errorCode: ErrorCode,
             val partition: PartitionIndex,
             val leader: NodeId,
-            val replicas: List<Int>,
-            val isr: List<Int>
+            val replicas: Int32List<Int>,
+            val isr: Int32List<Int>
         )
     }
 }

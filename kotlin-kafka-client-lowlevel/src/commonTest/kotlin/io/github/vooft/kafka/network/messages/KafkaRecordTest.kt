@@ -6,7 +6,8 @@ import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
-import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
+import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
@@ -31,7 +32,7 @@ class KafkaRecordTest {
         offsetDelta = VarInt.fromDecoded(1),
         recordKey = VarIntByteArray("key"),
         recordValue = VarIntByteArray("value"),
-        headers = VarIntCollection(listOf(header))
+        headers = VarIntList(listOf(header))
     )
     private val encodedRecordBody = byteArrayOf(
         0x05, // attributes
@@ -47,6 +48,14 @@ class KafkaRecordTest {
 
         0x02, // varint headers count
         *encodedHeader
+    )
+
+    private val record = KafkaRecordV0(
+        recordBody = VarIntBytesSizePrefixed(recordBody)
+    )
+    private val encodedRecord = byteArrayOf(
+        0x44, // recordBody size
+        *encodedRecordBody
     )
 
     @Test
@@ -71,5 +80,17 @@ class KafkaRecordTest {
     fun should_decode_kafka_record_body() {
         val actual = KafkaSerde.decode<KafkaRecordBody>(encodedRecordBody)
         actual shouldBe recordBody
+    }
+
+    @Test
+    fun should_encode_kafka_record() {
+        val actual = KafkaSerde.encode(record)
+        actual.readByteArray() shouldBe encodedRecord
+    }
+
+    @Test
+    fun should_decode_kafka_record() {
+        val actual = KafkaSerde.decode<KafkaRecordV0>(encodedRecord)
+        actual shouldBe record
     }
 }

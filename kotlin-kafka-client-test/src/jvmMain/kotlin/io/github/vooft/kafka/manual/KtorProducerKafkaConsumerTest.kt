@@ -12,6 +12,7 @@ import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3
 import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -59,10 +60,12 @@ fun main() = runBlocking {
                                                 maxTimestamp = System.currentTimeMillis(),
                                                 records = listOf(
                                                     KafkaRecordV0(
-                                                        recordBody = KafkaRecordV0.KafkaRecordBody(
-                                                            offsetDelta = 0.toVarInt(),
-                                                            recordKey = "key $it".toVarIntByteArray(),
-                                                            recordValue = "value $it".toVarIntByteArray()
+                                                        recordBody = VarIntBytesSizePrefixed(
+                                                            KafkaRecordV0.KafkaRecordBody(
+                                                                offsetDelta = 0.toVarInt(),
+                                                                recordKey = "key $it".toVarIntByteArray(),
+                                                                recordValue = "value $it".toVarIntByteArray()
+                                                            )
                                                         )
                                                     )
                                                 )

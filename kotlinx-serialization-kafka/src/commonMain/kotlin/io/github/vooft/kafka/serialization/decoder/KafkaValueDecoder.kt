@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.serialization.decoder
 
 import io.github.vooft.kafka.serialization.common.KafkaString
+import io.github.vooft.kafka.serialization.common.primitives.KafkaBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
 import kotlinx.io.Source
 import kotlinx.io.readString
@@ -20,7 +21,7 @@ open class KafkaValueDecoder(
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
         StructureKind.OBJECT, StructureKind.CLASS -> KafkaObjectDecoder(source, serializersModule)
 //        StructureKind.LIST -> KafkaListDecoder(source.readInt(), source, serializersModule)
-        else -> error("Not supported ${descriptor.kind}")
+        else -> error("Not supported ${descriptor.kind} for ${descriptor.serialName}")
     }
 
     override fun decodeBoolean(): Boolean {
@@ -49,6 +50,16 @@ open class KafkaValueDecoder(
         if (kafkaCollection != null) {
             return KafkaListDecoder(source = source, sizeEncoding = kafkaCollection.sizeEncoding, serializersModule = serializersModule)
         }
+
+        val kafkaBytesSizePrefixed = descriptor.annotations.filterIsInstance<KafkaBytesSizePrefixed>().singleOrNull()
+        if (kafkaBytesSizePrefixed != null) {
+            return KafkaBytesSizePrefixedDecoder(
+                source = source,
+                sizeEncoding = kafkaBytesSizePrefixed.sizeEncoding,
+                serializersModule = serializersModule
+            )
+        }
+
 
         return this
     }

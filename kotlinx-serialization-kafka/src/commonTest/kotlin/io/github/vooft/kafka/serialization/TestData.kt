@@ -2,9 +2,9 @@ package io.github.vooft.kafka.serialization
 
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
-import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
-import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
+import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
 
@@ -32,6 +32,6 @@ data class VarNumberClass(
 
 @Serializable
 data class CollectionsClass(
-    val int32Collection: Int32Collection<Int16String>,
-    val varIntCollection: VarIntCollection<Int16String>
+    val int32List: Int32List<Int16String>,
+    val varIntList: VarIntList<Int16String>
 )

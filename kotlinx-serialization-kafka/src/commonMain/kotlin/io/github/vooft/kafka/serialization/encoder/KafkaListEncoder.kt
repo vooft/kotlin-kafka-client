@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.modules.SerializersModule
 
 class KafkaListEncoder(
-    private val sink: Sink,
+    sink: Sink,
     private val sizeEncoding: IntEncoding,
     override val serializersModule: SerializersModule,
 ) : KafkaValueEncoder(sink, serializersModule), AbstractKafkaCompositeEncoder {

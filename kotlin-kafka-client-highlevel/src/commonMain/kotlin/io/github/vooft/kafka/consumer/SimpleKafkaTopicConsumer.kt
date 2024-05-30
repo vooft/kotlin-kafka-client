@@ -38,9 +38,9 @@ class SimpleKafkaTopicConsumer(
                         batchContainer.batch.body.records.map { record ->
                             KafkaRecord(
                                 partition = partition.partition,
-                                offset = batchContainer.firstOffset + record.recordBody.offsetDelta.toDecoded(),
-                                key = record.recordBody.recordKey.toBuffer(),
-                                value = record.recordBody.recordValue.toBuffer()
+                                offset = batchContainer.firstOffset + record.recordBody.value.offsetDelta.toDecoded(),
+                                key = record.recordBody.value.recordKey.toBuffer(),
+                                value = record.recordBody.value.recordValue.toBuffer()
                             )
                         }
                     } ?: emptyList()

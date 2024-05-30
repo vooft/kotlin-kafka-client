@@ -7,9 +7,9 @@ import io.github.vooft.kafka.serialization.NumbersClass
 import io.github.vooft.kafka.serialization.VarNumberClass
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
-import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
+import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
-import io.github.vooft.kafka.serialization.common.primitives.VarIntCollection
+import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe
@@ -115,8 +115,8 @@ class PrimitiveEncoderTest {
     @Test
     fun should_encode_collections() {
         val value = CollectionsClass(
-            int32Collection = Int32Collection(listOf(Int16String("test1"), Int16String("test2"))),
-            varIntCollection = VarIntCollection(listOf(Int16String("test3"), Int16String("test4")))
+            int32List = Int32List(listOf(Int16String("test1"), Int16String("test2"))),
+            varIntList = VarIntList(listOf(Int16String("test3"), Int16String("test4")))
         )
 
         val encoded = KafkaSerde.encode(value)
