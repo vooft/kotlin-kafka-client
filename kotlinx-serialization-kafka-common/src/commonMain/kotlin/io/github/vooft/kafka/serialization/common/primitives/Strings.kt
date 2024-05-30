@@ -1,6 +1,5 @@
 package io.github.vooft.kafka.serialization.common.primitives
 
-import io.github.vooft.kafka.serialization.common.IntEncoding
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 

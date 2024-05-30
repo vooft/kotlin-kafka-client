@@ -2,7 +2,6 @@
 
 package io.github.vooft.kafka.serialization.common.primitives
 
-import io.github.vooft.kafka.serialization.common.IntEncoding
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialInfo
 

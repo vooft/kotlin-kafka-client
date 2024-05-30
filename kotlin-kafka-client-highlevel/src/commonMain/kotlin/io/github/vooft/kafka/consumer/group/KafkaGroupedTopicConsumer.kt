@@ -161,19 +161,21 @@ class KafkaGroupedTopicConsumer(
             assignments = assignments.map { (memberId, partitions) ->
                 SyncGroupRequestV1.Assignment(
                     memberId = memberId,
-                    assignment = MemberAssignment(
-                        partitionAssignments = int32ListOf(
-                            MemberAssignment.PartitionAssignment(
-                                topic = topic,
-                                partitions = partitions.toInt32List()
-                            )
-                        ),
+                    assignment = Int32BytesSizePrefixed(
+                        MemberAssignment(
+                            partitionAssignments = int32ListOf(
+                                MemberAssignment.PartitionAssignment(
+                                    topic = topic,
+                                    partitions = partitions.toInt32List()
+                                )
+                            ),
+                        )
                     )
                 )
             }.toInt32List()
         ))
 
-        return syncResponse.assignment?.partitionAssignments?.single()?.partitions?.value ?: listOf()
+        return syncResponse.assignment.value?.partitionAssignments?.single()?.partitions?.value ?: listOf()
 
     }
 

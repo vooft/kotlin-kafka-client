@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.serialization.common.primitives
 
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.IntEncoding.VARINT
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding.INT32
+import io.github.vooft.kafka.serialization.common.primitives.IntEncoding.VARINT
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
