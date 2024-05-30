@@ -16,5 +16,9 @@ annotation class KafkaBytesSizePrefixed(val sizeEncoding: IntEncoding)
 
 @SerialInfo
 @Target(AnnotationTarget.CLASS)
+annotation class KafkaCrc32cPrefixed
+
+@SerialInfo
+@Target(AnnotationTarget.CLASS)
 annotation class KafkaString(val lengthEncoding: IntEncoding)
 

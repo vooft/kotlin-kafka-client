@@ -3,6 +3,7 @@ package io.github.vooft.kafka.serialization.encoder
 import io.github.vooft.kafka.serialization.common.KafkaString
 import io.github.vooft.kafka.serialization.common.primitives.KafkaBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
+import io.github.vooft.kafka.serialization.common.primitives.KafkaCrc32cPrefixed
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
@@ -46,6 +47,14 @@ open class KafkaValueEncoder(
             return KafkaBytesSizePrefixedEncoder(
                 sink = sink,
                 sizeEncoding = kafkaBytesSizePrefixed.sizeEncoding,
+                serializersModule = serializersModule
+            )
+        }
+
+        val crc32cPrefixed = descriptor.annotations.filterIsInstance<KafkaCrc32cPrefixed>().singleOrNull()
+        if (crc32cPrefixed != null) {
+            return KafkaCrc32cPrefixedEncoder(
+                sink = sink,
                 serializersModule = serializersModule
             )
         }

@@ -1,9 +1,8 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.network.common.toVarLong
-import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
-import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
-import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
+import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
@@ -34,13 +33,13 @@ data class KafkaRecordV0(
 @Serializable
 data class KafkaRecordBatchContainerV0(
     val firstOffset: Long = 0,
-    @KafkaSizeInBytesPrefixed(encoding = INT32) val batch: KafkaRecordBatch
+    val batch: Int32BytesSizePrefixed<KafkaRecordBatch>
 ) {
     @Serializable
     data class KafkaRecordBatch(
         val partitionLeaderEpoch: Int = 0,
         val magic: Byte = 2,
-        @KafkaCrc32Prefixed val body: KafkaRecordBatchBody
+        val body: Crc32cPrefixed<KafkaRecordBatchBody>
     ) {
         @Serializable
         data class KafkaRecordBatchBody(

@@ -3,6 +3,7 @@ package io.github.vooft.kafka.serialization.decoder
 import io.github.vooft.kafka.serialization.common.KafkaString
 import io.github.vooft.kafka.serialization.common.primitives.KafkaBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
+import io.github.vooft.kafka.serialization.common.primitives.KafkaCrc32cPrefixed
 import kotlinx.io.Source
 import kotlinx.io.readString
 import kotlinx.serialization.DeserializationStrategy
@@ -60,6 +61,13 @@ open class KafkaValueDecoder(
             )
         }
 
+        val crc32cPrefixed = descriptor.annotations.filterIsInstance<KafkaCrc32cPrefixed>().singleOrNull()
+        if (crc32cPrefixed != null) {
+            return KafkaCrc32PrefixedDecoder(
+                source = source,
+                serializersModule = serializersModule
+            )
+        }
 
         return this
     }

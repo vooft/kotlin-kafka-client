@@ -15,3 +15,8 @@ value class VarIntBytesSizePrefixed<T>(val value: T)
 @Serializable
 @JvmInline
 value class Int32BytesSizePrefixed<T>(val value: T)
+
+@KafkaCrc32cPrefixed
+@Serializable
+@JvmInline
+value class Crc32cPrefixed<T>(val value: T)
