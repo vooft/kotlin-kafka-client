@@ -4,6 +4,7 @@ import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
 import io.github.vooft.kafka.common.PartitionIndex
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.common.IntEncoding.INT32
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List

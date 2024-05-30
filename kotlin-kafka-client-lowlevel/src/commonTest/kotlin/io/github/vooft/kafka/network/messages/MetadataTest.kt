@@ -3,6 +3,7 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.messages.MetadataResponseV1.Broker
 import io.github.vooft.kafka.network.messages.MetadataResponseV1.Topic
 import io.github.vooft.kafka.network.messages.MetadataResponseV1.Topic.Partition

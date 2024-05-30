@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import kotlinx.serialization.Serializable
 

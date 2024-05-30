@@ -3,6 +3,7 @@ package io.github.vooft.kafka.network.messages
 import io.github.vooft.kafka.common.GroupId
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.MemberId
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.messages.JoinGroupRequestV1.GroupProtocol
 import io.github.vooft.kafka.network.messages.JoinGroupRequestV1.GroupProtocol.Metadata
 import io.github.vooft.kafka.network.messages.JoinGroupResponseV1.Member

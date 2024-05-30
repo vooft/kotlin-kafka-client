@@ -1,10 +1,10 @@
 package io.github.vooft.kafka.manual
 import io.github.vooft.kafka.common.KafkaTopic
 import io.github.vooft.kafka.common.PartitionIndex
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.common.toVarInt
 import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
-import io.github.vooft.kafka.network.messages.ErrorCode
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
 import io.github.vooft.kafka.network.messages.KafkaRecordV0
 import io.github.vooft.kafka.network.messages.MetadataRequestV1

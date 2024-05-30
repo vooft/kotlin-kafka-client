@@ -2,10 +2,10 @@ package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.common.nextHeader
 import io.github.vooft.kafka.network.headers.KafkaResponseHeaderV0
 import io.github.vooft.kafka.network.messages.KafkaRequest
 import io.github.vooft.kafka.network.messages.KafkaResponse
-import io.github.vooft.kafka.network.messages.nextHeader
 import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode

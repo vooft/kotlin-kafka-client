@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.common.NodeId
+import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
