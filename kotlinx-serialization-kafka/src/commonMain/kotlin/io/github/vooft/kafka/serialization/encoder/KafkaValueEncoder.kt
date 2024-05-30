@@ -1,6 +1,7 @@
 package io.github.vooft.kafka.serialization.encoder
 
 import io.github.vooft.kafka.serialization.common.KafkaString
+import io.github.vooft.kafka.serialization.common.primitives.KafkaCollection
 import kotlinx.io.Sink
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
@@ -11,7 +12,7 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
-class KafkaValueEncoder(
+open class KafkaValueEncoder(
     private val sink: Sink,
     override val serializersModule: SerializersModule = EmptySerializersModule()
 ) : Encoder {
@@ -32,6 +33,16 @@ class KafkaValueEncoder(
         val kafkaString = descriptor.annotations.filterIsInstance<KafkaString>().singleOrNull()
         if (kafkaString != null) {
             return KafkaStringEncoder(sink, kafkaString.encoding, serializersModule, this)
+        }
+
+        val kafkaCollection = descriptor.annotations.filterIsInstance<KafkaCollection>().singleOrNull()
+        if (kafkaCollection != null) {
+            return KafkaListEncoder(
+                targetSink = sink,
+                encodingMode = ListEncodingMode.SIZE_IN_ITEMS,
+                sizeEncoding = kafkaCollection.sizeEncoding,
+                serializersModule = serializersModule
+            )
         }
 
         return this

@@ -6,10 +6,10 @@ import io.github.vooft.kafka.serialization.common.IntEncoding.VARINT
 import io.github.vooft.kafka.serialization.common.KafkaCollectionWithVarIntSize
 import io.github.vooft.kafka.serialization.common.KafkaCrc32Prefixed
 import io.github.vooft.kafka.serialization.common.KafkaSizeInBytesPrefixed
-import io.github.vooft.kafka.serialization.common.customtypes.VarInt
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.customtypes.VarIntString
-import io.github.vooft.kafka.serialization.common.customtypes.VarLong
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import kotlinx.serialization.Serializable
 
 @Serializable

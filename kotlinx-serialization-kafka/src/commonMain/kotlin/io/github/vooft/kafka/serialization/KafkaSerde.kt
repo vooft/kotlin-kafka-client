@@ -21,7 +21,7 @@ object KafkaSerde {
     }
 }
 
-inline fun <reified T> KafkaSerde.encode(value: T, sink: Sink = Buffer()) = encode(serializer(), value, sink)
+inline fun <reified T> KafkaSerde.encode(value: T) = Buffer().apply { encode(serializer(), value, this) }
 inline fun <reified T> Sink.encode(value: T) = encode(serializer(), value)
 fun <T> Sink.encode(serializer: SerializationStrategy<T>, value: T) = KafkaSerde.encode(serializer, value, this)
 

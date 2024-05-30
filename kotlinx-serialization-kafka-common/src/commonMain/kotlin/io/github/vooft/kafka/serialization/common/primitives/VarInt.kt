@@ -1,4 +1,4 @@
-package io.github.vooft.kafka.serialization.common.customtypes
+package io.github.vooft.kafka.serialization.common.primitives
 
 import io.github.vooft.kafka.serialization.common.ZigzagInteger
 import kotlinx.serialization.KSerializer
@@ -12,18 +12,20 @@ import kotlin.jvm.JvmInline
 
 @Serializable(with = VarIntSerializer::class)
 @JvmInline
-value class VarInt(internal val zigzagEncoded: Int): KafkaCustomType {
+value class VarInt private constructor(private val zigzagEncoded: Int) {
 
+    fun toEncoded() = zigzagEncoded
     fun toDecoded() = ZigzagInteger.decode(zigzagEncoded)
 
     companion object {
         val MINUS_ONE = VarInt(ZigzagInteger.encode(-1))
         fun fromDecoded(value: Int) = VarInt(ZigzagInteger.encode(value))
+        fun fromEncoded(value: Int) = VarInt(value)
     }
 }
 
 // adapted from https://github.com/addthis/stream-lib
-internal object VarIntSerializer : KSerializer<VarInt>, KafkaCustomTypeSerializer {
+internal object VarIntSerializer : KSerializer<VarInt> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("VarInt", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): VarInt {
@@ -41,11 +43,11 @@ internal object VarIntSerializer : KSerializer<VarInt>, KafkaCustomTypeSerialize
             require(index <= 35) { "Variable length quantity is too long" }
         }
 
-        return VarInt(value or (currentByte shl index))
+        return VarInt.fromEncoded(value or (currentByte shl index))
     }
 
     override fun serialize(encoder: Encoder, value: VarInt) {
-        var varInt = value.zigzagEncoded
+        var varInt = value.toEncoded()
         while (varInt and -0x80 != 0) {
             encoder.encodeByte(((varInt and 0x7F) or 0x80).toByte())
             varInt = varInt ushr 7

@@ -1,8 +1,8 @@
 package io.github.vooft.kafka.serialization.common.customtypes
 
-import io.github.vooft.kafka.serialization.common.ZigzagInteger
 import io.github.vooft.kafka.serialization.common.decodeVarInt
 import io.github.vooft.kafka.serialization.common.encodeVarInt
+import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import kotlinx.io.Buffer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -31,8 +31,7 @@ object VarIntByteArraySerializer : KSerializer<VarIntByteArray>, KafkaCustomType
     }
 
     override fun serialize(encoder: Encoder, value: VarIntByteArray) {
-        val zigzag = ZigzagInteger.encode(value.data.size)
-        encoder.encodeVarInt(VarInt(zigzag))
+        encoder.encodeVarInt(VarInt.fromDecoded(value.data.size))
         value.data.forEach { encoder.encodeByte(it) }
     }
 

@@ -5,6 +5,7 @@ import io.github.vooft.kafka.common.NodeId
 import io.github.vooft.kafka.common.PartitionIndex
 import io.github.vooft.kafka.serialization.common.customtypes.Int16String
 import io.github.vooft.kafka.serialization.common.customtypes.NullableInt16String
+import io.github.vooft.kafka.serialization.common.primitives.Int32Collection
 import kotlinx.serialization.Serializable
 
 sealed interface MetadataRequest: KafkaRequest {
@@ -17,10 +18,10 @@ sealed interface MetadataRequest: KafkaRequest {
  *     name => STRING
  */
 @Serializable
-data class MetadataRequestV1(val topics: List<KafkaTopic>) : MetadataRequest, VersionedV1
+data class MetadataRequestV1(val topics: Int32Collection<KafkaTopic>) : MetadataRequest, VersionedV1
 
 fun MetadataRequestV1(topic: String) = MetadataRequestV1(listOf(KafkaTopic(topic)))
-fun MetadataRequestV1(topics: Collection<KafkaTopic>) = MetadataRequestV1(topics.toList())
+fun MetadataRequestV1(topics: Collection<KafkaTopic>) = MetadataRequestV1(Int32Collection(topics.toList()))
 
 sealed interface MetadataResponse: KafkaResponse
 
