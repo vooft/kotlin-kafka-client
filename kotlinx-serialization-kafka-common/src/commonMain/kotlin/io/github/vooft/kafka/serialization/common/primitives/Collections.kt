@@ -27,6 +27,7 @@ fun <T> List<T>.toInt32List() = Int32List(this)
 fun <T> int32ListOf() = Int32List<T>(emptyList())
 fun <T> int32ListOf(vararg values: T): Int32List<T> = Int32List(values.toList())
 
+// TODO: find a shortcut for just copying byte array from source, instead of reading byte-by-byte
 @Serializable
 @KafkaCollection(sizeEncoding = VARINT)
 @JvmInline
