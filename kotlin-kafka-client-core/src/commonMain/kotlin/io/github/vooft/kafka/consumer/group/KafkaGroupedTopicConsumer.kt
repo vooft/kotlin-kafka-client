@@ -148,6 +148,8 @@ class KafkaGroupedTopicConsumer(
             )
         )
 
+        require(response.errorCode == NO_ERROR) { "Join group failed with error code ${response.errorCode}" }
+
         return JoinedGroup(
             coordinatorNodeId = coordinatorNodeId,
             memberId = response.memberId,
