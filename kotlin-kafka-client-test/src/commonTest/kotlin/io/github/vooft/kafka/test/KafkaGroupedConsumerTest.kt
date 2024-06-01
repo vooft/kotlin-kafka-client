@@ -7,6 +7,8 @@ import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.producer.send
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -21,7 +23,7 @@ import kotlin.test.Test
 
 class KafkaGroupedConsumerTest {
 
-    private val totalRecords = 10
+    private val totalRecords = 1000
     private val topic = KafkaTopic(UUID.generateUUID().toString())
     private val values = List(totalRecords) { UUID.generateUUID().toString() }
 
@@ -90,7 +92,7 @@ class KafkaGroupedConsumerTest {
                     if (!consumer3.isCompleted) {
                         println("consumer3 joining")
                         consumer3.await()
-                        delay(10000) // wait for rebalancing, hopefully this is enough
+                        delay(1000) // wait for rebalancing, hopefully this is enough
                     }
 
                     async { consumer3.await().consume() }
@@ -101,15 +103,12 @@ class KafkaGroupedConsumerTest {
             val batch2Deferred = async { consumer2.consume() }
 
             val batch1 = batch1Deferred.await()
-            println(batch1)
             consumed1 += batch1.size
 
             val batch2 = batch2Deferred.await()
-            println(batch2)
             consumed2 += batch2.size
 
             val batch3 = batch3Deferred.await()
-            println(batch3)
             consumed3 += batch3.size
 
             for (record in (batch1 + batch2 + batch3)) {
@@ -118,16 +117,15 @@ class KafkaGroupedConsumerTest {
                 remaining.remove(value)
             }
 
-            println("Remaining: ${remaining.size}: $remaining")
+            println("Remaining: ${remaining.size}")
         }
 
         println("Consumed by 1: $consumed1")
         println("Consumed by 2: $consumed2")
         println("Consumed by 3: $consumed3")
 
-        // TODO: since we do not properly commit offsets, it fails for now
-//        withClue("consumed1 = $consumed1, consumed2 = $consumed2, consumed3 = $consumed3, totalRecords = $totalRecords") {
-//            consumed1 + consumed2 + consumed3 shouldBe totalRecords
-//        }
+        withClue("consumed1 = $consumed1, consumed2 = $consumed2, consumed3 = $consumed3, totalRecords = $totalRecords") {
+            consumed1 + consumed2 + consumed3 shouldBe totalRecords
+        }
     }
 }

@@ -60,6 +60,7 @@ class KafkaGroupedTopicConsumer(
         offsetProvider = ConsumerGroupOffsetProvider(
             groupId = groupId,
             topicStateProvider = topicStateProvider,
+            groupMembershipProvider = { consumerMetadata.await().value.membership },
             connectionPool = connectionPool
         ),
         coroutineScope = coroutineScope

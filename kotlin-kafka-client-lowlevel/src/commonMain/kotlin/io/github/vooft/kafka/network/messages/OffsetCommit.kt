@@ -41,10 +41,10 @@ data class OffsetCommitRequestV1(
     ) {
         @Serializable
         data class Partition(
-            val partitionIndex: PartitionIndex,
+            val partition: PartitionIndex,
             val committedOffset: PartitionOffset,
             val commitTimestamp: Long,
-            val committedMetadata: NullableInt16String
+            val committedMetadata: NullableInt16String = NullableInt16String.NULL
         )
     }
 }

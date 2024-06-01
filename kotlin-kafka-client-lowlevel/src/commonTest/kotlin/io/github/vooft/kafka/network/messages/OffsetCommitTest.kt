@@ -17,7 +17,7 @@ import kotlin.test.Test
 
 class OffsetCommitTest {
     private val requestPartition = OffsetCommitRequestV1.Topic.Partition(
-        partitionIndex = PartitionIndex(5),
+        partition = PartitionIndex(5),
         committedOffset = PartitionOffset(10),
         commitTimestamp = 0,
         committedMetadata = NullableInt16String(null)
