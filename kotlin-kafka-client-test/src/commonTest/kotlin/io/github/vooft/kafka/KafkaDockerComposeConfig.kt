@@ -6,6 +6,6 @@ object KafkaDockerComposeConfig {
     val bootstrapServers = listOf(
         BrokerAddress("localhost", 9092),
         BrokerAddress("localhost", 9093),
-        BrokerAddress("localhost", 9094),
+//        BrokerAddress("localhost", 9094),
     )
 }

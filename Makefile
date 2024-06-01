@@ -9,5 +9,4 @@ start-kafka:
 	docker-compose -f docker-compose.local.yaml up -d
 	while ! nc -z localhost 9092 ; do sleep 1 ; done
 	while ! nc -z localhost 9093 ; do sleep 1 ; done
-	while ! nc -z localhost 9094 ; do sleep 1 ; done
 
