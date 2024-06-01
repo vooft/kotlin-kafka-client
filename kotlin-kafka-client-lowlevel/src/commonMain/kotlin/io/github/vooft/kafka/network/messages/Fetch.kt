@@ -5,6 +5,7 @@ import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefi
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import kotlinx.serialization.Serializable
 
 interface FetchRequest : KafkaRequest {
@@ -43,7 +44,7 @@ data class FetchRequestV4(
         @Serializable
         data class Partition(
             val partition: PartitionIndex,
-            val fetchOffset: Long,
+            val fetchOffset: PartitionOffset,
             val maxBytes: Int
         )
     }
@@ -80,15 +81,15 @@ data class FetchResponseV4(
         data class Partition(
             val partition: PartitionIndex,
             val errorCode: ErrorCode,
-            val highwaterMarkOffset: Long,
-            val lastStableOffset: Long,
+            val highwaterMarkOffset: PartitionOffset,
+            val lastStableOffset: PartitionOffset,
             val abortedTransactions: Int32List<AbortedTransaction>,
             val batchContainer: Int32BytesSizePrefixed<KafkaRecordBatchContainerV0?>
         ) {
             @Serializable
             data class AbortedTransaction(
                 val producerId: Long,
-                val firstOffset: Long
+                val firstOffset: PartitionOffset
             )
         }
     }

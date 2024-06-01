@@ -39,11 +39,20 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
         val topicStateProvider = topicRegistry.forTopic(topic)
 
         if (groupId == null) {
-            return SimpleKafkaTopicConsumer(topicStateProvider, connectionPoolFactory.create(), coroutineScope)
+            return SimpleKafkaTopicConsumer(
+                topicStateProvider = topicStateProvider,
+                connectionPool = connectionPoolFactory.create(),
+                coroutineScope = coroutineScope)
         } else {
             val consumerGroupManager = consumerGroupManagersMutex.withLock {
                 consumerGroupManagers.getOrPut(TopicGroup(topic, groupId)) {
-                    KafkaConsumerGroupManager(topic, groupId, topicStateProvider, connectionPoolFactory, coroutineScope)
+                    KafkaConsumerGroupManager(
+                        topic = topic,
+                        groupId = groupId,
+                        topicStateProvider = topicStateProvider,
+                        connectionPoolFactory = connectionPoolFactory,
+                        coroutineScope = coroutineScope
+                    )
                 }
             }
 

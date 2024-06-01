@@ -16,6 +16,7 @@ import io.github.vooft.kafka.serialization.common.primitives.VarLong
 import io.github.vooft.kafka.serialization.common.primitives.toInt32List
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import kotlinx.benchmark.Benchmark
@@ -30,6 +31,7 @@ import kotlinx.benchmark.State
 import kotlinx.benchmark.Warmup
 import kotlinx.io.Buffer
 
+@Suppress("unused")
 @State(Scope.Benchmark)
 @Measurement(iterations = 5, time = 7, timeUnit = BenchmarkTimeUnit.SECONDS)
 @Warmup(iterations = 5, time = 5, timeUnit = BenchmarkTimeUnit.SECONDS)
@@ -56,7 +58,7 @@ class MultiplatformKafkaBenchmark {
                     partitions = (1..5).map {
                         FetchRequestV4.Topic.Partition(
                             partition = PartitionIndex(it),
-                            fetchOffset = 0,
+                            fetchOffset = PartitionOffset(0),
                             maxBytes = 10240
                         )
                     }.toInt32List()
@@ -75,8 +77,8 @@ class MultiplatformKafkaBenchmark {
                         FetchResponseV4.Topic.Partition(
                             partition = PartitionIndex(partition),
                             errorCode = ErrorCode.NO_ERROR,
-                            highwaterMarkOffset = 100,
-                            lastStableOffset = 100,
+                            highwaterMarkOffset = PartitionOffset(0),
+                            lastStableOffset = PartitionOffset(0),
                             abortedTransactions = Int32List(),
                             batchContainer = Int32BytesSizePrefixed(
                                 KafkaRecordBatchContainerV0(

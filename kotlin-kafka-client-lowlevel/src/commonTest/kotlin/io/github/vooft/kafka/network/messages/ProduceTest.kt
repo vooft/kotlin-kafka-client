@@ -10,6 +10,7 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePref
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe
@@ -79,7 +80,7 @@ class ProduceTest {
     private val responsePartition = ProduceResponseV3.Topic.Partition(
         index = PartitionIndex(10),
         errorCode = ErrorCode.NO_ERROR,
-        baseOffset = 123L,
+        baseOffset = PartitionOffset(123),
         logAppendTimeMs = 456L
     )
     private val encodedResponsePartition = byteArrayOf(

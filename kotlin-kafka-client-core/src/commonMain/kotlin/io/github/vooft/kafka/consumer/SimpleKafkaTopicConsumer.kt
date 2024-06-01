@@ -2,6 +2,8 @@ package io.github.vooft.kafka.consumer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
+import io.github.vooft.kafka.consumer.offset.ConsumerOffsetProvider
+import io.github.vooft.kafka.consumer.offset.InMemoryConsumerOffsetProvider
 import io.github.vooft.kafka.consumer.requests.ConsumerRequestsFactory
 import io.github.vooft.kafka.network.messages.FetchRequestV4
 import io.github.vooft.kafka.network.messages.FetchResponseV4
@@ -16,17 +18,27 @@ import kotlinx.coroutines.awaitAll
 class SimpleKafkaTopicConsumer(
     private val topicStateProvider: KafkaTopicStateProvider,
     private val connectionPool: KafkaConnectionPool,
+    private val offsetProvider: ConsumerOffsetProvider = InMemoryConsumerOffsetProvider(topicStateProvider.topic),
+    private val autoCommitOffset: Boolean = true,
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) : KafkaTopicConsumer {
+
+    init {
+        require(autoCommitOffset) { "Only auto commit offset is supported" }
+    }
 
     override val topic: KafkaTopic get() = topicStateProvider.topic
 
     override suspend fun consume(): KafkaRecordsBatch {
-        val partitionsByNode = topicStateProvider.topicPartitions().entries.groupBy({ it.value }, { it.key })
+        val partitionsByNode = topicStateProvider.topicPartitions().entries.groupBy(
+            keySelector = { it.value },
+            valueTransform = { it.key }
+        )
 
         val responses = partitionsByNode.entries.map {
             coroutineScope.async {
-                val request = ConsumerRequestsFactory.fetchRequest(topic, it.value)
+                val partitionOffsets = it.value.associateWith { offsetProvider.currentOffset(it) + 1 }
+                val request = ConsumerRequestsFactory.fetchRequest(topic, partitionOffsets)
                 connectionPool.acquire(it.key).sendRequest<FetchRequestV4, FetchResponseV4>(request)
             }
         }.awaitAll()
@@ -45,6 +57,13 @@ class SimpleKafkaTopicConsumer(
                         }
                     } ?: emptyList()
                 }
+            }
+        }
+
+        if (autoCommitOffset) {
+            records.groupBy { it.partition }.forEach { (partition, records) ->
+                val maxOffset = records.maxOf { it.offset }
+                offsetProvider.commitOffset(partition, maxOffset)
             }
         }
 

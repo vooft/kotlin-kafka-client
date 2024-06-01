@@ -31,6 +31,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-konan
 
+      - name: Start kafka
+        run: make start-kafka
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v3
         with:

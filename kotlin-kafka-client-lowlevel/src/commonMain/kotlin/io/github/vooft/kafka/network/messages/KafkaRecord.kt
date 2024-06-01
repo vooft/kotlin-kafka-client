@@ -10,6 +10,7 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePref
 import io.github.vooft.kafka.serialization.common.primitives.VarIntList
 import io.github.vooft.kafka.serialization.common.primitives.VarIntString
 import io.github.vooft.kafka.serialization.common.primitives.VarLong
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -32,7 +33,7 @@ data class KafkaRecordV0(
 
 @Serializable
 data class KafkaRecordBatchContainerV0(
-    val firstOffset: Long = 0,
+    val firstOffset: PartitionOffset = PartitionOffset(0),
     val batch: Int32BytesSizePrefixed<KafkaRecordBatch>
 ) {
     @Serializable

@@ -11,6 +11,7 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePref
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.github.vooft.kafka.utils.toHexString
@@ -47,7 +48,7 @@ class FetchTest {
 
     private val requestPartition = FetchRequestV4.Topic.Partition(
         partition = PartitionIndex(10),
-        fetchOffset = 123L,
+        fetchOffset = PartitionOffset(123),
         maxBytes = 1024
     )
     private val requestPartitionEncoded = byteArrayOf(
@@ -85,7 +86,7 @@ class FetchTest {
 
     private val responseAbortedTransaction = FetchResponseV4.Topic.Partition.AbortedTransaction(
         producerId = 123L,
-        firstOffset = 456L
+        firstOffset = PartitionOffset(456)
     )
     private val encodedResponseAbortedTransaction = byteArrayOf(
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7B, // producerId
@@ -95,8 +96,8 @@ class FetchTest {
     private val responsePartition = FetchResponseV4.Topic.Partition(
         partition = PartitionIndex(10),
         errorCode = ErrorCode.NO_ERROR,
-        highwaterMarkOffset = 123L,
-        lastStableOffset = 456L,
+        highwaterMarkOffset = PartitionOffset(123),
+        lastStableOffset = PartitionOffset(456),
         abortedTransactions = Int32List(responseAbortedTransaction),
         batchContainer = Int32BytesSizePrefixed(batchContainer)
     )

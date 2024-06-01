@@ -9,6 +9,7 @@ import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefi
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.kotest.matchers.shouldBe
@@ -61,7 +62,7 @@ class KafkaRecordBatchTest {
     )
 
     private val batchContainer = KafkaRecordBatchContainerV0(
-        firstOffset = 1,
+        firstOffset = PartitionOffset(1),
         batch = Int32BytesSizePrefixed(batch)
     )
     private val batchContainerEncoded = byteArrayOf(

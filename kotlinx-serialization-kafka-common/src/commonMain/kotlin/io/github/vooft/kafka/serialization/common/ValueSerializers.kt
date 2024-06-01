@@ -18,6 +18,10 @@ interface ByteValue {
     val value: Byte
 }
 
+interface LongValue {
+    val value: Long
+}
+
 // TODO: refactor
 abstract class ShortValueSerializer<T: ShortValue>(
     private val factory: (Short) -> T

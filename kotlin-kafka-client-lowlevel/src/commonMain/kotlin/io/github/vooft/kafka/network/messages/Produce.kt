@@ -6,6 +6,7 @@ import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import kotlinx.serialization.Serializable
 
 sealed interface ProduceRequest : KafkaRequest {
@@ -70,7 +71,7 @@ data class ProduceResponseV3(
         data class Partition(
             val index: PartitionIndex,
             val errorCode: ErrorCode,
-            val baseOffset: Long,
+            val baseOffset: PartitionOffset,
             val logAppendTimeMs: Long
         )
     }

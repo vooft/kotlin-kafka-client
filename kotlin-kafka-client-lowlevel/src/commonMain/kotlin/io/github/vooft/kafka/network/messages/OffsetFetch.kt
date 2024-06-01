@@ -7,6 +7,7 @@ import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import kotlinx.serialization.Serializable
 
 interface OffsetFetchRequest : KafkaRequest {
@@ -61,7 +62,7 @@ data class OffsetFetchResponseV1(
         @Serializable
         data class Partition(
             val partition: PartitionIndex,
-            val offset: Long,
+            val offset: PartitionOffset,
             val metadata: NullableInt16String,
             val errorCode: ErrorCode
         )

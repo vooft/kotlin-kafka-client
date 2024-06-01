@@ -53,7 +53,11 @@ class KafkaGroupedTopicConsumer(
         MutableStateFlow(metadata)
     }
 
-    private val delegate = SimpleKafkaTopicConsumer(GroupedTopicMetadataProvider(), connectionPool, coroutineScope)
+    private val delegate = SimpleKafkaTopicConsumer(
+        topicStateProvider = GroupedTopicMetadataProvider(),
+        connectionPool = connectionPool,
+        coroutineScope = coroutineScope
+    )
 
     override suspend fun consume() = delegate.consume()
 
@@ -77,6 +81,7 @@ class KafkaGroupedTopicConsumer(
                 NO_ERROR -> Unit
                 REBALANCE_IN_PROGRESS, NOT_COORDINATOR, ILLEGAL_GENERATION ->
                     metadata.value = rejoinGroup(metadata.value.membership.memberId)
+
                 UNKNOWN_MEMBER_ID -> metadata.value = rejoinGroup(MemberId.EMPTY)
                 else -> error("Heartbeat failed with error code $errorCode")
             }
@@ -126,9 +131,11 @@ class KafkaGroupedTopicConsumer(
                 groupProtocols = int32ListOf(
                     JoinGroupRequestV1.GroupProtocol(
                         protocol = "mybla".toInt16String(), // TODO: change to proper assigner
-                        metadata = Int32BytesSizePrefixed( JoinGroupRequestV1.GroupProtocol.Metadata(
-                            topics = int32ListOf(topic)
-                        ))
+                        metadata = Int32BytesSizePrefixed(
+                            JoinGroupRequestV1.GroupProtocol.Metadata(
+                                topics = int32ListOf(topic)
+                            )
+                        )
                     )
                 )
             )
@@ -156,26 +163,28 @@ class KafkaGroupedTopicConsumer(
         }
 
         val connection = connectionPool.acquire(joinedGroup.coordinatorNodeId)
-        val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(SyncGroupRequestV1(
-            groupId = groupId,
-            generationId = joinedGroup.generationId,
-            memberId = joinedGroup.memberId,
-            assignments = assignments.map { (memberId, partitions) ->
-                SyncGroupRequestV1.Assignment(
-                    memberId = memberId,
-                    assignment = Int32BytesSizePrefixed(
-                        MemberAssignment(
-                            partitionAssignments = int32ListOf(
-                                MemberAssignment.PartitionAssignment(
-                                    topic = topic,
-                                    partitions = partitions.toInt32List()
-                                )
-                            ),
+        val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(
+            SyncGroupRequestV1(
+                groupId = groupId,
+                generationId = joinedGroup.generationId,
+                memberId = joinedGroup.memberId,
+                assignments = assignments.map { (memberId, partitions) ->
+                    SyncGroupRequestV1.Assignment(
+                        memberId = memberId,
+                        assignment = Int32BytesSizePrefixed(
+                            MemberAssignment(
+                                partitionAssignments = int32ListOf(
+                                    MemberAssignment.PartitionAssignment(
+                                        topic = topic,
+                                        partitions = partitions.toInt32List()
+                                    )
+                                ),
+                            )
                         )
                     )
-                )
-            }.toInt32List()
-        ))
+                }.toInt32List()
+            )
+        )
 
         return syncResponse.assignment.value?.partitionAssignments?.single()?.partitions?.value ?: listOf()
 
