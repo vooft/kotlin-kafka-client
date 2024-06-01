@@ -61,6 +61,7 @@ enum class ApiKey(override val value: Short): ShortValue {
     PRODUCE(0),
     FETCH(1),
     METADATA(3),
+    OFFSET_COMMIT(8),
     OFFSET_FETCH(9),
     FIND_COORDINATOR(10),
     JOIN_GROUP(11),

@@ -4,6 +4,7 @@ import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
+import io.github.vooft.kafka.consumer.offset.ConsumerGroupOffsetProvider
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.common.ErrorCode.ILLEGAL_GENERATION
 import io.github.vooft.kafka.network.common.ErrorCode.NOT_COORDINATOR
@@ -56,6 +57,11 @@ class KafkaGroupedTopicConsumer(
     private val delegate = SimpleKafkaTopicConsumer(
         topicStateProvider = GroupedTopicMetadataProvider(),
         connectionPool = connectionPool,
+        offsetProvider = ConsumerGroupOffsetProvider(
+            groupId = groupId,
+            topicStateProvider = topicStateProvider,
+            connectionPool = connectionPool
+        ),
         coroutineScope = coroutineScope
     )
 

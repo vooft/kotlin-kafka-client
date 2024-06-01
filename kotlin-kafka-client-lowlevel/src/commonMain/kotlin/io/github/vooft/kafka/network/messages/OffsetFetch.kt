@@ -1,7 +1,6 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
@@ -28,14 +27,9 @@ data class OffsetFetchRequestV1(
 ) : OffsetFetchRequest, VersionedV1 {
     @Serializable
     data class Topic(
-        val topic: Int16String,
-        val partitions: Int32List<Partition>
-    ) {
-        @Serializable
-        data class Partition(
-            val partition: PartitionIndex
-        )
-    }
+        val topic: KafkaTopic,
+        val partitions: Int32List<PartitionIndex>
+    )
 }
 
 interface OffsetFetchResponse : KafkaResponse
