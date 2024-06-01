@@ -29,14 +29,12 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 import kotlinx.benchmark.Warmup
 import kotlinx.io.Buffer
-import org.openjdk.jmh.annotations.Fork
 
 @State(Scope.Benchmark)
 @Measurement(iterations = 5, time = 7, timeUnit = BenchmarkTimeUnit.SECONDS)
 @Warmup(iterations = 5, time = 5, timeUnit = BenchmarkTimeUnit.SECONDS)
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.Throughput)
-@Fork(1)
 class MultiplatformKafkaBenchmark {
 
     private lateinit var fetchRequest: FetchRequestV4
@@ -45,6 +43,7 @@ class MultiplatformKafkaBenchmark {
     private lateinit var fetchResponse: FetchResponseV4
     private lateinit var encodedFetchResponse: Buffer
 
+    @Suppress("detekt:LongMethod")
     @Setup
     fun setUp() {
         fetchRequest = FetchRequestV4(
