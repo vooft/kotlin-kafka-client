@@ -18,6 +18,7 @@ import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.minutes
 
 class KafkaGroupedConsumerTest {
 
@@ -36,7 +37,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group`() = runTest {
+    fun `should consume using 2 consumers in a group`() = runTest(timeout = 2.minutes) {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
 
@@ -68,7 +69,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest {
+    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest(timeout = 2.minutes) {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
         var consumer3: Deferred<KafkaTopicConsumer>? = null
