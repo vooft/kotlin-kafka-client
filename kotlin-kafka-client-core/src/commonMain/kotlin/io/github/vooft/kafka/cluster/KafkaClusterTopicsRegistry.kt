@@ -4,9 +4,7 @@ import io.github.vooft.kafka.network.common.ErrorCode.LEADER_NOT_AVAILABLE
 import io.github.vooft.kafka.network.common.ErrorCode.NO_ERROR
 import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_TOPIC_ID
 import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_TOPIC_OR_PARTITION
-import io.github.vooft.kafka.network.messages.MetadataRequestV1
-import io.github.vooft.kafka.network.messages.MetadataResponseV1
-import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
@@ -63,7 +61,7 @@ class KafkaClusterTopicsRegistryImpl(
 
         val now = Clock.System.now()
 
-        val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(topics))
+        val response = connection.metadata(topics)
         return buildMap {
             for (topic in response.topics) {
                 when (topic.errorCode) {

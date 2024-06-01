@@ -42,7 +42,7 @@ object ApiVersionSerializer : ShortValueSerializer<ApiVersion>(ApiVersion.entrie
 @JvmInline
 value class CorrelationId(override val value: Int) : IntValue {
     companion object {
-        private var counter = 666
+        private var counter = 666 // TODO: use atomic
         fun next() = CorrelationId(counter++)
     }
 }

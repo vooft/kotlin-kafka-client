@@ -76,5 +76,4 @@ value class ConsumerId private constructor(val id: Int) {
     }
 }
 
-// looks like in kafka itself they use "consumer" for this use case
-const val CONSUMER_PROTOCOL_TYPE = "consumer"
+

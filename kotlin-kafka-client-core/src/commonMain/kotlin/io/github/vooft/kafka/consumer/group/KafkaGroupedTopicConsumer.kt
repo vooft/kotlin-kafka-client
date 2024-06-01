@@ -11,13 +11,9 @@ import io.github.vooft.kafka.network.common.ErrorCode.NOT_COORDINATOR
 import io.github.vooft.kafka.network.common.ErrorCode.NO_ERROR
 import io.github.vooft.kafka.network.common.ErrorCode.REBALANCE_IN_PROGRESS
 import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_MEMBER_ID
-import io.github.vooft.kafka.network.common.toInt16String
-import io.github.vooft.kafka.network.messages.FindCoordinatorRequestV1
-import io.github.vooft.kafka.network.messages.FindCoordinatorResponseV1
-import io.github.vooft.kafka.network.messages.HeartbeatRequestV0
-import io.github.vooft.kafka.network.messages.HeartbeatResponseV0
-import io.github.vooft.kafka.network.messages.JoinGroupRequestV1
-import io.github.vooft.kafka.network.messages.JoinGroupResponseV1
+import io.github.vooft.kafka.network.findGroupCoordinator
+import io.github.vooft.kafka.network.heartbeat
+import io.github.vooft.kafka.network.joinGroup
 import io.github.vooft.kafka.network.messages.MemberAssignment
 import io.github.vooft.kafka.network.messages.SyncGroupRequestV1
 import io.github.vooft.kafka.network.messages.SyncGroupResponseV1
@@ -97,12 +93,10 @@ class KafkaGroupedTopicConsumer(
         val metadata = consumerMetadata.await().value
 
         val connection = connectionPool.acquire(metadata.membership.coordinatorNodeId)
-        val response = connection.sendRequest<HeartbeatRequestV0, HeartbeatResponseV0>(
-            HeartbeatRequestV0(
-                groupId = groupId,
-                generationId = metadata.membership.generationId,
-                memberId = metadata.membership.memberId
-            )
+        val response = connection.heartbeat(
+            groupId = groupId,
+            generationId = metadata.membership.generationId,
+            memberId = metadata.membership.memberId
         )
 
         return response.errorCode
@@ -111,9 +105,7 @@ class KafkaGroupedTopicConsumer(
     private suspend fun findCoordinator(): NodeId {
         while (true) { // TODO: better retry
             val connection = connectionPool.acquire()
-            val response = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
-                FindCoordinatorRequestV1(groupId.value.toInt16String()) // TODO: create 2 types: one for groups, one for txns
-            )
+            val response = connection.findGroupCoordinator(groupId)
 
             if (response.errorCode.isRetriable) {
                 continue
@@ -129,24 +121,10 @@ class KafkaGroupedTopicConsumer(
 
             val connection = connectionPool.acquire(coordinatorNodeId)
 
-            val response = connection.sendRequest<JoinGroupRequestV1, JoinGroupResponseV1>(
-                JoinGroupRequestV1(
-                    groupId = groupId,
-                    sessionTimeoutMs = 30000,
-                    rebalanceTimeoutMs = 60000,
-                    memberId = memberId,
-                    protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
-                    groupProtocols = int32ListOf(
-                        JoinGroupRequestV1.GroupProtocol(
-                            protocol = "mybla".toInt16String(), // TODO: change to proper assigner
-                            metadata = Int32BytesSizePrefixed(
-                                JoinGroupRequestV1.GroupProtocol.Metadata(
-                                    topics = int32ListOf(topic)
-                                )
-                            )
-                        )
-                    )
-                )
+            val response = connection.joinGroup(
+                groupId = groupId,
+                memberId = memberId,
+                topic = topic
             )
 
             if (response.errorCode.isRetriable || response.errorCode == NOT_COORDINATOR) {

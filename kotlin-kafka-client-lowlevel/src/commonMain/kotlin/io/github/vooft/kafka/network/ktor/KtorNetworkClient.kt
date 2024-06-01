@@ -3,10 +3,9 @@ package io.github.vooft.kafka.network.ktor
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
 import io.github.vooft.kafka.network.common.nextHeader
-import io.github.vooft.kafka.network.headers.KafkaResponseHeaderV0
+import io.github.vooft.kafka.network.headers.KafkaResponseHeader
 import io.github.vooft.kafka.network.messages.KafkaRequest
 import io.github.vooft.kafka.network.messages.KafkaResponse
-import io.github.vooft.kafka.network.serialization.encodeHeader
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.github.vooft.kafka.utils.toHexString
@@ -55,14 +54,14 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         writeChannelMutex.withLock {
             writeChannel.writeMessage {
                 val header = request.nextHeader()
-                encodeHeader(header)
+                encode(header)
                 encode(requestSerializer, request)
             }
         }
 
         return readChannelMutex.withLock {
             readChannel.readMessage {
-                val header = decode<KafkaResponseHeaderV0>()
+                val header = decode<KafkaResponseHeader>()
 
                 val result = decode(responseDeserializer)
 

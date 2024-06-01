@@ -5,10 +5,9 @@ import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
 import io.github.vooft.kafka.network.messages.KafkaRecordV0
-import io.github.vooft.kafka.network.messages.MetadataRequestV1
-import io.github.vooft.kafka.network.messages.MetadataResponseV1
 import io.github.vooft.kafka.network.messages.ProduceRequestV3
 import io.github.vooft.kafka.network.messages.ProduceResponseV3
+import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.network.sendRequest
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
@@ -41,7 +40,7 @@ fun main() = runBlocking {
         val client = KtorNetworkClient()
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
-            val response = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(MetadataRequestV1(topic))
+            val response = connection.metadata(topic)
             println("Metadata response: $response")
         } while (response.topics.single().errorCode != ErrorCode.NO_ERROR)
 

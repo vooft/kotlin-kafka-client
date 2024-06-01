@@ -1,10 +1,7 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.network.messages.MetadataRequestV1
-import io.github.vooft.kafka.network.messages.MetadataResponseV1
-import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -33,7 +30,7 @@ class KafkaNodesRegistryImpl(private val connectionPool: KafkaConnectionPool, co
 
     private suspend fun fetchNodes(): Nodes {
         val connection = connectionPool.acquire()
-        val metadata = connection.sendRequest<MetadataRequestV1, MetadataResponseV1>(EMPTY_METADATA_REQUEST)
+        val metadata = connection.metadata(emptyList())
 
         return metadata.brokers.associateBy({ it.nodeId }, { BrokerAddress(it.host.value, it.port) })
     }
@@ -41,7 +38,5 @@ class KafkaNodesRegistryImpl(private val connectionPool: KafkaConnectionPool, co
 }
 
 private data class NodesState(val updated: Instant, val nodes: Nodes)
-private val EMPTY_METADATA_REQUEST = MetadataRequestV1(emptyList<KafkaTopic>())
-
 
 
