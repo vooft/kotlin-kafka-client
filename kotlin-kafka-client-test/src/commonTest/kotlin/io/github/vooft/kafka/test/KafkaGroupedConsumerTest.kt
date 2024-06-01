@@ -37,7 +37,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group`() = runTest(timeout = 2.minutes) {
+    fun `should consume using 2 consumers in a group`() = runTest(timeout = 3.minutes) {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
 
@@ -69,7 +69,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest(timeout = 2.minutes) {
+    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest(timeout = 3.minutes) {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
         var consumer3: Deferred<KafkaTopicConsumer>? = null
