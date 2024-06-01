@@ -25,11 +25,6 @@ fun KafkaClusterTopicsRegistry.forTopic(topic: KafkaTopic): KafkaTopicStateProvi
     override suspend fun topicPartitions(): Map<PartitionIndex, NodeId> = topicPartitions(topic)
 }
 
-interface KafkaTopicStateProvider {
-    val topic: KafkaTopic
-    suspend fun topicPartitions(): Map<PartitionIndex, NodeId>
-}
-
 class KafkaClusterTopicsRegistryImpl(
     private val connectionPool: KafkaConnectionPool,
 ) : KafkaClusterTopicsRegistry {
