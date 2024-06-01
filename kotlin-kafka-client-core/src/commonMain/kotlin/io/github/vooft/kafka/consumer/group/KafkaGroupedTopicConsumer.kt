@@ -69,9 +69,7 @@ class KafkaGroupedTopicConsumer(
     override suspend fun consume() = delegate.consume()
 
     private suspend fun rejoinGroup(memberId: MemberId): ExtendedConsumerMetadata {
-        val coordinator = findCoordinator()
-
-        val joinedGroup = joinGroup(coordinator, memberId)
+        val joinedGroup = joinGroup(memberId)
         val assignedPartitions = syncGroup(joinedGroup, joinedGroup.otherMembers)
         return ExtendedConsumerMetadata(
             membership = joinedGroup,
@@ -111,7 +109,7 @@ class KafkaGroupedTopicConsumer(
     }
 
     private suspend fun findCoordinator(): NodeId {
-        while (true) {
+        while (true) { // TODO: better retry
             val connection = connectionPool.acquire()
             val response = connection.sendRequest<FindCoordinatorRequestV1, FindCoordinatorResponseV1>(
                 FindCoordinatorRequestV1(groupId.value.toInt16String()) // TODO: create 2 types: one for groups, one for txns
@@ -125,38 +123,46 @@ class KafkaGroupedTopicConsumer(
         }
     }
 
-    private suspend fun joinGroup(coordinatorNodeId: NodeId, memberId: MemberId = MemberId("")): JoinedGroup {
-        val connection = connectionPool.acquire(coordinatorNodeId)
+    private suspend fun joinGroup(memberId: MemberId = MemberId("")): JoinedGroup {
+        while (true) { // TODO: better retry
+            val coordinatorNodeId = findCoordinator()
 
-        val response = connection.sendRequest<JoinGroupRequestV1, JoinGroupResponseV1>(
-            JoinGroupRequestV1(
-                groupId = groupId,
-                sessionTimeoutMs = 30000,
-                rebalanceTimeoutMs = 60000,
-                memberId = memberId,
-                protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
-                groupProtocols = int32ListOf(
-                    JoinGroupRequestV1.GroupProtocol(
-                        protocol = "mybla".toInt16String(), // TODO: change to proper assigner
-                        metadata = Int32BytesSizePrefixed(
-                            JoinGroupRequestV1.GroupProtocol.Metadata(
-                                topics = int32ListOf(topic)
+            val connection = connectionPool.acquire(coordinatorNodeId)
+
+            val response = connection.sendRequest<JoinGroupRequestV1, JoinGroupResponseV1>(
+                JoinGroupRequestV1(
+                    groupId = groupId,
+                    sessionTimeoutMs = 30000,
+                    rebalanceTimeoutMs = 60000,
+                    memberId = memberId,
+                    protocolType = CONSUMER_PROTOCOL_TYPE.toInt16String(),
+                    groupProtocols = int32ListOf(
+                        JoinGroupRequestV1.GroupProtocol(
+                            protocol = "mybla".toInt16String(), // TODO: change to proper assigner
+                            metadata = Int32BytesSizePrefixed(
+                                JoinGroupRequestV1.GroupProtocol.Metadata(
+                                    topics = int32ListOf(topic)
+                                )
                             )
                         )
                     )
                 )
             )
-        )
 
-        require(response.errorCode == NO_ERROR) { "Join group failed with error code ${response.errorCode}" }
+            if (response.errorCode.isRetriable || response.errorCode == NOT_COORDINATOR) {
+                continue
+            }
 
-        return JoinedGroup(
-            coordinatorNodeId = coordinatorNodeId,
-            memberId = response.memberId,
-            isLeader = response.leaderId == response.memberId,
-            generationId = response.generationId,
-            otherMembers = response.members.map { it.memberId }
-        )
+            require(response.errorCode == NO_ERROR) { "Join group failed with error code ${response.errorCode}" }
+
+            return JoinedGroup(
+                coordinatorNodeId = coordinatorNodeId,
+                memberId = response.memberId,
+                isLeader = response.leaderId == response.memberId,
+                generationId = response.generationId,
+                otherMembers = response.members.map { it.memberId }
+            )
+        }
     }
 
     private suspend fun syncGroup(joinedGroup: JoinedGroup, memberIds: Collection<MemberId>): List<PartitionIndex> {
