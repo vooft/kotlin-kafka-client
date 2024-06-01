@@ -14,6 +14,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import org.kodein.log.LoggerFactory
+import org.kodein.log.newLogger
 
 class SimpleKafkaTopicConsumer(
     private val topicStateProvider: KafkaTopicStateProvider,
@@ -34,6 +36,8 @@ class SimpleKafkaTopicConsumer(
             keySelector = { it.value },
             valueTransform = { it.key }
         )
+
+        logger.info { "Consuming topic $topic from partitions: ${partitionsByNode.values.flatten()}" }
 
         val responses = partitionsByNode.entries.map {
             coroutineScope.async {
@@ -70,4 +74,7 @@ class SimpleKafkaTopicConsumer(
         return KafkaRecordsBatch(topic, records)
     }
 
+    companion object {
+        private val logger = LoggerFactory.default.newLogger<SimpleKafkaTopicConsumer>()
+    }
 }
