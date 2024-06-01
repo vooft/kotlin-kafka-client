@@ -12,8 +12,6 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.readString
 import kotlinx.uuid.UUID
@@ -70,7 +68,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group with later joining 3rd`(): Unit = runBlocking {
+    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
         var consumer3: Deferred<KafkaTopicConsumer>? = null
@@ -92,7 +90,6 @@ class KafkaGroupedConsumerTest {
                     if (!consumer3.isCompleted) {
                         println("consumer3 joining")
                         consumer3.await()
-                        delay(1000) // wait for rebalancing, hopefully this is enough
                     }
 
                     async { consumer3.await().consume() }
