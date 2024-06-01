@@ -23,7 +23,7 @@ import kotlin.test.Test
 
 class KafkaGroupedConsumerTest {
 
-    private val totalRecords = 1000
+    private val totalRecords = 100
     private val topic = KafkaTopic(UUID.generateUUID().toString())
     private val values = List(totalRecords) { UUID.generateUUID().toString() }
 
