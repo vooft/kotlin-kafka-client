@@ -36,6 +36,10 @@ fun <T> int32ListOf(vararg values: T): Int32List<T> = Int32List(values.toList())
 // https://youtrack.jetbrains.com/issue/KT-24874/Support-custom-equals-and-hashCode-for-value-classes
 value class VarIntByteArray(val data: List<Byte>) {
     constructor(data: ByteArray): this(data.toList())
+
+    companion object {
+        val EMPTY = VarIntByteArray(emptyList())
+    }
 }
 
 fun VarIntByteArray(value: String) = VarIntByteArray(value.encodeToByteArray())

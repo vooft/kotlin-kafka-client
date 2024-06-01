@@ -2,11 +2,8 @@ package io.github.vooft.kafka.producer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
-import io.github.vooft.kafka.network.messages.ProduceRequestV3
-import io.github.vooft.kafka.network.messages.ProduceResponseV3
-import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.producer.requests.ProduceRequestFactory
-import io.github.vooft.kafka.producer.requests.ProducedRecord
+import io.github.vooft.kafka.network.ProduceRecord
+import io.github.vooft.kafka.network.produce
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
@@ -24,8 +21,7 @@ class SimpleKafkaTopicProducer(
         val (partition, node) = topicStateProvider.determinePartition(key)
         val connection = connectionPool.acquire(node)
 
-        val request = ProduceRequestFactory.createProduceRequest(topic, partition, listOf(ProducedRecord(key, value)))
-        val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(request)
+        val response = connection.produce(topic, mapOf(partition to listOf(ProduceRecord(key, value))))
 
         return RecordMetadata(
             topic = response.topics.single().topic,

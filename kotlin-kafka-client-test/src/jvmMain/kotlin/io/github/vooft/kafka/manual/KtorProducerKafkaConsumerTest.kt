@@ -1,21 +1,13 @@
 package io.github.vooft.kafka.manual
+import io.github.vooft.kafka.network.ProduceRecord
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.common.toVarInt
-import io.github.vooft.kafka.network.common.toVarIntByteArray
 import io.github.vooft.kafka.network.ktor.KtorNetworkClient
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0
-import io.github.vooft.kafka.network.messages.KafkaRecordV0
-import io.github.vooft.kafka.network.messages.ProduceRequestV3
-import io.github.vooft.kafka.network.messages.ProduceResponseV3
 import io.github.vooft.kafka.network.metadata
-import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
-import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
-import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
-import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.network.produce
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.Buffer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -46,43 +38,13 @@ fun main() = runBlocking {
 
 
         repeat(COUNT) {
-            val response = connection.sendRequest<ProduceRequestV3, ProduceResponseV3>(
-                ProduceRequestV3(
-                    timeoutMs = 1000,
-                    topic = int32ListOf(
-                        ProduceRequestV3.Topic(
-                            topic = KafkaTopic(topic),
-                            partition = int32ListOf(
-                                ProduceRequestV3.Topic.Partition(
-                                    partition = PartitionIndex(0),
-                                    batchContainer = Int32BytesSizePrefixed(
-                                        KafkaRecordBatchContainerV0(
-                                            batch = Int32BytesSizePrefixed(
-                                                KafkaRecordBatchContainerV0.KafkaRecordBatch(
-                                                    body = Crc32cPrefixed(
-                                                        KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody(
-                                                            lastOffsetDelta = 0,
-                                                            firstTimestamp = System.currentTimeMillis(),
-                                                            maxTimestamp = System.currentTimeMillis(),
-                                                            records = int32ListOf(
-                                                                KafkaRecordV0(
-                                                                    recordBody = VarIntBytesSizePrefixed(
-                                                                        KafkaRecordV0.KafkaRecordBody(
-                                                                            offsetDelta = 0.toVarInt(),
-                                                                            recordKey = "key $it".toVarIntByteArray(),
-                                                                            recordValue = "value $it".toVarIntByteArray()
-                                                                        )
-                                                                    )
-                                                                )
-                                                            )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
+            val response = connection.produce(
+                KafkaTopic(topic),
+                mapOf(
+                    PartitionIndex(0) to listOf(
+                        ProduceRecord(
+                            key = Buffer().apply { write("key $it".encodeToByteArray()) },
+                            value = Buffer().apply { write("value $it".encodeToByteArray()) }
                         )
                     )
                 )

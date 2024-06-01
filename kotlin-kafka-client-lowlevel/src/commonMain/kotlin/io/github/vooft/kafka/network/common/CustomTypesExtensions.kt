@@ -16,8 +16,8 @@ fun List<String>.toInt16String() = map { it.toNullableInt16String() }
 fun Int.toVarInt() = VarInt.fromDecoded(this)
 
 fun ByteArray.toVarIntByteArray() = VarIntByteArray(this)
-fun String.toVarIntByteArray() = VarIntByteArray(this.encodeToByteArray())
-fun Source.toVarIntByteArray() = VarIntByteArray(readByteArray())
+fun String.toVarIntByteArray() = VarIntByteArray(encodeToByteArray())
+fun Source.toVarIntByteArray() = VarIntByteArray(peek().readByteArray())
 
 fun String?.toVarIntString() = VarIntString(this)
 

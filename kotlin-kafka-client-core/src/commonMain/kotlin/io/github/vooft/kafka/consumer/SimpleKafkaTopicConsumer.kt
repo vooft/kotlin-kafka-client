@@ -4,10 +4,7 @@ import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.consumer.offset.ConsumerOffsetProvider
 import io.github.vooft.kafka.consumer.offset.InMemoryConsumerOffsetProvider
-import io.github.vooft.kafka.consumer.requests.ConsumerRequestsFactory
-import io.github.vooft.kafka.network.messages.FetchRequestV4
-import io.github.vooft.kafka.network.messages.FetchResponseV4
-import io.github.vooft.kafka.network.sendRequest
+import io.github.vooft.kafka.network.fetch
 import io.github.vooft.kafka.serialization.common.primitives.toBuffer
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import kotlinx.coroutines.CoroutineScope
@@ -42,8 +39,7 @@ class SimpleKafkaTopicConsumer(
         val responses = partitionsByNode.entries.map {
             coroutineScope.async {
                 val partitionOffsets = it.value.associateWith { offsetProvider.currentOffset(it) + 1 }
-                val request = ConsumerRequestsFactory.fetchRequest(topic, partitionOffsets)
-                connectionPool.acquire(it.key).sendRequest<FetchRequestV4, FetchResponseV4>(request)
+                connectionPool.acquire(it.key).fetch(topic, partitionOffsets)
             }
         }.awaitAll()
 

@@ -14,13 +14,7 @@ import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_MEMBER_ID
 import io.github.vooft.kafka.network.findGroupCoordinator
 import io.github.vooft.kafka.network.heartbeat
 import io.github.vooft.kafka.network.joinGroup
-import io.github.vooft.kafka.network.messages.MemberAssignment
-import io.github.vooft.kafka.network.messages.SyncGroupRequestV1
-import io.github.vooft.kafka.network.messages.SyncGroupResponseV1
-import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
-import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
-import io.github.vooft.kafka.serialization.common.primitives.toInt32List
+import io.github.vooft.kafka.network.syncGroup
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.MemberId
@@ -156,27 +150,12 @@ class KafkaGroupedTopicConsumer(
         }
 
         val connection = connectionPool.acquire(joinedGroup.coordinatorNodeId)
-        val syncResponse = connection.sendRequest<SyncGroupRequestV1, SyncGroupResponseV1>(
-            SyncGroupRequestV1(
-                groupId = groupId,
-                generationId = joinedGroup.generationId,
-                memberId = joinedGroup.memberId,
-                assignments = assignments.map { (memberId, partitions) ->
-                    SyncGroupRequestV1.Assignment(
-                        memberId = memberId,
-                        assignment = Int32BytesSizePrefixed(
-                            MemberAssignment(
-                                partitionAssignments = int32ListOf(
-                                    MemberAssignment.PartitionAssignment(
-                                        topic = topic,
-                                        partitions = partitions.toInt32List()
-                                    )
-                                ),
-                            )
-                        )
-                    )
-                }.toInt32List()
-            )
+        val syncResponse = connection.syncGroup(
+            groupId = groupId,
+            topic = topic,
+            generationId = joinedGroup.generationId,
+            currentMemberId = joinedGroup.memberId,
+            assignments = assignments
         )
 
         return syncResponse.assignment.value?.partitionAssignments?.single()?.partitions?.value ?: listOf()

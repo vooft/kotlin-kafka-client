@@ -3,18 +3,13 @@ package io.github.vooft.kafka.consumer.offset
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.consumer.group.ConsumerGroupMembership
+import io.github.vooft.kafka.network.commitOffset
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.messages.OffsetCommitRequestV1
-import io.github.vooft.kafka.network.messages.OffsetCommitResponseV1
-import io.github.vooft.kafka.network.messages.OffsetFetchRequestV1
-import io.github.vooft.kafka.network.messages.OffsetFetchResponseV1
-import io.github.vooft.kafka.network.sendRequest
-import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
+import io.github.vooft.kafka.network.fetchOffset
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
-import kotlinx.datetime.Clock
 import org.kodein.log.LoggerFactory
 import org.kodein.log.newLogger
 
@@ -33,17 +28,7 @@ class ConsumerGroupOffsetProvider(
         logger.info { "$groupId: Requesting offset for partition $partition" }
 
         val membership = groupMembershipProvider.membership()
-        val response = connectionPool.acquire(membership.coordinatorNodeId).sendRequest<OffsetFetchRequestV1, OffsetFetchResponseV1>(
-            OffsetFetchRequestV1(
-                groupId = groupId,
-                topics = int32ListOf(
-                    OffsetFetchRequestV1.Topic(
-                        topic = topic,
-                        partitions = int32ListOf(partition)
-                    )
-                )
-            )
-        )
+        val response = connectionPool.acquire(membership.coordinatorNodeId).fetchOffset(groupId, topic, listOf(partition))
 
         return response.topics.singleOrNull()?.partitions?.singleOrNull()?.offset ?: PartitionOffset(-1)
     }
@@ -52,25 +37,12 @@ class ConsumerGroupOffsetProvider(
         logger.info { "$groupId: Committing offset for partition $partition: $offset" }
 
         val membership = groupMembershipProvider.membership()
-        val response = connectionPool.acquire(membership.coordinatorNodeId).sendRequest<OffsetCommitRequestV1, OffsetCommitResponseV1>(
-            OffsetCommitRequestV1(
-                groupId = groupId,
-                generationIdOrMemberEpoch = membership.generationId,
-                memberId = membership.memberId,
-                topics = int32ListOf(
-                    OffsetCommitRequestV1.Topic(
-                        topic = topic,
-                        partitions = int32ListOf(
-                            OffsetCommitRequestV1.Topic.Partition(
-                                partition = partition,
-                                committedOffset = offset,
-                                commitTimestamp = Clock.System.now().epochSeconds
-                            )
-                        )
-                    )
-
-                )
-            )
+        val response = connectionPool.acquire(membership.coordinatorNodeId).commitOffset(
+            groupId = groupId,
+            generationId = membership.generationId,
+            memberId = membership.memberId,
+            topic = topic,
+            offsets = mapOf(partition to offset)
         )
 
         val errorCode = response.topics.single().partitions.single().errorCode
