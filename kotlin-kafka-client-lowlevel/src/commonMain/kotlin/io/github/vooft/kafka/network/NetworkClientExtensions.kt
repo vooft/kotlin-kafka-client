@@ -223,5 +223,4 @@ suspend fun KafkaConnection.syncGroup(
     )
 
 // looks like in kafka itself they use "consumer" for this use case
-private
-val CONSUMER_PROTOCOL_TYPE = Int16String("consumer")
+private val CONSUMER_PROTOCOL_TYPE = Int16String("consumer")
