@@ -6,7 +6,6 @@ kotlin {
     jvm()
 
     macosArm64()
-    linuxX64()
 
     applyDefaultHierarchyTemplate()
 
