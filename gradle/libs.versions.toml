@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.0"
-kotest = "5.9.0"
+kotest = "5.9.1"
 ktor = "2.3.11"
 kotlinx-benchmark = "0.4.10"
 
