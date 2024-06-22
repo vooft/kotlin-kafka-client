@@ -5,6 +5,7 @@ import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.producer.send
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.kotest.common.runBlocking
+import kotlinx.coroutines.delay
 import kotlinx.io.readString
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
@@ -23,6 +24,13 @@ class KafkaSimpleTest {
 
         println("creating producer")
         val producer = cluster.createProducer(topic)
+
+        println("send dummy values")
+        repeat(10) {
+            val value = (0 - it).toString()
+            producer.send(value, value)
+            delay(50)
+        }
 
         println("sending values")
         values.forEach {

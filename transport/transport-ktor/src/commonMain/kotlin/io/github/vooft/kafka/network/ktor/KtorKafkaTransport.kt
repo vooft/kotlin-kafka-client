@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.network.ktor
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.network.common.nextHeader
@@ -62,6 +63,7 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
         try {
             writeChannel.writeMessage {
                 val header = request.nextHeader()
+
                 encode(header)
                 encode(requestSerializer, request)
             }
@@ -93,25 +95,42 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
     }
 
     private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) = writeChannelMutex.withLock {
+        logger.trace { "Writing message" }
+
         val buffer = Buffer()
         buffer.block()
 
         val data = buffer.readByteArray()
+
+        logger.trace { "Writing message size ${data.size}" }
         writeInt(data.size)
+
+        logger.trace { "Writing message itself" }
         writeFully(data)
 
+        logger.trace { "Message written, flushing" }
         flush()
+        logger.trace { "Flushed" }
     }
 
     private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T = readChannelMutex.withLock {
+        logger.trace { "Reading message" }
+
         val size = readInt()
+        logger.trace { "Reading message with size: $size"}
 
         val dst = ByteArray(size)
         readFully(dst, 0, size)
 
+        logger.trace { "Read message with size: $size" }
+
         val result = Buffer()
         result.write(dst)
         return result.block()
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger {  }
     }
 }
 
