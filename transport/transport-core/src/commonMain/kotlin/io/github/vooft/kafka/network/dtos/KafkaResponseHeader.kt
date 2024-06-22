@@ -1,6 +1,5 @@
-package io.github.vooft.kafka.network.headers
+package io.github.vooft.kafka.network.dtos
 
-import io.github.vooft.kafka.network.messages.CorrelationId
 import kotlinx.serialization.Serializable
 
 @Serializable

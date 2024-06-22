@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.network
 
-import io.github.vooft.kafka.network.messages.KafkaRequest
-import io.github.vooft.kafka.network.messages.KafkaResponse
+import io.github.vooft.kafka.network.dtos.KafkaRequest
+import io.github.vooft.kafka.network.dtos.KafkaResponse
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer

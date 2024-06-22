@@ -3,9 +3,9 @@ package io.github.vooft.kafka.network.ktor
 import io.github.vooft.kafka.network.KafkaConnection
 import io.github.vooft.kafka.network.NetworkClient
 import io.github.vooft.kafka.network.common.nextHeader
-import io.github.vooft.kafka.network.headers.KafkaResponseHeader
-import io.github.vooft.kafka.network.messages.KafkaRequest
-import io.github.vooft.kafka.network.messages.KafkaResponse
+import io.github.vooft.kafka.network.dtos.KafkaRequest
+import io.github.vooft.kafka.network.dtos.KafkaResponse
+import io.github.vooft.kafka.network.dtos.KafkaResponseHeader
 import io.github.vooft.kafka.transport.serialization.decode
 import io.github.vooft.kafka.transport.serialization.encode
 import io.github.vooft.kafka.utils.toHexString
