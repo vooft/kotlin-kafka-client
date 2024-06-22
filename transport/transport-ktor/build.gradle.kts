@@ -19,7 +19,6 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":common:utils"))
             implementation(project(":transport:transport-core"))
-            implementation(project(":transport:transport-serialization"))
             implementation(libs.ktor.network)
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
