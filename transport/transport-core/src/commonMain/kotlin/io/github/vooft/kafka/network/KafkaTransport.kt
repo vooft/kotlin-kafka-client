@@ -6,7 +6,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
 
-interface NetworkClient {
+interface KafkaTransport {
     suspend fun connect(host: String, port: Int): KafkaConnection
 
     companion object

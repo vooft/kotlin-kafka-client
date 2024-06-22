@@ -1,6 +1,6 @@
 package io.github.vooft.kafka
 
-import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.network.createDefaultClient
 import io.github.vooft.kafka.network.findGroupCoordinator
 import io.github.vooft.kafka.network.joinGroup
@@ -12,7 +12,7 @@ import io.kotest.common.runBlocking
 class KafkaTest {
 //    @Test
     fun test(): Unit = runBlocking {
-        val ktorClient = NetworkClient.createDefaultClient()
+        val ktorClient = KafkaTransport.createDefaultClient()
 
         val connection = ktorClient.connect("localhost", 9093)
 

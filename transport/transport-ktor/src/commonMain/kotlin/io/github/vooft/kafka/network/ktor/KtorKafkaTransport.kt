@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.network.ktor
 
 import io.github.vooft.kafka.network.KafkaConnection
-import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.network.common.nextHeader
 import io.github.vooft.kafka.network.dtos.KafkaRequest
 import io.github.vooft.kafka.network.dtos.KafkaResponse
@@ -31,7 +31,7 @@ import kotlinx.io.readByteArray
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 
-class KtorNetworkClient : NetworkClient {
+class KtorKafkaTransport : KafkaTransport {
 
     private val selectorManager by lazy { SelectorManager(Dispatchers.IO) }
 

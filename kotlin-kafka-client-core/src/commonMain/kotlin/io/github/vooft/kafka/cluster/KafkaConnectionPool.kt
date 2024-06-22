@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.cluster
 
 import io.github.vooft.kafka.network.KafkaConnection
-import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +15,7 @@ interface KafkaConnectionPool {
 }
 
 class KafkaDynamicNodesListConnectionPool(
-    private val networkClient: NetworkClient,
+    private val transport: KafkaTransport,
     private val nodesRegistry: KafkaNodesRegistry
 ) : KafkaConnectionPool {
 
@@ -34,20 +34,20 @@ class KafkaDynamicNodesListConnectionPool(
         val brokerAddress = nodeId?.let { nodes.getValue(it) } ?: nodes.values.random()
         return connectionsMutex.withLock {
             connections.getOrPut(brokerAddress) {
-                networkClient.connect(brokerAddress.hostname, brokerAddress.port)
+                transport.connect(brokerAddress.hostname, brokerAddress.port)
             }
         }
     }
 }
 
 class KafkaFixedNodesListConnectionPool(
-    private val networkClient: NetworkClient,
+    private val transport: KafkaTransport,
     nodes: List<BrokerAddress>,
     coroutineScope: CoroutineScope
 ) : KafkaConnectionPool {
 
     private val connectionsDeferred = coroutineScope.async {
-        nodes.map { BrokerConnection(it, MutableStateFlow(networkClient.connect(it.hostname, it.port))) }
+        nodes.map { BrokerConnection(it, MutableStateFlow(transport.connect(it.hostname, it.port))) }
     }
     private val connectionsMutex = Mutex()
 
@@ -59,7 +59,7 @@ class KafkaFixedNodesListConnectionPool(
         if (connection.isClosed) {
             connectionsMutex.withLock {
                 if (connection.isClosed) {
-                    connection.value = networkClient.connect(connection.address.hostname, connection.address.port)
+                    connection.value = transport.connect(connection.address.hostname, connection.address.port)
                 }
             }
         }

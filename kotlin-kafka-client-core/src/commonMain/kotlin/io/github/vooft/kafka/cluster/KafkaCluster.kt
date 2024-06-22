@@ -3,7 +3,7 @@ package io.github.vooft.kafka.cluster
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
 import io.github.vooft.kafka.consumer.group.KafkaConsumerGroupManager
-import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.network.createDefaultClient
 import io.github.vooft.kafka.producer.KafkaTopicProducer
 import io.github.vooft.kafka.producer.SimpleKafkaTopicProducer
@@ -17,16 +17,16 @@ import kotlinx.coroutines.sync.withLock
 
 class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineScope: CoroutineScope = CoroutineScope(Job())) {
 
-    private val networkClient = NetworkClient.createDefaultClient()
+    private val transport = KafkaTransport.createDefaultClient()
     private val bootstrapConnectionPool: KafkaConnectionPool = KafkaFixedNodesListConnectionPool(
-        networkClient = networkClient,
+        transport = transport,
         nodes = bootstrapServers,
         coroutineScope = coroutineScope
     )
 
     private val nodesRegistry: KafkaNodesRegistry = KafkaNodesRegistryImpl(bootstrapConnectionPool, coroutineScope)
     private val topicRegistry: KafkaClusterTopicsRegistry = KafkaClusterTopicsRegistryImpl(bootstrapConnectionPool)
-    private val connectionPoolFactory: KafkaConnectionPoolFactory = KafkaConnectionPoolFactoryImpl(networkClient, nodesRegistry)
+    private val connectionPoolFactory: KafkaConnectionPoolFactory = KafkaConnectionPoolFactoryImpl(transport, nodesRegistry)
 
     private val consumerGroupManagers = mutableMapOf<TopicGroup, KafkaConsumerGroupManager>()
     private val consumerGroupManagersMutex = Mutex()

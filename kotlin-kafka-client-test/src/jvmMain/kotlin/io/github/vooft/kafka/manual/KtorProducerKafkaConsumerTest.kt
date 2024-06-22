@@ -1,5 +1,5 @@
 package io.github.vooft.kafka.manual
-import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.network.ProduceRecord
 import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.network.createDefaultClient
@@ -30,7 +30,7 @@ fun main() = runBlocking {
 
         container.start()
 
-        val client = NetworkClient.createDefaultClient()
+        val client = KafkaTransport.createDefaultClient()
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
             val response = connection.metadata(topic)
