@@ -48,7 +48,7 @@ sealed interface MetadataResponse: KafkaResponse
 @Serializable
 data class MetadataResponseV1(
     val brokers: Int32List<Broker>,
-    val controllerId: Int,
+    val controllerId: NodeId,
     val topics: Int32List<Topic>,
 ) : MetadataResponse, VersionedV1 {
     @Serializable

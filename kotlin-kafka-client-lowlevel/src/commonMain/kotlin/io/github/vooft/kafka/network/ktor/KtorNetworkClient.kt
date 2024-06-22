@@ -12,10 +12,13 @@ import io.github.vooft.kafka.utils.toHexString
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.awaitClosed
+import io.ktor.network.sockets.isClosed
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
+import io.ktor.utils.io.CancellationException
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -46,22 +49,26 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
     private val readChannel = socket.openReadChannel()
     private val readChannelMutex = Mutex()
 
+    override val isClosed: Boolean get() = socket.isClosed
+
     override suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> sendRequest(
         request: Rq,
         requestSerializer: SerializationStrategy<Rq>,
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs {
-        writeChannelMutex.withLock {
+        // TODO: add auto-closing after a timeout
+        require(!socket.isClosed) { "Socket is closed" }
+
+        try {
             writeChannel.writeMessage {
                 val header = request.nextHeader()
                 encode(header)
                 encode(requestSerializer, request)
             }
-        }
 
-        return readChannelMutex.withLock {
-            readChannel.readMessage {
+            return readChannel.readMessage {
                 val header = decode<KafkaResponseHeader>()
+                // TODO: use version from the header to determine which one to deserialize
 
                 val result = decode(responseDeserializer)
 
@@ -70,32 +77,44 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
 
                 result
             }
+        } catch (e: CancellationException) {
+            close()
+            throw e
         }
     }
 
     override suspend fun close() {
+        if (socket.isClosed) {
+            return
+        }
+
         socket.close()
+        socket.awaitClosed()
+    }
+
+    private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) = writeChannelMutex.withLock {
+        val buffer = Buffer()
+        buffer.block()
+
+        val data = buffer.readByteArray()
+        writeInt(data.size)
+        writeFully(data)
+
+        flush()
+    }
+
+    private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T = readChannelMutex.withLock {
+        val size = readInt()
+
+        val dst = ByteArray(size)
+        readFully(dst, 0, size)
+
+        val result = Buffer()
+        result.write(dst)
+        return result.block()
     }
 }
 
-private suspend fun ByteWriteChannel.writeMessage(block: Sink.() -> Unit) {
-    val buffer = Buffer()
-    buffer.block()
 
-    val data = buffer.readByteArray()
-    writeInt(data.size)
-    writeFully(data)
 
-    flush()
-}
 
-private suspend fun <T> ByteReadChannel.readMessage(block: Source.() -> T): T {
-    val size = readInt()
-
-    val dst = ByteArray(size)
-    readFully(dst, 0, size)
-
-    val result = Buffer()
-    result.write(dst)
-    return result.block()
-}

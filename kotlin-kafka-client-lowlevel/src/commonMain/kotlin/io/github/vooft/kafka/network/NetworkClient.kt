@@ -17,6 +17,7 @@ interface KafkaConnection {
         responseDeserializer: DeserializationStrategy<Rs>
     ): Rs
 
+    val isClosed: Boolean
     suspend fun close()
 }
 

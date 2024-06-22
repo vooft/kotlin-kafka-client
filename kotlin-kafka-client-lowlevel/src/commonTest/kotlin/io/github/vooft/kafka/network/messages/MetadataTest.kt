@@ -96,7 +96,7 @@ class MetadataTest {
 
     private val response = MetadataResponseV1(
         brokers = Int32List(broker),
-        controllerId = 100,
+        controllerId = NodeId(100),
         topics = Int32List(topic)
     )
     private val encodedResponse = byteArrayOf(

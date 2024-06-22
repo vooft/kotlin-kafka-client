@@ -6,6 +6,7 @@ import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -23,34 +24,51 @@ class KafkaDynamicNodesListConnectionPool(
 
     // TODO: make it more reactive and update when metadata changes
     override suspend fun acquire(nodeId: NodeId?): KafkaConnection {
+        // remove closed connections first
+        connectionsMutex.withLock {
+            val closed = connections.filterValues { !it.isClosed }
+            closed.keys.forEach { connections.remove(it) }
+        }
+
         val nodes = nodesRegistry.nodes()
         val brokerAddress = nodeId?.let { nodes.getValue(it) } ?: nodes.values.random()
-        connectionsMutex.withLock {
-            val existing = connections[brokerAddress]
-            if (existing != null) {
-                return existing
-            } else {
-                val connection = networkClient.connect(brokerAddress.hostname, brokerAddress.port)
-                connections[brokerAddress] = connection
-                return connection
+        return connectionsMutex.withLock {
+            connections.getOrPut(brokerAddress) {
+                networkClient.connect(brokerAddress.hostname, brokerAddress.port)
             }
         }
     }
 }
 
 class KafkaFixedNodesListConnectionPool(
-    networkClient: NetworkClient,
+    private val networkClient: NetworkClient,
     nodes: List<BrokerAddress>,
     coroutineScope: CoroutineScope
 ) : KafkaConnectionPool {
 
-    private val connections = nodes.associateWith {
-        coroutineScope.async { networkClient.connect(it.hostname, it.port) }
+    private val connectionsDeferred = coroutineScope.async {
+        nodes.map { BrokerConnection(it, MutableStateFlow(networkClient.connect(it.hostname, it.port))) }
     }
+    private val connectionsMutex = Mutex()
 
     override suspend fun acquire(nodeId: NodeId?): KafkaConnection {
-        require(nodeId == null) { "nodeId is not supported for KafkaFixedBrokerListConnectionPool" }
-        return connections.values.random().await()
-    }
+        require(nodeId == null) { "nodeId is not supported for ${this::class}" }
+        val connections = connectionsDeferred.await()
+        val connection = connections.random()
 
+        if (connection.isClosed) {
+            connectionsMutex.withLock {
+                if (connection.isClosed) {
+                    connection.value = networkClient.connect(connection.address.hostname, connection.address.port)
+                }
+            }
+        }
+
+        return connection.value
+    }
 }
+
+private data class BrokerConnection(val address: BrokerAddress, val connection: MutableStateFlow<KafkaConnection>) :
+    MutableStateFlow<KafkaConnection> by connection
+
+private val BrokerConnection.isClosed: Boolean get() = connection.value.isClosed
