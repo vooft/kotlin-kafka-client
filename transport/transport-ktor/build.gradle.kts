@@ -17,7 +17,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":kotlin-kafka-client-common"))
+            implementation(project(":common:utils"))
             implementation(project(":transport:transport-core"))
             implementation(project(":transport:transport-serialization"))
             implementation(libs.ktor.network)

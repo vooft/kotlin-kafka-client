@@ -20,11 +20,25 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
+            implementation(project(":serialization:serialization-types"))
         }
 
         jvmMain.dependencies { }
 
 //        jsMain.dependencies { }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.framework.datatest)
+            implementation(libs.kotlin.reflect)
+        }
+
+        jvmTest.dependencies {
+            // must be present even for commonTests only
+            implementation(libs.kotest.runner.junit5)
+        }
     }
 
     // TODO: move to buildSrc

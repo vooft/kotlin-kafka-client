@@ -22,9 +22,9 @@ kotlin {
             implementation(libs.ktor.network)
             implementation(libs.canard)
             api(libs.kotlinx.io.core)
-            implementation(project(":kotlin-kafka-client-common"))
-            implementation(project(":serialization:kafka-serde"))
-            api(project(":kotlinx-serialization-kafka-common"))
+            implementation(project(":common:utils"))
+            implementation(project(":serialization:serialization-core"))
+            api(project(":serialization:serialization-types"))
             implementation(project(":transport:transport-core"))
             implementation(project(":transport:transport-serialization"))
         }

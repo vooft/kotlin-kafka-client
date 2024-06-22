@@ -16,7 +16,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.ktor.network)
             implementation(libs.kotlinx.uuid)
-            implementation(project(":kotlin-kafka-client-lowlevel"))
+            implementation(project(":client:lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
             implementation(project(":transport:transport-factory"))
         }

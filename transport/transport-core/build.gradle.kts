@@ -20,8 +20,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.serialization.core)
-            implementation(project(":kotlin-kafka-client-common"))
-            implementation(project(":kotlinx-serialization-kafka-common"))
+            implementation(project(":common:utils"))
+            implementation(project(":serialization:serialization-types"))
         }
     }
 }

@@ -18,7 +18,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":serialization:kafka-serde"))
+            implementation(project(":serialization:serialization-core"))
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
         }

@@ -23,8 +23,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.benchmark.runtime)
-            implementation(project(":kotlin-kafka-client-lowlevel"))
-            implementation(project(":serialization:kafka-serde"))
+            implementation(project(":client:lowlevel"))
+            implementation(project(":serialization:serialization-core"))
         }
 
         jvmMain.dependencies {

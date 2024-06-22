@@ -19,26 +19,24 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io.core)
-            implementation(project(":kotlinx-serialization-kafka-common"))
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.canard)
+            implementation(project(":client:lowlevel"))
+            implementation(project(":common:utils"))
+            implementation(project(":transport:transport-factory"))
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.framework.engine)
         }
 
         jvmMain.dependencies { }
 
 //        jsMain.dependencies { }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotest.framework.engine)
-            implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.framework.datatest)
-            implementation(libs.kotlin.reflect)
-        }
-
-        jvmTest.dependencies {
-            // must be present even for commonTests only
-            implementation(libs.kotest.runner.junit5)
-        }
     }
 
     // TODO: move to buildSrc
