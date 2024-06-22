@@ -4,7 +4,7 @@ import io.github.vooft.kafka.KafkaDockerComposeConfig
 import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.producer.send
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import kotlinx.coroutines.test.runTest
+import io.kotest.common.runBlocking
 import kotlinx.io.readString
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
@@ -14,13 +14,17 @@ class KafkaSimpleTest {
 
     private val totalRecords = 100
     private val topic = KafkaTopic(UUID.generateUUID().toString())
-    private val values = List(totalRecords) { UUID.generateUUID().toString() }
+    private val values = List(totalRecords) { it.toString() }
 
     @Test
-    fun `should produce and consume message`() = runTest {
+    fun `should produce and consume message`(): Unit = runBlocking {
+        println("starting")
         val cluster = KafkaCluster(KafkaDockerComposeConfig.bootstrapServers)
 
+        println("creating producer")
         val producer = cluster.createProducer(topic)
+
+        println("sending values")
         values.forEach {
             producer.send(it, it)
             println("Sent $it")
