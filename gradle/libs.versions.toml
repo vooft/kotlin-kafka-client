@@ -11,6 +11,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0" }
 kotlinx-uuid = { module = "app.softwork:kotlinx-uuid-core", version = "0.0.25" }
 canard = { module = "org.kodein.log:canard", version = "1.2.0" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging", version = "7.0.0" }
 
 # networking
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
