@@ -1,7 +1,8 @@
 package io.github.vooft.kafka.manual
+import io.github.vooft.kafka.network.NetworkClient
 import io.github.vooft.kafka.network.ProduceRecord
 import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.ktor.KtorNetworkClient
+import io.github.vooft.kafka.network.createDefaultClient
 import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.network.produce
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
@@ -29,7 +30,7 @@ fun main() = runBlocking {
 
         container.start()
 
-        val client = KtorNetworkClient()
+        val client = NetworkClient.createDefaultClient()
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
             val response = connection.metadata(topic)

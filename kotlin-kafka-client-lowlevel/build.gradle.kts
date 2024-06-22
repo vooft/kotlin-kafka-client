@@ -25,6 +25,7 @@ kotlin {
             implementation(project(":kotlin-kafka-client-common"))
             implementation(project(":serialization:kafka-serde"))
             api(project(":kotlinx-serialization-kafka-common"))
+            implementation(project(":transport:transport-core"))
             implementation(project(":transport:transport-serialization"))
         }
 
@@ -38,6 +39,7 @@ kotlin {
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotest.framework.datatest)
             implementation(libs.kotlin.reflect)
+            implementation(project(":transport:transport-factory"))
         }
 
         jvmTest.dependencies {

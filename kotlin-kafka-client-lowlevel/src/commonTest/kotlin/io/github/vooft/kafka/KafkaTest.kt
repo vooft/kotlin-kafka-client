@@ -1,8 +1,9 @@
 package io.github.vooft.kafka
 
+import io.github.vooft.kafka.network.NetworkClient
+import io.github.vooft.kafka.network.createDefaultClient
 import io.github.vooft.kafka.network.findGroupCoordinator
 import io.github.vooft.kafka.network.joinGroup
-import io.github.vooft.kafka.network.ktor.KtorNetworkClient
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.MemberId
@@ -11,7 +12,7 @@ import io.kotest.common.runBlocking
 class KafkaTest {
 //    @Test
     fun test(): Unit = runBlocking {
-        val ktorClient = KtorNetworkClient()
+        val ktorClient = NetworkClient.createDefaultClient()
 
         val connection = ktorClient.connect("localhost", 9093)
 

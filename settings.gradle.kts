@@ -11,4 +11,5 @@ include(":serialization:kafka-serde")
 
 include(":transport:transport-core")
 include(":transport:transport-ktor")
+include(":transport:transport-factory")
 include(":transport:transport-serialization")

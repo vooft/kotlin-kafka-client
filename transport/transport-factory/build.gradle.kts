@@ -5,7 +5,6 @@ plugins {
 
     // test plugins
     alias(libs.plugins.kotest.multiplatform)
-//    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -18,9 +17,20 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":serialization:kafka-serde"))
+            api(project(":kotlin-kafka-client-common"))
+            api(project(":transport:transport-core"))
+            implementation(project(":transport:transport-serialization"))
+            implementation(libs.ktor.network)
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
+        }
+
+        nativeMain.dependencies {
+            implementation(project(":transport:transport-ktor"))
+        }
+
+        jvmMain.dependencies {
+            implementation(project(":transport:transport-ktor"))
         }
     }
 }

@@ -22,9 +22,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.core)
             implementation(project(":kotlin-kafka-client-common"))
             implementation(project(":kotlinx-serialization-kafka-common"))
-//            implementation(libs.canard)
-//            implementation(project(":kotlin-kafka-client-common"))
-//            implementation(project(":serialization:kotlinx-serialization-kafka")
         }
     }
 }

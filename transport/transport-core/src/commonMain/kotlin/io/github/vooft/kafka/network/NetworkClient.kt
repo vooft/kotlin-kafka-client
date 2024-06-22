@@ -8,6 +8,8 @@ import kotlinx.serialization.serializer
 
 interface NetworkClient {
     suspend fun connect(host: String, port: Int): KafkaConnection
+
+    companion object
 }
 
 interface KafkaConnection {
@@ -21,5 +23,5 @@ interface KafkaConnection {
     suspend fun close()
 }
 
-internal suspend inline fun <reified Rq: KafkaRequest, reified Rs: KafkaResponse> KafkaConnection.sendRequest(request: Rq): Rs =
+suspend inline fun <reified Rq: KafkaRequest, reified Rs: KafkaResponse> KafkaConnection.sendRequest(request: Rq): Rs =
     sendRequest(request, serializer<Rq>(), serializer<Rs>())

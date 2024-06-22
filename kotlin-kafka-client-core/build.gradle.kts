@@ -31,6 +31,7 @@ kotlin {
             implementation(libs.canard)
             implementation(project(":kotlin-kafka-client-lowlevel"))
             implementation(project(":kotlin-kafka-client-common"))
+            implementation(project(":transport:transport-factory"))
         }
 
         commonTest.dependencies {

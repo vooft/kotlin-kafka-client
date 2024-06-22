@@ -1,6 +1,9 @@
 package io.github.vooft.kafka.network.messages
 
 import io.github.vooft.kafka.network.common.ErrorCode
+import io.github.vooft.kafka.network.dtos.ApiKey
+import io.github.vooft.kafka.network.dtos.KafkaRequest
+import io.github.vooft.kafka.network.dtos.KafkaResponse
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String

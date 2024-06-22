@@ -17,6 +17,7 @@ kotlin {
             implementation(libs.kotlinx.uuid)
             implementation(project(":kotlin-kafka-client-lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
+            implementation(project(":transport:transport-factory"))
         }
 
         jvmMain.dependencies {
