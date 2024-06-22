@@ -5,12 +5,12 @@ import io.ktor.network.sockets.aSocket
 import io.ktor.utils.io.core.use
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 
 class KafkaContainerIsRunningCheckTest {
     @Test
-    fun `please run make start-kafka from the project root if this test fails`() = runTest {
+    fun `please run make start-kafka from the project root if this test fails`(): Unit = runBlocking {
         try {
             SelectorManager(Dispatchers.IO).use { selectorManager ->
                 aSocket(selectorManager).tcp().connect("localhost", 9093)

@@ -12,13 +12,12 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import kotlinx.io.readString
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.time.Duration.Companion.minutes
 
 class KafkaGroupedConsumerTest {
 
@@ -31,13 +30,13 @@ class KafkaGroupedConsumerTest {
     private val cluster = KafkaCluster(KafkaDockerComposeConfig.bootstrapServers)
 
     @BeforeTest
-    fun setUp() = runTest {
+    fun setUp(): Unit = runBlocking {
         val producer = cluster.createProducer(topic)
         values.forEach { producer.send(it, it) }
     }
 
     @Test
-    fun `should consume using 2 consumers in a group`() = runTest(timeout = 3.minutes) {
+    fun `should consume using 2 consumers in a group`(): Unit = runBlocking {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
 
@@ -69,7 +68,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun `should consume using 2 consumers in a group with later joining 3rd`() = runTest(timeout = 3.minutes) {
+    fun `should consume using 2 consumers in a group with later joining 3rd`(): Unit = runBlocking {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
         var consumer3: Deferred<KafkaTopicConsumer>? = null
