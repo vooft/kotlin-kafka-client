@@ -24,7 +24,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.benchmark.runtime)
             implementation(project(":kotlin-kafka-client-lowlevel"))
-            implementation(project(":kotlinx-serialization-kafka"))
+            implementation(project(":serialization:kafka-serde"))
         }
 
         jvmMain.dependencies {

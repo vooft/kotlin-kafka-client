@@ -22,8 +22,10 @@ kotlin {
             implementation(libs.ktor.network)
             implementation(libs.canard)
             api(libs.kotlinx.io.core)
-            implementation(project(":kotlinx-serialization-kafka"))
+            implementation(project(":kotlin-kafka-client-common"))
+            implementation(project(":serialization:kafka-serde"))
             api(project(":kotlinx-serialization-kafka-common"))
+            implementation(project(":transport:transport-serialization"))
         }
 
         jvmMain.dependencies { }
