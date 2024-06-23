@@ -22,7 +22,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.uuid)
+            implementation(libs.kt.uuid)
             implementation(project(":client:lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
             implementation(project(":transport:transport-factory"))

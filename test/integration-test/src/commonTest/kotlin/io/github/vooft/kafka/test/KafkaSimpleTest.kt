@@ -4,17 +4,16 @@ import io.github.vooft.kafka.KafkaDockerComposeConfig
 import io.github.vooft.kafka.cluster.KafkaCluster
 import io.github.vooft.kafka.producer.send
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.ktuuid.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.readString
-import kotlinx.uuid.UUID
-import kotlinx.uuid.generateUUID
 import kotlin.test.Test
 
 class KafkaSimpleTest {
 
     private val totalRecords = 100
-    private val topic = KafkaTopic(UUID.generateUUID().toString())
+    private val topic = KafkaTopic(UUID.randomUUID().toString())
     private val values = List(totalRecords) { it.toString() }
 
     @Test
