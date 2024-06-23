@@ -16,7 +16,7 @@ Used technologies:
 * Serialization - `kotlinx-serialization` (with custom serializer for Kafka protocol)
 
 # Quick start
-Library is published to Maven Central under name [io.github.vooft:kotlin-kafka-client-core](https://central.sonatype.com/search?namespace=io.github.vooft).
+Library is published to Maven Central under name [io.github.vooft:kotlin-kafka-client-core](https://central.sonatype.com/search?namespace=io.github.vooft&name=kotlin-kafka-client-core).
 
 Add the dependency to your project:
 ```kotlin
