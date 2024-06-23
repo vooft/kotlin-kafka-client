@@ -43,6 +43,7 @@ class KafkaClusterTopicsRegistryImpl(
         }
 
         return topicsStateMutex.withLock {
+            // TODO: there is a race condition and sometimes topicState doesn't contain topic
             topicsState.getValue(topic).value.partitionLayout
         }
     }
