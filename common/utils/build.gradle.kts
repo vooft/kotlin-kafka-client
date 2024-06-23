@@ -19,6 +19,7 @@ kotlin {
     linuxX64()
 
     js { nodejs() }
+    wasmJs { nodejs() }
 
     applyDefaultHierarchyTemplate()
 

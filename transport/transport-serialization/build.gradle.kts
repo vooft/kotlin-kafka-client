@@ -12,6 +12,7 @@ kotlin {
     jvm()
 
     js { nodejs() }
+    wasmJs { nodejs() }
 
     macosArm64()
     linuxX64()

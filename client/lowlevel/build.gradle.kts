@@ -12,6 +12,7 @@ kotlin {
     jvm()
 
     js { nodejs() }
+    wasmJs { nodejs() }
 
     macosArm64()
     linuxX64()
@@ -36,16 +37,13 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.framework.datatest)
             implementation(libs.kotlin.reflect)
+            implementation(libs.kotlinx.coroutines.test)
             implementation(project(":transport:transport-factory"))
         }
 
         jvmTest.dependencies {
-            // must be present even for commonTests only
-            implementation(libs.kotest.runner.junit5)
         }
     }
 

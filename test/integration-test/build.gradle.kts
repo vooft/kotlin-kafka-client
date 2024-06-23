@@ -18,6 +18,17 @@ kotlin {
         binaries.executable()
     }
 
+    wasmJs {
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "2m"
+                }
+            }
+        }
+        binaries.executable()
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -43,11 +54,10 @@ kotlin {
             implementation(project(":serialization:serialization-types"))
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.coroutines.test)
 
             implementation(libs.kotlin.test)
-            implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.framework.datatest)
             implementation(libs.kotlin.reflect)
         }
 
