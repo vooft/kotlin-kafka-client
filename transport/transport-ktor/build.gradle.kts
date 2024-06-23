@@ -20,7 +20,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":common:utils"))
             implementation(project(":transport:transport-core"))
             implementation(libs.ktor.network)
             implementation(libs.kotlinx.io.core)

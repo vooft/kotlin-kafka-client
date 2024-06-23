@@ -3,14 +3,11 @@ package io.github.vooft.kafka.transport.nodejs
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.transport.KafkaConnection
 import io.github.vooft.kafka.transport.KafkaTransport
-import io.github.vooft.kafka.transport.dtos.KafkaResponse
 import io.github.vooft.kafka.transport.nodejs.internal.Socket
 import io.github.vooft.kafka.transport.nodejs.internal.connect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.io.Buffer
-import kotlinx.io.Sink
 import kotlinx.io.Source
 import kotlinx.io.readByteArray
 import org.khronos.webgl.Uint8Array
@@ -42,26 +39,16 @@ private class NodeJsKafkaConnection(private val socket: Socket, coroutineScope: 
     override val isClosed: Boolean
         get() = socket.readyState != "open" && socket.readyState != "opening"
 
-    override suspend fun writeMessage(block: suspend Sink.() -> Unit) {
+    override suspend fun writeMessage(source: Source) {
         writeMutex.withLock {
-            val data = Buffer().apply { block() }.readByteArray()
-
-            val lengthBuffer = Buffer()
-            lengthBuffer.writeInt(data.size)
-
-            val lengthWrite = socket.write(Uint8Array(lengthBuffer.readByteArray().toTypedArray()))
-            logger.trace { "written length $lengthWrite" }
-
-            val result = socket.write(Uint8Array(data.toTypedArray()))
-            logger.trace { "write result $result" }
+            require(socket.write(Uint8Array(source.readByteArray().toTypedArray()))) {
+                "Failed to write message"
+            }
         }
     }
 
-    override suspend fun <Rs : KafkaResponse> readMessage(block: suspend Source.() -> Rs): Rs {
-        readMutex.withLock {
-            val buffer = accumulator.receive()
-            return buffer.block()
-        }
+    override suspend fun readMessage(): Source {
+        readMutex.withLock { return accumulator.receive() }
     }
 
     override suspend fun close() {
