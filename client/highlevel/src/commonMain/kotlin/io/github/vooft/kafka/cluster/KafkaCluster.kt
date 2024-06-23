@@ -9,7 +9,7 @@ import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.transport.KafkaTransport
-import io.github.vooft.kafka.transport.createDefaultClient
+import io.github.vooft.kafka.transport.createDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -21,7 +21,7 @@ class KafkaCluster(
     private val coroutineScope: CoroutineScope = CoroutineScope(Job())
 ) {
 
-    private val transport = KafkaTransport.createDefaultClient(coroutineScope)
+    private val transport = KafkaTransport.createDefault(coroutineScope)
     private val bootstrapConnectionPool: KafkaConnectionPool = KafkaFixedNodesListConnectionPool(
         transport = transport,
         nodes = bootstrapServers,

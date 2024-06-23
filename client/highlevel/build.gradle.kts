@@ -30,7 +30,7 @@ kotlin {
             implementation(libs.kotlin.logging)
             implementation(project(":client:lowlevel"))
             implementation(project(":common:utils"))
-            implementation(project(":transport:transport-factory"))
+            implementation(project(":kotlin-kafka-client-transport"))
             implementation(project(":serialization:serialization-core"))
         }
 

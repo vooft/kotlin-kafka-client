@@ -36,7 +36,7 @@ kotlin {
             implementation(libs.kt.uuid)
             implementation(project(":client:lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
-            implementation(project(":transport:transport-factory"))
+            implementation(project(":kotlin-kafka-client-transport"))
             implementation(project(":serialization:serialization-core"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlin.logging)

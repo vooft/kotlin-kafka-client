@@ -29,7 +29,7 @@ kotlin {
             implementation(libs.kotlinx.io.core)
             implementation(project(":common:utils"))
             implementation(project(":serialization:serialization-core"))
-            implementation(project(":transport:transport-core"))
+            implementation(project(":kotlin-kafka-client-transport"))
         }
 
         jvmMain.dependencies { }
@@ -41,7 +41,6 @@ kotlin {
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotlin.reflect)
             implementation(libs.kotlinx.coroutines.test)
-            implementation(project(":transport:transport-factory"))
         }
 
         jvmTest.dependencies {

@@ -9,10 +9,7 @@ include(":common:utils")
 
 include(":serialization:serialization-core")
 
-include(":transport:transport-core")
-include(":transport:transport-ktor")
-include(":transport:transport-nodejs")
-include(":transport:transport-factory")
+include(":kotlin-kafka-client-transport")
 
 include(":test:benchmark")
 include(":test:integration-test")
