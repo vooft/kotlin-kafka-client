@@ -30,6 +30,7 @@ suspend fun main() {
             println(response)
         }
     } catch (e: Exception) {
+        @Suppress("detekt:PrintStackTrace")
         e.printStackTrace()
     }
 

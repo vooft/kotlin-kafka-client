@@ -3,7 +3,6 @@ package io.github.vooft.kafka
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
 import io.ktor.utils.io.core.use
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 
@@ -11,7 +10,7 @@ class KafkaContainerIsRunningCheckTest {
     @Test
     fun `please run make start-kafka from the project root if this test fails`(): Unit = runBlocking {
         try {
-            SelectorManager(Dispatchers.IO).use { selectorManager ->
+            SelectorManager().use { selectorManager ->
                 aSocket(selectorManager).tcp().connect("localhost", 9093)
             }
         } catch (e: Exception) {

@@ -11,7 +11,6 @@ import io.ktor.network.sockets.isClosed
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.writeFully
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.io.Buffer
@@ -20,7 +19,7 @@ import kotlinx.io.readByteArray
 
 class KtorKafkaTransport : KafkaTransport {
 
-    private val selectorManager by lazy { SelectorManager(Dispatchers.Default) }
+    private val selectorManager by lazy { SelectorManager() }
 
     private val connectionsMutex = Mutex()
     private val connections = mutableListOf<KafkaConnection>()
