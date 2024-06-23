@@ -44,4 +44,4 @@ jobs:
         run: find ./kotlin-kafka-client-core/build
 
       - name: Publish
-        run: ./gradlew :kotlin-kafka-client-core:publishAndReleaseToMavenCentral
+        run: ./gradlew :kotlin-kafka-client-core:publishAndReleaseToMavenCentral --no-configuration-cache
