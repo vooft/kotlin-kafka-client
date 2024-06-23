@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.consumer.group
 
-import io.github.vooft.kafka.serialization.common.wrappers.MemberId
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.common.types.MemberId
+import io.github.vooft.kafka.common.types.PartitionIndex
 
 object RoundRobinConsumerPartitionAssigner {
     fun assign(partitions: List<PartitionIndex>, members: List<MemberId>): Map<MemberId, List<PartitionIndex>> {

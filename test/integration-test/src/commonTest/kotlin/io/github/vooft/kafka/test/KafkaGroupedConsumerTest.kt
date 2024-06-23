@@ -2,11 +2,11 @@ package io.github.vooft.kafka.test
 
 import io.github.vooft.kafka.KafkaDockerComposeConfig
 import io.github.vooft.kafka.cluster.KafkaCluster
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.KafkaTopic
 import io.github.vooft.kafka.consumer.KafkaRecord
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.producer.send
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.ktuuid.UUID
 import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe

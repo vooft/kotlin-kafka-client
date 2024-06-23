@@ -3,11 +3,11 @@ package io.github.vooft.kafka.consumer.offset
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.PartitionIndex
+import io.github.vooft.kafka.common.types.PartitionOffset
 import io.github.vooft.kafka.consumer.group.ConsumerGroupMembership
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.transport.commitOffset
 import io.github.vooft.kafka.transport.common.ErrorCode
 import io.github.vooft.kafka.transport.fetchOffset

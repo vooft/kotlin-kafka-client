@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
+            implementation(project(":kotlin-kafka-client-common"))
             implementation(project(":kotlin-kafka-client-transport"))
         }
 

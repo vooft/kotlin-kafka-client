@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.types.NodeId
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
-import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.github.vooft.kafka.transport.common.ErrorCode

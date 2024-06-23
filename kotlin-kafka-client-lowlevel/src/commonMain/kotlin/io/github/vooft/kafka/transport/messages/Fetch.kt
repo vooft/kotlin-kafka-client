@@ -1,10 +1,10 @@
 package io.github.vooft.kafka.transport.messages
 
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.PartitionIndex
+import io.github.vooft.kafka.common.types.PartitionOffset
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.transport.common.ErrorCode
 import io.github.vooft.kafka.transport.dtos.ApiKey
 import io.github.vooft.kafka.transport.dtos.KafkaRequest

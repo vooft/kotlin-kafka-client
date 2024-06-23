@@ -1,6 +1,6 @@
 package io.github.vooft.kafka.manual
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.PartitionIndex
 import io.github.vooft.kafka.transport.KafkaTransport
 import io.github.vooft.kafka.transport.ProduceRecord
 import io.github.vooft.kafka.transport.common.ErrorCode

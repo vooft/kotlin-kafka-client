@@ -3,10 +3,10 @@ package io.github.vooft.kafka.consumer
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
+import io.github.vooft.kafka.common.types.KafkaTopic
 import io.github.vooft.kafka.consumer.offset.ConsumerOffsetProvider
 import io.github.vooft.kafka.consumer.offset.InMemoryConsumerOffsetProvider
 import io.github.vooft.kafka.serialization.common.primitives.toBuffer
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.transport.fetch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async

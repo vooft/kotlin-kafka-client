@@ -1,12 +1,12 @@
 package io.github.vooft.kafka.network.messages
 
+import io.github.vooft.kafka.common.types.PartitionOffset
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
 import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
 import io.github.vooft.kafka.transport.common.toVarInt

@@ -1,5 +1,10 @@
 package io.github.vooft.kafka.transport
 
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.MemberId
+import io.github.vooft.kafka.common.types.PartitionIndex
+import io.github.vooft.kafka.common.types.PartitionOffset
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
@@ -7,11 +12,6 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntByteArray
 import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
 import io.github.vooft.kafka.serialization.common.primitives.toInt32List
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.MemberId
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.transport.common.toInt16String
 import io.github.vooft.kafka.transport.common.toVarInt
 import io.github.vooft.kafka.transport.common.toVarIntByteArray

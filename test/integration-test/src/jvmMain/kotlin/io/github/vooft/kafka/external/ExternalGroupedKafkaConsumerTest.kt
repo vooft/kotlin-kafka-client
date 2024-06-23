@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.external
 
 import io.github.vooft.kafka.cluster.KafkaCluster
-import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.common.types.BrokerAddress
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.KafkaTopic
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.readString

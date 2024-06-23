@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.transport.messages
 
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.MemberId
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.MemberId
 import io.github.vooft.kafka.transport.common.ErrorCode
 import io.github.vooft.kafka.transport.dtos.ApiKey
 import io.github.vooft.kafka.transport.dtos.KafkaRequest

@@ -1,12 +1,12 @@
 package io.github.vooft.kafka.transport.messages
 
+import io.github.vooft.kafka.common.types.GroupId
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.MemberId
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32ByteArray
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32List
-import io.github.vooft.kafka.serialization.common.wrappers.GroupId
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import io.github.vooft.kafka.transport.common.ErrorCode
 import io.github.vooft.kafka.transport.dtos.ApiKey
 import io.github.vooft.kafka.transport.dtos.KafkaRequest

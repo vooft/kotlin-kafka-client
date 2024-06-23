@@ -1,6 +1,6 @@
 package io.github.vooft.kafka
 
-import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
+import io.github.vooft.kafka.common.types.BrokerAddress
 
 object KafkaDockerComposeConfig {
     val bootstrapServers = listOf(

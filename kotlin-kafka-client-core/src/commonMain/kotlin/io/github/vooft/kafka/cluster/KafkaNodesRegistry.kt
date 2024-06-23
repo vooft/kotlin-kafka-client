@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
-import io.github.vooft.kafka.serialization.common.wrappers.NodeId
+import io.github.vooft.kafka.common.types.BrokerAddress
+import io.github.vooft.kafka.common.types.NodeId
 import io.github.vooft.kafka.transport.metadata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred

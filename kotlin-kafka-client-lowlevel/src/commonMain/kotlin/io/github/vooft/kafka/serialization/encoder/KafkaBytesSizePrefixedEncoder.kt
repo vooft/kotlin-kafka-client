@@ -1,6 +1,6 @@
 package io.github.vooft.kafka.serialization.encoder
 
-import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
+import io.github.vooft.kafka.common.annotations.IntEncoding
 import io.github.vooft.kafka.serialization.common.primitives.VarInt
 import kotlinx.io.Buffer
 import kotlinx.io.Sink

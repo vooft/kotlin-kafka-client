@@ -6,6 +6,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(project(":kotlin-kafka-client-common"))
             implementation(project(":kotlin-kafka-client-lowlevel"))
             implementation(project(":kotlin-kafka-client-transport"))
             implementation(libs.kotlinx.io.core)

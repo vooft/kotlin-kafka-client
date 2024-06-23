@@ -1,11 +1,14 @@
 package io.github.vooft.kafka.transport.common
 
-import io.github.vooft.kafka.serialization.common.ShortValue
-import io.github.vooft.kafka.serialization.common.ShortValueSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = ErrorCodeSerializer::class)
-enum class ErrorCode(override val value: Short, val isRetriable: Boolean) : ShortValue {
+enum class ErrorCode(val value: Short, val isRetriable: Boolean) {
     /**
      * The server experienced an unexpected error when processing the request.
      */
@@ -632,4 +635,17 @@ enum class ErrorCode(override val value: Short, val isRetriable: Boolean) : Shor
     INVALID_REGISTRATION(119, false),
 }
 
-object ErrorCodeSerializer : ShortValueSerializer<ErrorCode>(ErrorCode.entries)
+private val errorCodeMap = ErrorCode.entries.associateBy { it.value }
+
+object ErrorCodeSerializer : KSerializer<ErrorCode> {
+    override val descriptor = PrimitiveSerialDescriptor("ErrorCode", PrimitiveKind.SHORT)
+
+    override fun deserialize(decoder: Decoder): ErrorCode {
+        val code = decoder.decodeShort()
+        return errorCodeMap.getValue(code)
+    }
+
+    override fun serialize(encoder: Encoder, value: ErrorCode) {
+        encoder.encodeShort(value.value)
+    }
+}

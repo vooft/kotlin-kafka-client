@@ -1,8 +1,8 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.NodeId
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.NodeId
+import io.github.vooft.kafka.common.types.PartitionIndex
 
 interface KafkaTopicStateProvider {
     val topic: KafkaTopic

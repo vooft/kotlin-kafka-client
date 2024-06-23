@@ -2,8 +2,8 @@ package io.github.vooft.kafka.test
 
 import io.github.vooft.kafka.KafkaDockerComposeConfig
 import io.github.vooft.kafka.cluster.KafkaCluster
+import io.github.vooft.kafka.common.types.KafkaTopic
 import io.github.vooft.kafka.producer.send
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.ktuuid.UUID
 import kotlinx.coroutines.delay
 import kotlinx.io.readString

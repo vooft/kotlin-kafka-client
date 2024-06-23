@@ -1,15 +1,14 @@
 package io.github.vooft.kafka.transport.messages
 
-import io.github.vooft.kafka.serialization.common.ByteValue
-import io.github.vooft.kafka.serialization.common.ByteValueSerializer
+import io.github.vooft.kafka.common.types.NodeId
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
-import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.transport.common.ErrorCode
 import io.github.vooft.kafka.transport.dtos.ApiKey
 import io.github.vooft.kafka.transport.dtos.KafkaRequest
 import io.github.vooft.kafka.transport.dtos.KafkaResponse
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
 interface FindCoordinatorRequest : KafkaRequest {
     override val apiKey: ApiKey get() = ApiKey.FIND_COORDINATOR
@@ -47,10 +46,11 @@ data class FindCoordinatorResponseV1(
     val port: Int,
 ) : FindCoordinatorResponse, VersionedV1
 
-@Serializable(with = CoordinatorTypeSerializer::class)
-enum class CoordinatorType(override val value: Byte) : ByteValue {
-    GROUP(0),
-    TRANSACTION(1),
+@Serializable
+@JvmInline
+value class CoordinatorType private constructor(val value: Byte) {
+    companion object {
+        val GROUP = CoordinatorType(0)
+        val TRANSACTION = CoordinatorType(1)
+    }
 }
-
-object CoordinatorTypeSerializer : ByteValueSerializer<CoordinatorType>(CoordinatorType.entries)

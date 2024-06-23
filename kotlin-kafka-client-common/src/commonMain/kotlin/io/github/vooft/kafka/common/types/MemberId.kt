@@ -1,7 +1,7 @@
-package io.github.vooft.kafka.serialization.common.wrappers
+package io.github.vooft.kafka.common.types
 
-import io.github.vooft.kafka.serialization.common.KafkaString
-import io.github.vooft.kafka.serialization.common.primitives.IntEncoding
+import io.github.vooft.kafka.common.annotations.IntEncoding
+import io.github.vooft.kafka.common.annotations.KafkaString
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 

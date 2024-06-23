@@ -1,7 +1,7 @@
 package io.github.vooft.kafka.producer
 
-import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
-import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.common.types.KafkaTopic
+import io.github.vooft.kafka.common.types.PartitionIndex
 import io.github.vooft.kafka.transport.common.ErrorCode
 import kotlinx.io.Buffer
 import kotlinx.io.Source
