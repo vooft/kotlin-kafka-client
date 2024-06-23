@@ -7,6 +7,7 @@ import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.network.produce
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.Buffer
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -30,7 +31,7 @@ fun main() = runBlocking {
 
         container.start()
 
-        val client = KafkaTransport.createDefaultClient()
+        val client = KafkaTransport.createDefaultClient(CoroutineScope(coroutineContext))
         val connection = client.connect(container.host, container.firstMappedPort)
         do {
             val response = connection.metadata(topic)

@@ -5,26 +5,22 @@ plugins {
 
     // test plugins
     alias(libs.plugins.kotest.multiplatform)
-//    alias(libs.plugins.mokkery)
 }
 
 kotlin {
-    jvm()
 
     js { nodejs() }
-
-    macosArm64()
-    linuxX64()
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.io.core)
-            implementation(libs.kotlinx.serialization.core)
             implementation(project(":common:utils"))
-            implementation(project(":serialization:serialization-types"))
+            implementation(project(":transport:transport-core"))
             implementation(project(":transport:transport-serialization"))
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.io.core)
+            implementation(libs.kotlin.logging)
         }
     }
 }

@@ -11,6 +11,8 @@ plugins {
 kotlin {
     jvm()
 
+    js { nodejs() }
+
     macosArm64()
     linuxX64()
 

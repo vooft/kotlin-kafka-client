@@ -15,6 +15,8 @@ allOpen {
 kotlin {
     jvm()
 
+    js { nodejs() }
+
     macosArm64()
     linuxX64()
 
@@ -23,8 +25,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.benchmark.runtime)
+            implementation(libs.kotlinx.io.core)
             implementation(project(":client:lowlevel"))
             implementation(project(":serialization:serialization-core"))
+            implementation(project(":serialization:serialization-types"))
         }
 
         jvmMain.dependencies {

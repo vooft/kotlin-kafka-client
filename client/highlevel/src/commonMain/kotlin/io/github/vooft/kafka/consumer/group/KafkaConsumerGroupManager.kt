@@ -9,7 +9,6 @@ import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.jvm.JvmInline
@@ -19,7 +18,7 @@ class KafkaConsumerGroupManager(
     private val groupId: GroupId,
     private val topicStateProvider: KafkaTopicStateProvider,
     private val connectionPoolFactory: KafkaConnectionPoolFactory,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Job())
+    private val coroutineScope: CoroutineScope
 ) {
 
     private val consumers = mutableMapOf<ConsumerId, KafkaGroupedTopicConsumer>()

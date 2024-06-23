@@ -8,11 +8,13 @@ import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import io.kotest.common.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlin.coroutines.coroutineContext
 
 class KafkaTest {
 //    @Test
     fun test(): Unit = runBlocking {
-        val ktorClient = KafkaTransport.createDefaultClient()
+        val ktorClient = KafkaTransport.createDefaultClient(CoroutineScope(coroutineContext))
 
         val connection = ktorClient.connect("localhost", 9093)
 

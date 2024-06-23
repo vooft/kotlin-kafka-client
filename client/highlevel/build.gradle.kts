@@ -11,6 +11,8 @@ plugins {
 kotlin {
     jvm()
 
+    js { nodejs() }
+
     macosArm64()
     linuxX64()
 
@@ -18,14 +20,14 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.canard)
+            implementation(libs.kotlin.logging)
             implementation(project(":client:lowlevel"))
             implementation(project(":common:utils"))
             implementation(project(":transport:transport-factory"))
+            implementation(project(":serialization:serialization-types"))
         }
 
         commonTest.dependencies {

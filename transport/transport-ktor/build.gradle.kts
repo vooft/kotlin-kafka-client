@@ -20,7 +20,6 @@ kotlin {
             implementation(project(":common:utils"))
             implementation(project(":transport:transport-core"))
             implementation(libs.ktor.network)
-            implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlin.logging)
         }

@@ -12,6 +12,7 @@ include(":serialization:serialization-types")
 
 include(":transport:transport-core")
 include(":transport:transport-ktor")
+include(":transport:transport-nodejs")
 include(":transport:transport-factory")
 include(":transport:transport-serialization")
 

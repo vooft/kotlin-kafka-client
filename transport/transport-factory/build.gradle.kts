@@ -10,6 +10,8 @@ plugins {
 kotlin {
     jvm()
 
+    js { nodejs() }
+
     macosArm64()
     linuxX64()
 
@@ -17,12 +19,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":common:utils"))
             api(project(":transport:transport-core"))
-            implementation(project(":transport:transport-serialization"))
-            implementation(libs.ktor.network)
-            implementation(libs.kotlinx.serialization.core)
-            implementation(libs.kotlinx.io.core)
+            implementation(libs.kotlinx.coroutines.core)
         }
 
         nativeMain.dependencies {
@@ -31,6 +29,10 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(project(":transport:transport-ktor"))
+        }
+
+        jsMain.dependencies {
+            implementation(project(":transport:transport-nodejs"))
         }
     }
 }
