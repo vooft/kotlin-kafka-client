@@ -38,4 +38,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Publish
-        run: ./gradlew :kotlin-kafka-client-core:publishAndReleaseToMavenCentral --no-configuration-cache
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
