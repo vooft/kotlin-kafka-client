@@ -37,11 +37,5 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Assemble
-        run: ./gradlew :kotlin-kafka-client-core:assemble
-
-      - name: Print files
-        run: find ./kotlin-kafka-client-core/build
-
       - name: Publish
         run: ./gradlew :kotlin-kafka-client-core:publishAndReleaseToMavenCentral --no-configuration-cache
