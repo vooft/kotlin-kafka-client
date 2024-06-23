@@ -11,6 +11,7 @@ kotlin {
     jvm()
 
     js { nodejs() }
+    wasmJs { nodejs() }
 
     macosArm64()
     linuxX64()
@@ -32,6 +33,10 @@ kotlin {
         }
 
         jsMain.dependencies {
+            implementation(project(":transport:transport-nodejs"))
+        }
+
+        wasmJsMain.dependencies {
             implementation(project(":transport:transport-nodejs"))
         }
     }

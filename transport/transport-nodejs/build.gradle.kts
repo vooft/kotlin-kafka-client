@@ -10,6 +10,7 @@ plugins {
 kotlin {
 
     js { nodejs() }
+    wasmJs { nodejs() }
 
     applyDefaultHierarchyTemplate()
 

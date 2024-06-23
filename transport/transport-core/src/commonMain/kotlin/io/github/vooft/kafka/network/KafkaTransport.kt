@@ -42,21 +42,16 @@ suspend fun <Rq : KafkaRequest, Rs : KafkaResponse> KafkaConnection.sendRequest(
     try {
         writeMessage {
             val header = request.nextHeader()
-            println("writing header $header")
 
             encode(header)
-
-            println("writing request $request")
             encode(requestSerializer, request)
         }
 
         return readMessage {
             val header = decode<KafkaResponseHeader>()
-            println("read header $header")
             // TODO: use version from the header to determine which one to deserialize
 
             val result = decode(responseDeserializer)
-            println("read response $result")
 
             val remaining = readByteArray()
             require(remaining.isEmpty()) { "Buffer is not empty: ${remaining.toHexString()}" }
