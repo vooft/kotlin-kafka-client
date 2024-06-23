@@ -24,24 +24,25 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.canard)
             implementation(libs.kotlinx.io.core)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.kotlin.logging)
-            implementation(project(":client:lowlevel"))
-            implementation(project(":common:utils"))
             implementation(project(":kotlin-kafka-client-transport"))
-            implementation(project(":serialization:serialization-core"))
-        }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotest.assertions.core)
         }
 
         jvmMain.dependencies { }
 
 //        jsMain.dependencies { }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotlin.reflect)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+
+        jvmTest.dependencies {
+        }
     }
 
     // TODO: move to buildSrc

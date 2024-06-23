@@ -25,7 +25,12 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":client:highlevel"))
+            implementation(project(":kotlin-kafka-client-lowlevel"))
+            implementation(project(":kotlin-kafka-client-transport"))
+            implementation(libs.kotlinx.io.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlin.logging)
         }
     }
 }
