@@ -10,7 +10,9 @@ This library is at the moment in early development stage and should not be used 
 
 Used technologies:
 * Kotlin Coroutines
-* Network layer - `ktor-network` (though could be abstracted for other implementations, such as nodejs)
+* Network layer
+    * `net.socket` from NodeJS wrapper for JS and WASM
+    * `ktor-network` for other platforms
 * Serialization - `kotlinx-serialization` (with custom serializer for Kafka protocol)
 
 # Quick start
