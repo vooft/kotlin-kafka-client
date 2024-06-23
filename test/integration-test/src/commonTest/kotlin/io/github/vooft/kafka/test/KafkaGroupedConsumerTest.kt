@@ -13,8 +13,8 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.test.runTest
 import kotlinx.io.readString
+import runIntegrationTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -30,18 +30,18 @@ class KafkaGroupedConsumerTest {
     private val cluster = KafkaCluster(KafkaDockerComposeConfig.bootstrapServers)
 
     @BeforeTest
-    fun setUp() = runTest {
+    fun setUp() = runIntegrationTest {
         val producer = cluster.createProducer(topic)
         values.forEach { producer.send(it, it) }
     }
 
     @AfterTest
-    fun tearDown() = runTest {
+    fun tearDown() = runIntegrationTest {
         cluster.close()
     }
 
     @Test
-    fun should_consume_using_2_consumers_in_a_group() = runTest {
+    fun should_consume_using_2_consumers_in_a_group() = runIntegrationTest {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
 
@@ -73,7 +73,7 @@ class KafkaGroupedConsumerTest {
     }
 
     @Test
-    fun should_consume_using_2_consumers_in_a_group_with_later_joining_3rd() = runTest {
+    fun should_consume_using_2_consumers_in_a_group_with_later_joining_3rd() = runIntegrationTest {
         val consumer1 = cluster.createConsumer(topic, group)
         val consumer2 = cluster.createConsumer(topic, group)
         var consumer3: Deferred<KafkaTopicConsumer>? = null

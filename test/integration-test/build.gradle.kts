@@ -1,7 +1,5 @@
-import org.gradle.api.tasks.testing.logging.TestLogEvent
-
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
+    id("kotlin-base")
 }
 
 kotlin {
@@ -61,22 +59,6 @@ kotlin {
 
         jvmTest.dependencies {
             implementation(libs.ktor.network)
-        }
-    }
-
-    // TODO: move to buildSrc
-    tasks.named<Test>("jvmTest") {
-        useJUnitPlatform()
-    }
-
-    afterEvaluate {
-        tasks.withType<AbstractTestTask> {
-            testLogging {
-                showExceptions = true
-                showStandardStreams = true
-                events = setOf(TestLogEvent.STARTED, TestLogEvent.FAILED, TestLogEvent.PASSED)
-                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-            }
         }
     }
 }
