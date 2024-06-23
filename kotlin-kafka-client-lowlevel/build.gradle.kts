@@ -27,8 +27,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.canard)
             implementation(libs.kotlinx.io.core)
-            implementation(project(":common:utils"))
-            implementation(project(":serialization:serialization-core"))
             implementation(project(":kotlin-kafka-client-transport"))
         }
 
