@@ -1,6 +1,5 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.NullableInt16String
 import io.github.vooft.kafka.serialization.common.primitives.int32ListOf
@@ -11,6 +10,9 @@ import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.transport.common.ErrorCode
+import io.github.vooft.kafka.transport.messages.OffsetCommitRequestV1
+import io.github.vooft.kafka.transport.messages.OffsetCommitResponseV1
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test

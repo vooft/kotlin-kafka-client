@@ -31,7 +31,7 @@ kotlin {
             implementation(project(":client:lowlevel"))
             implementation(project(":common:utils"))
             implementation(project(":transport:transport-factory"))
-            implementation(project(":serialization:serialization-types"))
+            implementation(project(":serialization:serialization-core"))
         }
 
         commonTest.dependencies {

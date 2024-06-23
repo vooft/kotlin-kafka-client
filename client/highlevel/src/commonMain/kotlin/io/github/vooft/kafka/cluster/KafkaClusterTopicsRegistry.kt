@@ -1,13 +1,13 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.network.common.ErrorCode.LEADER_NOT_AVAILABLE
-import io.github.vooft.kafka.network.common.ErrorCode.NO_ERROR
-import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_TOPIC_ID
-import io.github.vooft.kafka.network.common.ErrorCode.UNKNOWN_TOPIC_OR_PARTITION
-import io.github.vooft.kafka.network.metadata
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.transport.common.ErrorCode.LEADER_NOT_AVAILABLE
+import io.github.vooft.kafka.transport.common.ErrorCode.NO_ERROR
+import io.github.vooft.kafka.transport.common.ErrorCode.UNKNOWN_TOPIC_ID
+import io.github.vooft.kafka.transport.common.ErrorCode.UNKNOWN_TOPIC_OR_PARTITION
+import io.github.vooft.kafka.transport.metadata
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

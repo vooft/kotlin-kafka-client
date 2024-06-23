@@ -1,8 +1,5 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.network.common.toVarInt
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0.KafkaRecordBatch
-import io.github.vooft.kafka.network.messages.KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
@@ -12,6 +9,11 @@ import io.github.vooft.kafka.serialization.common.primitives.VarIntBytesSizePref
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.transport.common.toVarInt
+import io.github.vooft.kafka.transport.messages.KafkaRecordBatchContainerV0
+import io.github.vooft.kafka.transport.messages.KafkaRecordBatchContainerV0.KafkaRecordBatch
+import io.github.vooft.kafka.transport.messages.KafkaRecordBatchContainerV0.KafkaRecordBatch.KafkaRecordBatchBody
+import io.github.vooft.kafka.transport.messages.KafkaRecordV0
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test

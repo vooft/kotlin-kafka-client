@@ -1,9 +1,5 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.messages.JoinGroupRequestV1.GroupProtocol
-import io.github.vooft.kafka.network.messages.JoinGroupRequestV1.GroupProtocol.Metadata
-import io.github.vooft.kafka.network.messages.JoinGroupResponseV1.Member
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Int16String
 import io.github.vooft.kafka.serialization.common.primitives.Int32ByteArray
@@ -14,6 +10,12 @@ import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.MemberId
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.transport.common.ErrorCode
+import io.github.vooft.kafka.transport.messages.JoinGroupRequestV1
+import io.github.vooft.kafka.transport.messages.JoinGroupRequestV1.GroupProtocol
+import io.github.vooft.kafka.transport.messages.JoinGroupRequestV1.GroupProtocol.Metadata
+import io.github.vooft.kafka.transport.messages.JoinGroupResponseV1
+import io.github.vooft.kafka.transport.messages.JoinGroupResponseV1.Member
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test

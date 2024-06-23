@@ -4,13 +4,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.consumer.group.ConsumerGroupMembership
-import io.github.vooft.kafka.network.commitOffset
-import io.github.vooft.kafka.network.common.ErrorCode
-import io.github.vooft.kafka.network.fetchOffset
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
+import io.github.vooft.kafka.transport.commitOffset
+import io.github.vooft.kafka.transport.common.ErrorCode
+import io.github.vooft.kafka.transport.fetchOffset
 
 class ConsumerGroupOffsetProvider(
     override val groupId: GroupId,

@@ -37,7 +37,7 @@ kotlin {
             implementation(project(":client:lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
             implementation(project(":transport:transport-factory"))
-            implementation(project(":serialization:serialization-types"))
+            implementation(project(":serialization:serialization-core"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlin.logging)
         }
@@ -51,7 +51,6 @@ kotlin {
         }
 
         commonTest.dependencies {
-            implementation(project(":serialization:serialization-types"))
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.coroutines.test)

@@ -29,7 +29,6 @@ kotlin {
             implementation(libs.kotlinx.io.core)
             implementation(project(":client:lowlevel"))
             implementation(project(":serialization:serialization-core"))
-            implementation(project(":serialization:serialization-types"))
         }
 
         jvmMain.dependencies {

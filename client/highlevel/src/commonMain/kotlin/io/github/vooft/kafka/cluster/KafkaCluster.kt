@@ -3,13 +3,13 @@ package io.github.vooft.kafka.cluster
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.consumer.SimpleKafkaTopicConsumer
 import io.github.vooft.kafka.consumer.group.KafkaConsumerGroupManager
-import io.github.vooft.kafka.network.KafkaTransport
-import io.github.vooft.kafka.network.createDefaultClient
 import io.github.vooft.kafka.producer.KafkaTopicProducer
 import io.github.vooft.kafka.producer.SimpleKafkaTopicProducer
 import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
 import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
+import io.github.vooft.kafka.transport.KafkaTransport
+import io.github.vooft.kafka.transport.createDefaultClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel

@@ -26,7 +26,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.io.core)
-            implementation(project(":serialization:serialization-types"))
         }
 
         jvmMain.dependencies { }
