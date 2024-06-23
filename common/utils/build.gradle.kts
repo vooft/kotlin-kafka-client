@@ -18,11 +18,12 @@ kotlin {
     macosArm64()
     linuxX64()
 
+    js { nodejs() }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.io.core)
         }
     }
 }

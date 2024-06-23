@@ -1,5 +1,6 @@
 package io.github.vooft.kafka.consumer
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
 import io.github.vooft.kafka.consumer.offset.ConsumerOffsetProvider
@@ -8,18 +9,15 @@ import io.github.vooft.kafka.network.fetch
 import io.github.vooft.kafka.serialization.common.primitives.toBuffer
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import org.kodein.log.LoggerFactory
-import org.kodein.log.newLogger
 
 class SimpleKafkaTopicConsumer(
     private val topicStateProvider: KafkaTopicStateProvider,
     private val connectionPool: KafkaConnectionPool,
     private val offsetProvider: ConsumerOffsetProvider = InMemoryConsumerOffsetProvider(topicStateProvider.topic),
     private val autoCommitOffset: Boolean = true,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Job())
+    private val coroutineScope: CoroutineScope
 ) : KafkaTopicConsumer {
 
     init {
@@ -71,6 +69,6 @@ class SimpleKafkaTopicConsumer(
     }
 
     companion object {
-        private val logger = LoggerFactory.default.newLogger<SimpleKafkaTopicConsumer>()
+        private val logger = KotlinLogging.logger { }
     }
 }

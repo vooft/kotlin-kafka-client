@@ -11,6 +11,8 @@ plugins {
 kotlin {
     jvm()
 
+    js { nodejs() }
+
     macosArm64()
     linuxX64()
 
@@ -31,13 +33,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.framework.datatest)
             implementation(libs.kotlin.reflect)
-        }
-
-        jvmTest.dependencies {
-            // must be present even for commonTests only
-            implementation(libs.kotest.runner.junit5)
         }
     }
 

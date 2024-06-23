@@ -4,7 +4,6 @@ import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
 import io.ktor.utils.io.core.use
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 

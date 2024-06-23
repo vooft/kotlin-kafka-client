@@ -7,18 +7,28 @@ plugins {
 kotlin {
     jvm()
 
-    macosArm64()
-    linuxX64()
+    js {
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "2m"
+                }
+            }
+        }
+        binaries.executable()
+    }
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.ktor.network)
             implementation(libs.kotlinx.uuid)
             implementation(project(":client:lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
             implementation(project(":transport:transport-factory"))
+            implementation(project(":serialization:serialization-types"))
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlin.logging)
         }
 
         jvmMain.dependencies {
@@ -26,14 +36,23 @@ kotlin {
             implementation("ch.qos.logback:logback-classic:1.5.6")
             implementation("org.slf4j:slf4j-api:2.0.13")
             implementation("org.testcontainers:kafka:1.19.8")
+            implementation(libs.kotlinx.io.core)
         }
 
         commonTest.dependencies {
+            implementation(project(":serialization:serialization-types"))
+            implementation(libs.kotlinx.io.core)
+            implementation(libs.kotlinx.coroutines.core)
+
             implementation(libs.kotlin.test)
             implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotest.framework.datatest)
             implementation(libs.kotlin.reflect)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.ktor.network)
         }
     }
 

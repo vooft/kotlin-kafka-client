@@ -12,12 +12,16 @@ import io.github.vooft.kafka.serialization.common.wrappers.GroupId
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineScope: CoroutineScope = CoroutineScope(Job())) {
+class KafkaCluster(
+    bootstrapServers: List<BrokerAddress>,
+    private val coroutineScope: CoroutineScope = CoroutineScope(Job())
+) {
 
-    private val transport = KafkaTransport.createDefaultClient()
+    private val transport = KafkaTransport.createDefaultClient(coroutineScope)
     private val bootstrapConnectionPool: KafkaConnectionPool = KafkaFixedNodesListConnectionPool(
         transport = transport,
         nodes = bootstrapServers,
@@ -43,7 +47,8 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
             return SimpleKafkaTopicConsumer(
                 topicStateProvider = topicStateProvider,
                 connectionPool = connectionPoolFactory.create(),
-                coroutineScope = coroutineScope)
+                coroutineScope = coroutineScope
+            )
         } else {
             val consumerGroupManager = consumerGroupManagersMutex.withLock {
                 consumerGroupManagers.getOrPut(TopicGroup(topic, groupId)) {
@@ -59,6 +64,11 @@ class KafkaCluster(bootstrapServers: List<BrokerAddress>, private val coroutineS
 
             return consumerGroupManager.createConsumer()
         }
+    }
+
+    suspend fun close() {
+        transport.close()
+        coroutineScope.cancel()
     }
 }
 

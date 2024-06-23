@@ -27,9 +27,22 @@ class KtorKafkaTransport : KafkaTransport {
 
     private val selectorManager by lazy { SelectorManager(Dispatchers.IO) }
 
+    private val connectionsMutex = Mutex()
+    private val connections = mutableListOf<KafkaConnection>()
+
     override suspend fun connect(host: String, port: Int): KafkaConnection {
         val socket = aSocket(selectorManager).tcp().connect(host, port)
-        return KtorKafkaConnection(socket)
+        return KtorKafkaConnection(socket).also {
+            connectionsMutex.withLock { connections.add(it) }
+        }
+    }
+
+    override suspend fun close() {
+        connectionsMutex.withLock {
+            for (connection in connections) {
+                connection.close()
+            }
+        }
     }
 }
 
