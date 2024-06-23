@@ -1,6 +1,6 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.network.KafkaTransport
+import io.github.vooft.kafka.transport.KafkaTransport
 
 interface KafkaConnectionPoolFactory {
     fun create(): KafkaConnectionPool

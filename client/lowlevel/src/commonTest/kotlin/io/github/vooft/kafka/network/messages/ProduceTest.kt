@@ -1,6 +1,5 @@
 package io.github.vooft.kafka.network.messages
 
-import io.github.vooft.kafka.network.common.ErrorCode
 import io.github.vooft.kafka.serialization.KafkaSerde
 import io.github.vooft.kafka.serialization.common.primitives.Crc32cPrefixed
 import io.github.vooft.kafka.serialization.common.primitives.Int32BytesSizePrefixed
@@ -13,6 +12,11 @@ import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionOffset
 import io.github.vooft.kafka.serialization.decode
 import io.github.vooft.kafka.serialization.encode
+import io.github.vooft.kafka.transport.common.ErrorCode
+import io.github.vooft.kafka.transport.messages.KafkaRecordBatchContainerV0
+import io.github.vooft.kafka.transport.messages.KafkaRecordV0
+import io.github.vooft.kafka.transport.messages.ProduceRequestV3
+import io.github.vooft.kafka.transport.messages.ProduceResponseV3
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readByteArray
 import kotlin.test.Test

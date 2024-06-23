@@ -1,9 +1,9 @@
 package io.github.vooft.kafka.cluster
 
-import io.github.vooft.kafka.network.KafkaConnection
-import io.github.vooft.kafka.network.KafkaTransport
 import io.github.vooft.kafka.serialization.common.wrappers.BrokerAddress
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
+import io.github.vooft.kafka.transport.KafkaConnection
+import io.github.vooft.kafka.transport.KafkaTransport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -25,10 +25,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.io.core)
-            implementation(libs.kotlinx.serialization.core)
-            implementation(project(":common:utils"))
-            implementation(project(":serialization:serialization-types"))
-            implementation(project(":transport:transport-serialization"))
         }
     }
 }

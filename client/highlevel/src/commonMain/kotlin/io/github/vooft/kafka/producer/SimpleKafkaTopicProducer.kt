@@ -2,11 +2,11 @@ package io.github.vooft.kafka.producer
 
 import io.github.vooft.kafka.cluster.KafkaConnectionPool
 import io.github.vooft.kafka.cluster.KafkaTopicStateProvider
-import io.github.vooft.kafka.network.ProduceRecord
-import io.github.vooft.kafka.network.produce
 import io.github.vooft.kafka.serialization.common.wrappers.KafkaTopic
 import io.github.vooft.kafka.serialization.common.wrappers.NodeId
 import io.github.vooft.kafka.serialization.common.wrappers.PartitionIndex
+import io.github.vooft.kafka.transport.ProduceRecord
+import io.github.vooft.kafka.transport.produce
 import kotlinx.io.Source
 import kotlinx.io.readByteArray
 

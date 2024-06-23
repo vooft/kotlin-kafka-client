@@ -29,9 +29,7 @@ kotlin {
             implementation(libs.kotlinx.io.core)
             implementation(project(":common:utils"))
             implementation(project(":serialization:serialization-core"))
-            implementation(project(":serialization:serialization-types"))
             implementation(project(":transport:transport-core"))
-            implementation(project(":transport:transport-serialization"))
         }
 
         jvmMain.dependencies { }
