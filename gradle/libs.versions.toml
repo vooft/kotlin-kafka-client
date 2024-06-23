@@ -34,6 +34,6 @@ kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "ko
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 mokkery = { id = "dev.mokkery", version = "2.1.0" }
-maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.29.0" }
+maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.28.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
