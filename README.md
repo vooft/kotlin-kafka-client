@@ -23,6 +23,10 @@ Used technologies:
     * `ktor-network` for other platforms
 * Serialization - `kotlinx-serialization` (with custom serializer for Kafka protocol)
 
+## Demo app
+
+There is a demo app built using Compose Multiplatform that runs on Android, iOS and Desktop: [kotlin-kafka-client-demo](https://github.com/vooft/kotlin-kafka-client-demo)
+
 # Quick start
 Library is published to Maven Central under name [io.github.vooft:kotlin-kafka-client-core](https://central.sonatype.com/search?namespace=io.github.vooft&name=kotlin-kafka-client-core).
 
