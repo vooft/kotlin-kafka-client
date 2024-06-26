@@ -26,6 +26,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
-mokkery = { id = "dev.mokkery", version = "2.1.0" }
+mokkery = { id = "dev.mokkery", version = "2.1.1" }
 maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.29.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
