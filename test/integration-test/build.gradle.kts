@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
-    id("kotlin-base")
+    `kotlin-base`
 }
 
 kotlin {
@@ -16,6 +18,7 @@ kotlin {
         binaries.executable()
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs {
             testTask {

@@ -1,6 +1,6 @@
 plugins {
-    id("kotlin-library")
-    id("maven-central-publish")
+    `kotlin-library`
+    `maven-central-publish`
 }
 
 kotlin {
