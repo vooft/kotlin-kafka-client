@@ -7,7 +7,7 @@ ktor = "2.3.12"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.7.1" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.5.3" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.8.1" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
 kt-uuid = { module = "io.github.vooft:kt-uuid-core", version = "0.2.2" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging", version = "7.0.0" }
 
