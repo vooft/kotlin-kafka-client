@@ -37,8 +37,48 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v3
         with:
-          arguments: build --parallel
+          arguments: assemble
           dependency-graph: generate-and-submit
+
+      - name: jvmTest
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: jvmTest
+
+      - name: iosSimulatorArm64Test
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: iosSimulatorArm64Test
+
+      - name: jsNodeTest
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: jsNodeTest
+
+      - name: jsTest
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: jsTest
+
+      - name: linuxX64Test
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: linuxX64Test
+
+      - name: macosArm64Test
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: macosArm64Test
+
+      - name: wasmJsNodeTest
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: wasmJsNodeTest
+
+      - name: wasmJsTest
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: wasmJsTest
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
