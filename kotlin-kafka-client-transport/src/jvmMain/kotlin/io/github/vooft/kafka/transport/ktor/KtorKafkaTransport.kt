@@ -10,6 +10,8 @@ import io.ktor.network.sockets.awaitClosed
 import io.ktor.network.sockets.isClosed
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readByteArray
+import io.ktor.utils.io.readInt
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -68,7 +70,7 @@ private class KtorKafkaConnection(private val socket: Socket) : KafkaConnection 
             logger.trace { "Reading message with size: $size"}
 
             val dst = ByteArray(size)
-            readChannel.readFully(dst, 0, size)
+            readChannel.readByteArray(size)
 
             logger.trace { "Read message with size: $size" }
             return Buffer().apply { write(dst) }
