@@ -24,7 +24,7 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.7" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 mokkery = { id = "dev.mokkery", version = "2.3.0" }
 maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.29.0" }
