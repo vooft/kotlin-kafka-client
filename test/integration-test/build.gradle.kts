@@ -46,7 +46,7 @@ kotlin {
             implementation("org.apache.kafka:kafka-clients:3.8.0")
             implementation("ch.qos.logback:logback-classic:1.5.8")
             implementation("org.slf4j:slf4j-api:2.0.16")
-            implementation("org.testcontainers:kafka:1.20.1")
+            implementation("org.testcontainers:kafka:1.20.2")
             implementation(libs.kotlinx.io.core)
         }
 
