@@ -34,12 +34,6 @@ jobs:
       - name: Start kafka
         run: make start-kafka
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: assemble
-          dependency-graph: generate-and-submit
-
       - name: jvmTest
         uses: gradle/gradle-build-action@v3
         with:
