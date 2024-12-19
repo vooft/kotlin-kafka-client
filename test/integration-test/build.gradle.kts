@@ -44,7 +44,7 @@ kotlin {
 
         jvmMain.dependencies {
             implementation("org.apache.kafka:kafka-clients:3.8.0")
-            implementation("ch.qos.logback:logback-classic:1.5.10")
+            implementation("ch.qos.logback:logback-classic:1.5.14")
             implementation("org.slf4j:slf4j-api:2.0.16")
             implementation("org.testcontainers:kafka:1.20.2")
             implementation(libs.kotlinx.io.core)
