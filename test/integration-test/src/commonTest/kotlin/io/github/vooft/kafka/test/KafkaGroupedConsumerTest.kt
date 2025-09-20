@@ -7,7 +7,6 @@ import io.github.vooft.kafka.common.types.KafkaTopic
 import io.github.vooft.kafka.consumer.KafkaRecord
 import io.github.vooft.kafka.consumer.KafkaTopicConsumer
 import io.github.vooft.kafka.producer.send
-import io.github.vooft.ktuuid.UUID
 import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineStart
@@ -18,14 +17,15 @@ import runIntegrationTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.uuid.Uuid
 
 class KafkaGroupedConsumerTest {
 
     private val totalRecords = 100
-    private val topic = KafkaTopic(UUID.randomUUID().toString())
-    private val values = List(totalRecords) { UUID.randomUUID().toString() }
+    private val topic = KafkaTopic(Uuid.random().toString())
+    private val values = List(totalRecords) { Uuid.random().toString() }
 
-    private val group = GroupId(UUID.randomUUID().toString())
+    private val group = GroupId(Uuid.random().toString())
 
     private val cluster = KafkaCluster(KafkaDockerComposeConfig.bootstrapServers)
 

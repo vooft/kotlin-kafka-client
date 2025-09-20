@@ -1,21 +1,22 @@
 [versions]
-kotlin = "2.0.21"
-kotest = "5.9.1"
-ktor = "3.0.0"
+kotlin = "2.2.20"
+kotest = "6.0.3"
+ktor = "3.3.0"
+coroutines = "1.10.2"
 
 [libraries]
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.7.3" }
-kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.5.4" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.9.0" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.9.0" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.8.0" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
-kt-uuid = { module = "io.github.vooft:kt-uuid-core", version = "0.2.2" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version = "0.5.0" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging", version = "7.0.0" }
 
 # networking
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 
 # testing
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version = "1.9.0" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
@@ -26,6 +27,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.7" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
-mokkery = { id = "dev.mokkery", version = "2.4.0" }
+mokkery = { id = "dev.mokkery", version = "2.10.0" }
 maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }

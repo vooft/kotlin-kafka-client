@@ -34,7 +34,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kt.uuid)
             implementation(project(":kotlin-kafka-client-lowlevel"))
             implementation(project(":kotlin-kafka-client-core"))
             implementation(project(":kotlin-kafka-client-transport"))
