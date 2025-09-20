@@ -35,10 +35,10 @@ jobs:
         run: make start-kafka
 
       - name: Build with Gradle
-        run: ./gradlew clean :kotlin-kafka-client-common:build :kotlin-kafka-client-core:build :kotlin-kafka-client-lowlevel:build :kotlin-kafka-client-transport:build --max-workers=10
+        run: make clean-assemble
 
       - name: Run integration test
-        run: ./gradlew :test:integration-test:build
+        run: make integration-test
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4

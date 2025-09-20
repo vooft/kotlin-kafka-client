@@ -9,3 +9,10 @@ start-kafka:
 	while ! nc -z localhost 9092 ; do sleep 1 ; done
 	while ! nc -z localhost 9093 ; do sleep 1 ; done
 
+clean-assemble:
+	./gradlew clean :kotlin-kafka-client-common:build :kotlin-kafka-client-core:build :kotlin-kafka-client-lowlevel:build :kotlin-kafka-client-transport:build
+
+integration-test:
+	 ./gradlew :test:integration-test:build --max-workers=1
+
+clean-build: clean-assemble integration-test

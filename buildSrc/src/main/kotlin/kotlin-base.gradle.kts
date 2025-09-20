@@ -28,4 +28,10 @@ kotlin {
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
     }
+
+    compilerOptions {
+        optIn.addAll(
+            "kotlin.uuid.ExperimentalUuidApi"
+        )
+    }
 }

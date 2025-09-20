@@ -18,5 +18,13 @@ kotlin {
         nativeMain.dependencies {
             implementation(libs.ktor.network)
         }
+
+        jsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+        }
+
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+        }
     }
 }
