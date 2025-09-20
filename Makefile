@@ -5,8 +5,7 @@ benchmark-macos:
  		io.github.vooft.kafka.MultiplatformKafkaBenchmark
 
 start-kafka:
-	docker-compose -f docker-compose.local.yaml rm -svf
-	docker-compose -f docker-compose.local.yaml up -d
+	sh start-kafka.sh
 	while ! nc -z localhost 9092 ; do sleep 1 ; done
 	while ! nc -z localhost 9093 ; do sleep 1 ; done
 
