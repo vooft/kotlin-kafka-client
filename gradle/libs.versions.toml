@@ -23,7 +23,7 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version = "4.1.0" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.18" }
-slf4j-api = { module = "org.slf4j:slf4j-api", version = "2.0.16" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version = "2.0.17" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version = "1.21.3" }
 
 [plugins]
@@ -34,4 +34,4 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 mokkery = { id = "dev.mokkery", version = "2.10.0" }
 maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.34.0" }
-dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
+dokka = { id = "org.jetbrains.dokka", version = "2.0.0" }
