@@ -31,7 +31,8 @@ kotlin {
 
     compilerOptions {
         optIn.addAll(
-            "kotlin.uuid.ExperimentalUuidApi"
+            "kotlin.uuid.ExperimentalUuidApi",
+            "kotlin.time.ExperimentalTime"
         )
     }
 }
