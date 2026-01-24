@@ -1,11 +1,12 @@
 version: 2
-open-pull-requests-limit: 10
 updates:
     - package-ecosystem: gradle
+      open-pull-requests-limit: 10
       directory: /
       schedule:
         interval: daily
     - package-ecosystem: github-actions
+      open-pull-requests-limit: 10
       directory: /
       schedule:
         interval: daily
