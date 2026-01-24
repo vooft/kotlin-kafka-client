@@ -33,5 +33,5 @@ kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "ko
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 mokkery = { id = "dev.mokkery", version = "3.1.1" }
-maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
+maven-central-publish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.1.0" }
