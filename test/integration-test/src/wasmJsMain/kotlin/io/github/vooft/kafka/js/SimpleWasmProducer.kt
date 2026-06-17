@@ -12,7 +12,7 @@ suspend fun main() {
     println("starting simple js producer")
 
     try {
-        KotlinLoggingConfiguration.logLevel = Level.TRACE
+        KotlinLoggingConfiguration.direct.logLevel = Level.TRACE
 
         val count = 10
         val topic = "my-topic"
