@@ -2,7 +2,7 @@
 kotlin = "2.3.21"
 kotest = "6.0.3"
 ktor = "3.4.1"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 
 [libraries]
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.10.0" }
